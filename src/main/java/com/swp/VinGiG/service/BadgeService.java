@@ -39,7 +39,7 @@ public class BadgeService {
 	//DELETE
 	public boolean delete(int id) {
 		badgeRepo.deleteById(id);
-		return badgeRepo.findById(id).isEmpty();
+		return !badgeRepo.findById(id).isPresent();
 	}
 	
 }
