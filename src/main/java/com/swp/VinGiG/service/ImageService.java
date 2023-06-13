@@ -26,7 +26,7 @@ public class ImageService {
 		else return null;
 	}
 	
-	public List<Image> findByProviderServiceProServiceID(long proServiceID){
+	public List<Image> findByProviderServiceID(long proServiceID) {
 		return imageRepo.findByProviderServiceProServiceID(proServiceID);
 	}
 	

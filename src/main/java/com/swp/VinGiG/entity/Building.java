@@ -46,6 +46,9 @@ public class Building implements Serializable{
 	@Column(name = "note")
 	private String note;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@OneToMany(targetEntity = Customer.class, mappedBy = "building")

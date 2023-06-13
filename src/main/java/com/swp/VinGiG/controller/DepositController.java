@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.swp.VinGiG.entity.Building;
-import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.entity.Deposit;
-import com.swp.VinGiG.service.BuildingService;
 import com.swp.VinGiG.service.DepositService;
 
 public class DepositController {
@@ -42,7 +39,7 @@ public class DepositController {
 	@GetMapping("/provider/{id}/deposit/{dateMin}/{dateMax}")
 	public ResponseEntity<List<Deposit>> findByProviderIDInterval(@PathVariable long id, @PathVariable Date dateMin, @PathVariable Date dateMax ){
 
-		List<Deposit> ls = depositService.findByProviderIDInterval(id,dateMin, dateMax);
+		List<Deposit> ls = depositService.findByProviderIDDateInterval(id,dateMin, dateMax);
 		if(ls.size() > 0)
 			return ResponseEntity.status(HttpStatus.OK).body(ls);
 		else 

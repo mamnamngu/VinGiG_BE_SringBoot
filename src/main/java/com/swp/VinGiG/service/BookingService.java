@@ -90,7 +90,7 @@ public class BookingService {
 	
 	//display reviews for a providerService
 	public List<Booking> reviewsByProServiceID(long proServiceID){
-		return bookingRepo.findByProviderServiceProServiceIDAndCustomerReviewIsNotNullOrderByDateDesc(proServiceID);
+		return bookingRepo.findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(proServiceID);
 	}
 	
 	//display booking by customerID over a time interval
@@ -128,14 +128,14 @@ public class BookingService {
 	//Customer place a Booking
 	public Booking placeBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(false);
+//		booking.setStatus(false);
 		return add(booking);
 	}
 	
 	//Provider accept a Booking
 	public Booking acceptBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(true);
+//		booking.setStatus(true);
 		update(booking);
 		
 		//Set the availability of all other Provider Service of such Provider to FALSE
@@ -150,7 +150,7 @@ public class BookingService {
 	//Provider decline a Booking
 	public Booking declineBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(false);
+//		booking.setStatus(false);
 		update(booking);
 		return booking;
 	}
@@ -158,7 +158,7 @@ public class BookingService {
 	//Provider confirm the completion of a Booking
 	public Booking completeBooking(Booking booking, Long total) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(true);
+//		booking.setStatus(true);
 		if(total != null) booking.setTotal(total);
 		update(booking);
 		
@@ -174,7 +174,7 @@ public class BookingService {
 	//Review
 	public Booking reviewBookingByCustomerID(long customerID, Booking booking, String content, Integer rating) {
 		if(customerID != booking.getCustomer().getCustomerID()) return null;
-		if(!content.isEmpty()) booking.setCustomerReview(content);
+		if(!content.isEmpty()) booking.setCustomersReview(content);
 		if(rating != null) booking.setCustomersRating(rating);
 		
 		//UPDATE Provider Service Rating

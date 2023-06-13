@@ -67,6 +67,9 @@ public class GiGService implements Serializable{
 	@Column(name = "fee", nullable = false)
 	private long fee;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = ServiceCategory.class, fetch = FetchType.LAZY)

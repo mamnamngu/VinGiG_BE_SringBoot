@@ -2,12 +2,14 @@ package com.swp.VinGiG.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,7 +44,7 @@ public class Provider implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "providerID")
 	private long providerID;
 	
@@ -80,6 +82,15 @@ public class Provider implements Serializable{
 	
 	@Column(name = "address", nullable = false)
 	private String address;
+	
+	@Column(name = "createDate", nullable = false)
+	private Date createDate;
+	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
+	@Column(name = "role", columnDefinition = "NVARCHAR(10) DEFAULT 'provider'", nullable = false)
+	private boolean role;
 	
 	//RELATIONSHIP SETUP
 	

@@ -47,6 +47,9 @@ public class ServiceCategory implements Serializable{
 	@Column(name = "description", nullable = false)
 	private String description;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@OneToMany(targetEntity = GiGService.class, mappedBy = "serviceCategory")

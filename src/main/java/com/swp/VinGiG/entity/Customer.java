@@ -85,6 +85,12 @@ public class Customer implements Serializable{
 	@Column(name = "rating", precision = 2, scale = 1)
 	private double rating;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
+	@Column(name = "role", columnDefinition = "NVARCHAR(10) DEFAULT 'customer'", nullable = false)
+	private boolean role;
+	
 	//RELATIONSHIP SETUP
 	
 	@OneToMany(targetEntity = Booking.class, mappedBy = "customer")

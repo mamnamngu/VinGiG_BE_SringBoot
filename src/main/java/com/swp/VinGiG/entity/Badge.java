@@ -50,6 +50,9 @@ public class Badge implements Serializable{
 	@Column(name = "benefit", precision = 2, scale = 1)
 	private double benefit;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@OneToMany(targetEntity = Provider.class, mappedBy = "badge")

@@ -51,6 +51,9 @@ public class SubscriptionFee implements Serializable{
 //	@Column(name = "planID", nullable = false, insertable = false, updatable = false)
 //	private int planID;
 	
+	@Column(name = "amount", nullable = false, updatable = false)
+	private long amount;
+	
 	@Column(name = "date", nullable = false, updatable = false)
 	private Date date;
 

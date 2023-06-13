@@ -31,7 +31,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 	public List<Booking> findByProviderServiceProServiceIDAndCustomersRatingIsNotNull(long proServiceID);
 	
 	//Display all reviews for providerService
-	public List<Booking> findByProviderServiceProServiceIDAndCustomerReviewIsNotNullOrderByDateDesc(long proServiceID);
+	public List<Booking> findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(long proServiceID);
 	
 	//History
 	@Query("SELECT a FROM Booking a WHERE a.customer.getCustomerID() = :customerID AND a.date BETWEEN :dateMin AND :dateMax")

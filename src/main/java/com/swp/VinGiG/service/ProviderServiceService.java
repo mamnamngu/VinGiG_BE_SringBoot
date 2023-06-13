@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.ProviderService;
 import com.swp.VinGiG.repository.ProviderServiceRepository;
+import com.swp.VinGiG.utilities.Constants;
 
 @Service
 public class ProviderServiceService {
@@ -40,17 +41,21 @@ public class ProviderServiceService {
 		return providerServiceRepo.findByProviderProviderIDAndServiceServiceID(providerID,serviceID);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByRatingInterval(double lower, double upper){
+	public List<com.swp.VinGiG.entity.ProviderService> findByRatingInterval(Long lower, Long upper){
+		if(lower == null) lower = Constants.DEFAULT_LOWER;
+		if(upper == null) upper = Constants.DEFAULT_UPPER;
 		return providerServiceRepo.findByRatingInterval(lower, upper);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByUnitPriceInterval(double lower, double upper){
+	public List<com.swp.VinGiG.entity.ProviderService> findByUnitPriceInterval(Long lower, Long upper){
+		if(lower == null) lower = Constants.DEFAULT_LOWER;
+		if(upper == null) upper = Constants.DEFAULT_UPPER;
 		return providerServiceRepo.findByUnitPriceInterval(lower, upper);
 	}
 	
 	//Display all customer-visible ProviderService
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByProviderProviderIDAndAvailabilityIsTrue(int providerID){
+	public List<com.swp.VinGiG.entity.ProviderService> findByProviderProviderIDAndAvailabilityIsTrue(long providerID){
 		return providerServiceRepo.findByProviderProviderIDAndAvailabilityIsTrue(providerID);
 	}
 	
@@ -62,11 +67,15 @@ public class ProviderServiceService {
 		return providerServiceRepo.findByProviderProviderIDAndServiceServiceIDAndAvailabilityIsTrue(providerID,serviceID);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(int serviceID, double lower, double upper){
+	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(int serviceID, Long lower, Long upper){
+		if(lower == null) lower = Constants.DEFAULT_LOWER;
+		if(upper == null) upper = Constants.DEFAULT_UPPER;
 		return providerServiceRepo.findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(serviceID,lower, upper);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrue(int serviceID, double lower, double upper){
+	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrue(int serviceID, Long lower, Long upper){
+		if(lower == null) lower = Constants.DEFAULT_LOWER;
+		if(upper == null) upper = Constants.DEFAULT_UPPER;
 		return providerServiceRepo.findByServiceIDByRatingIntervalAndAvailabilityIsTrue(serviceID, lower, upper);
 	}
 	

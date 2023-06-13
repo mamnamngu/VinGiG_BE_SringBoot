@@ -14,7 +14,9 @@ public interface SubscriptionFeeRepository extends JpaRepository<SubscriptionFee
 	
 	public List<SubscriptionFee> findByDateBetween(Date dateMin, Date dateMax);
 	
+	//admin
 	public List<SubscriptionFee> findByPlanPlanIDAndDateBetween(int planID, Date dateMin, Date dateMax);
 	
+	//provider
 	public List<SubscriptionFee> findByProviderProviderIDAndDateBetween(long providerID, Date dateMin, Date dateMax);
 }

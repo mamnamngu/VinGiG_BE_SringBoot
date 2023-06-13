@@ -30,4 +30,15 @@ public final class Constants {
 	public static final long DEFAULT_LOWER = -10000;
 	public static final long DEFAULT_UPPER = 1000000000;
 	public static final long NEW_WALLET_BALANCE_PROMO = 10000;
+	
+	//Transaction type constants
+	public static final String TRANSACTION_DEPOSIT = "deposit";
+	public static final String TRANSACTION_BOOKINGFEE = "bookingFee";
+	public static final String TRANSACTION_SUBSCRIPTIONFEE = "subscriptionFee";
+	
+	//Booking Status
+	public static final int BOOKING_STATUS_PENDING = 0;
+	public static final int BOOKING_STATUS_ACCEPTED = 1;
+	public static final int BOOKING_STATUS_COMPLETED = 2;
+	public static final int BOOKING_STATUS_CANCELLED = 3;
 }

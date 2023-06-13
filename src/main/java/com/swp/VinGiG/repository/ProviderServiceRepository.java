@@ -23,7 +23,7 @@ public interface ProviderServiceRepository extends JpaRepository<ProviderService
 
 	//Display all customer-visible ProviderService
 	
-	public List<ProviderService> findByProviderProviderIDAndAvailabilityIsTrue(int providerID);
+	public List<ProviderService> findByProviderProviderIDAndAvailabilityIsTrue(long providerID);
 	
 	public List<ProviderService> findByServiceServiceIDAndAvailabilityIsTrue(int serviceID);
 	
@@ -32,16 +32,16 @@ public interface ProviderServiceRepository extends JpaRepository<ProviderService
 	//Display admin and provider-visible ProviderService by intervals
 	
 	@Query("SELECT p FROM ProviderService p WHERE p.rating BETWEEN :lower AND :upper")
-	public List<ProviderService> findByRatingInterval(@Param("lower") double lower, @Param("upper") double upper);
+	public List<ProviderService> findByRatingInterval(@Param("lower") long lower, @Param("upper") long upper);
 	
 	@Query("SELECT p FROM ProviderService p WHERE p.unitPrice BETWEEN :lower AND :upper")
-	public List<ProviderService> findByUnitPriceInterval(@Param("lower") double lower, @Param("upper") double upper);
+	public List<ProviderService> findByUnitPriceInterval(@Param("lower") long lower, @Param("upper") long upper);
 	
 	//Display customer-visible ProviderService by intervals
 	
 	@Query("SELECT p FROM ProviderService p WHERE p.service.getServiceID() = :serviceID AND p.rating BETWEEN :lower AND :upper AND p.availability IS TRUE")
-	public List<ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrue(@Param("serviceID") int serviceID, @Param("lower") double lower, @Param("upper") double upper);
+	public List<ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrue(@Param("serviceID") int serviceID, @Param("lower") long lower, @Param("upper") long upper);
 	
 	@Query("SELECT p FROM ProviderService p WHERE p.service.getServiceID() = :serviceID AND p.unitPrice BETWEEN :lower AND :upper AND p.availability IS TRUE")
-	public List<ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(@Param("serviceID") int serviceID, @Param("lower") double lower, @Param("upper") double upper);
+	public List<ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(@Param("serviceID") int serviceID, @Param("lower") long lower, @Param("upper") long upper);
 }

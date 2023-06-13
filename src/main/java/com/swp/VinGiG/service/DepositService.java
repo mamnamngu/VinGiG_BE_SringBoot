@@ -14,7 +14,6 @@ import com.swp.VinGiG.utilities.Constants;
 @Service
 public class DepositService {
 
-
 	@Autowired
 	private DepositRepository depositRepo;
 	
@@ -29,7 +28,7 @@ public class DepositService {
 		else return null;
 	}
 	
-	public List<Deposit> findByProviderIDInterval(long ProviderID, Date dateMin, Date dateMax){
+	public List<Deposit> findByProviderIDDateInterval(long ProviderID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
 		return depositRepo.findByProviderIDInterval(ProviderID, dateMin, dateMax);
@@ -62,6 +61,4 @@ public class DepositService {
 		depositRepo.deleteById(id);
 		return !depositRepo.findById(id).isPresent();
 	}
-	
-
 }

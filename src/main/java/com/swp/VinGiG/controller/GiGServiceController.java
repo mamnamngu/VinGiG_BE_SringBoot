@@ -47,7 +47,7 @@ public class GiGServiceController {
 		ServiceCategory category = serviceCategoryService.findById(id);
 		if(category != null)
 			return ResponseEntity.ok(giGServiceService.findByServiceCategory(id));
-		else return ResponseEntity.notFound().build();
+		else return ResponseEntity.notFound().header("message", "No Service Category found for such ID").build();
     }
 	
 	@GetMapping("/giGServices/{keyword}")

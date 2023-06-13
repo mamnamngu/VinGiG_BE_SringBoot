@@ -54,6 +54,9 @@ public class Wallet implements Serializable{
 	@Column(name = "createDate", nullable = false)
 	private Date createDate;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)

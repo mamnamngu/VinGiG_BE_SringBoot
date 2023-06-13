@@ -50,6 +50,9 @@ public class SubscriptionPlan implements Serializable{
 	@Column(name = "price", nullable = false)
 	private long price;
 	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@OneToMany(targetEntity = SubscriptionFee.class, mappedBy = "plan")

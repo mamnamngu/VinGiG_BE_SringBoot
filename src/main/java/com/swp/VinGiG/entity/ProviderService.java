@@ -66,6 +66,12 @@ public class ProviderService implements Serializable{
 	@Column(name = "availability", nullable = false)
 	private boolean availability;
 	
+	@Column(name = "visible", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean visible;
+	
+	@Column(name = "active", columnDefinition = "BIT DEFAULT 1", nullable = false)
+	private boolean active;
+	
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
