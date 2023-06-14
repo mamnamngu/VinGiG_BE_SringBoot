@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp.VinGiG.entity.GiGService;
+import com.swp.VinGiG.entity.Image;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.ProviderService;
 import com.swp.VinGiG.service.GiGServiceService;
 import com.swp.VinGiG.service.ProviderServiceService;
+import com.swp.VinGiG.view.ProviderServiceObject;
 
 @RestController
 public class ProviderServiceController {
@@ -59,10 +62,21 @@ public class ProviderServiceController {
 
 	// display all currently available ProviderServices by GiGService
 	@GetMapping("/giGservice/{id}/providerServices")
-	public ResponseEntity<List<ProviderService>> findByServiceIDAvailable(@PathVariable int id) {
+	public ResponseEntity<List<ProviderServiceObject>> findByServiceIDAvailable(@PathVariable int id) {
 		GiGService service = giGServiceService.findById(id);
 		if (service != null) {
-			return ResponseEntity.ok(providerServiceService.findByServiceServiceIDAndAvailabilityIsFalse(id));
+			List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
+			List<ProviderService> proServiceList = providerServiceService.findByServiceServiceIDAndAvailabilityIsFalse(id);
+			for(ProviderService x: proServiceList) {
+				ProviderServiceObject object = new ProviderServiceObject();
+				object.setProviderService(x);
+				object.setProvider(providerService.findById(x.getProvider().getProviderID()));
+				Image image = new Image();
+				image.setLink("https://cleaningspaces.net/wp-content/uploads/2020/10/house-cleaning-services.jpeg");
+				object.setImage(image);
+				ls.add(object);
+			}
+			return ResponseEntity.ok(ls);
 		} else
 			return ResponseEntity.notFound().header("message", "No GiGService found for such ID").build();
 	}
