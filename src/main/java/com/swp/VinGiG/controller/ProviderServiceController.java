@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp.VinGiG.entity.GiGService;
-import com.swp.VinGiG.entity.Image;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.ProviderService;
 import com.swp.VinGiG.service.GiGServiceService;
@@ -60,7 +59,7 @@ public class ProviderServiceController {
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
 	}
 
-	// display all currently available ProviderServices by GiGService
+	 //display all currently available ProviderServices by GiGService
 	@GetMapping("/giGservice/{id}/providerServices")
 	public ResponseEntity<List<ProviderServiceObject>> findByServiceIDAvailable(@PathVariable int id) {
 		GiGService service = giGServiceService.findById(id);
@@ -68,13 +67,7 @@ public class ProviderServiceController {
 			List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
 			List<ProviderService> proServiceList = providerServiceService.findByServiceServiceIDAndAvailabilityIsFalse(id);
 			for(ProviderService x: proServiceList) {
-				ProviderServiceObject object = new ProviderServiceObject();
-				object.setProviderService(x);
-				object.setProvider(providerService.findById(x.getProvider().getProviderID()));
-				Image image = new Image();
-				image.setLink("https://cleaningspaces.net/wp-content/uploads/2020/10/house-cleaning-services.jpeg");
-				object.setImage(image);
-				ls.add(object);
+				ls.add(providerServiceService.displayRender(x));
 			}
 			return ResponseEntity.ok(ls);
 		} else

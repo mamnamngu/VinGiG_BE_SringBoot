@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.swp.VinGiG.entity.ProviderService;
 import com.swp.VinGiG.repository.ProviderServiceRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.ProviderServiceObject;
 
 @Service
 public class ProviderServiceService {
@@ -95,4 +96,33 @@ public class ProviderServiceService {
 		return providerServiceRepo.findById(id).isEmpty();
 	}
 	
+	//Display
+	
+	//Display
+	public ProviderServiceObject displayRender(ProviderService x) {
+		ProviderServiceObject object = new ProviderServiceObject();
+		object.setProServiceID(x.getProServiceID());
+		object.setRating(x.getRating());
+		object.setBookingNo(x.getBookingNo());
+		object.setUnitPrice(x.getUnitPrice());
+		object.setDescription(x.getDescription());
+		object.setAvailablity(x.isAvailability());
+		object.setVisible(x.isVisible());
+		object.setActive(x.isActive());
+		
+		//Provider
+		object.setProviderID(x.getProvider().getProviderID());
+		object.setFullName(x.getProvider().getFullName());
+		object.setGender(x.getProvider().isGender());
+		
+		//Badge
+		object.setBadgeID(x.getProvider().getBadge().getBadgeID());
+		object.setBadgeName(x.getProvider().getBadge().getBadgeName());
+		
+		//Image
+		object.setImageID(0);
+		object.setLink("https://cleaningspaces.net/wp-content/uploads/2020/10/house-cleaning-services.jpeg");
+		
+		return object;
+	}	
 }

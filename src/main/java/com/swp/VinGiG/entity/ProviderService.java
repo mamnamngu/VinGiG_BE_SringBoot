@@ -74,13 +74,13 @@ public class ProviderService implements Serializable{
 	
 	//RELATIONSHIP SETUP
 	
-	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = false, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Provider provider;
 	
-	@ManyToOne(targetEntity = GiGService.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = GiGService.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "serviceID", referencedColumnName = "serviceID")
 	@JsonIgnore
 	@ToString.Exclude
