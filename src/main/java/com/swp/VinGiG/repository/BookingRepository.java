@@ -34,10 +34,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 	public List<Booking> findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(long proServiceID);
 	
 	//History
-	@Query("SELECT a FROM Booking a WHERE a.customer.getCustomerID() = :customerID AND a.date BETWEEN :dateMin AND :dateMax")
+	@Query("SELECT a FROM Booking a WHERE a.customer.customerID = :customerID AND a.date BETWEEN :dateMin AND :dateMax")
 	public List<Booking> findByCustomerIDByDateInterval(@Param("customerID") long customerID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
-	@Query("SELECT a FROM Booking a WHERE a.providerService.getProServiceID() = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax")
+	@Query("SELECT a FROM Booking a WHERE a.providerService.proServiceID = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax")
 	public List<Booking> findByProServiceIDByDateInterval(@Param("proServiceID") long proServiceID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
 }

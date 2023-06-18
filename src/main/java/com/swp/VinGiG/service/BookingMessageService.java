@@ -17,6 +17,12 @@ public class BookingMessageService {
 	@Autowired
 	private BookingMessageRepository bookingMessageRepo;
 	
+	@Autowired
+	ProviderServiceService pss;
+	
+	@Autowired
+	BookingService bs;
+	
 	//FIND
 	public List<BookingMessage> findAll(){
 		return bookingMessageRepo.findAll();
@@ -34,9 +40,7 @@ public class BookingMessageService {
 	
 	public List<Booking> findBookingHasBookingMessageForProvider(long providerID){
 		List<Booking> list = new ArrayList<Booking>();
-		ProviderServiceService pss = new ProviderServiceService();
 		List<com.swp.VinGiG.entity.ProviderService> psList = pss.findByProviderID(providerID);
-		BookingService bs = new BookingService();
 		List<Booking> bookingList = new ArrayList<Booking>();
 		for(com.swp.VinGiG.entity.ProviderService x: psList)
 			bookingList.addAll(bs.findByProServiceIDByDateInterval(x.getProServiceID(), null, null));
@@ -49,7 +53,6 @@ public class BookingMessageService {
 	
 	public List<Booking> findBookingHasBookingMessageForCustomer(long customerID){
 		List<Booking> list = new ArrayList<Booking>();
-		BookingService bs = new BookingService();
 		List<Booking> bookingList = bs.findByCustomerIDByDateInterval(customerID, null, null);
 		for(Booking y: bookingList)
 			if(findByBookingID(y.getBookingID()).size() > 0)

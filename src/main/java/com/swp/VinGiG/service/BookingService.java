@@ -20,13 +20,13 @@ public class BookingService {
 	private BookingRepository bookingRepo;
 	
 	@Autowired
-	ProviderServiceService providerServiceService;
+	private ProviderServiceService providerServiceService;
 	
 	@Autowired
-	ProviderService providerService;
+	private ProviderService providerService;
 	
 	@Autowired
-	CustomerService customerService;
+	private CustomerService customerService;
 
 	//FIND
 	public List<Booking> findAll(){
