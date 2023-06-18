@@ -1,7 +1,6 @@
 package com.swp.VinGiG.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +16,20 @@ public class BadgeService {
 	
 	//FIND
 	public List<Badge> findAll(){
-		return badgeRepo.findAll();
+		return badgeRepo.findByActiveIsTrue();
 	}
 	
 	public Badge findById(int id) {
-		Optional<Badge> badge = badgeRepo.findById(id);
-		if(badge.isPresent()) return badge.get();
-		else return null;
+		Badge badge = badgeRepo.findByBadgeIDAndActiveIsTrue(id);
+		return badge;
+	}
+	
+	public List<Badge> findByNameOrDescription(String keyword){
+		return badgeRepo.findByBadgeNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveIsTrue(keyword.trim(), keyword.trim());
+	}
+	
+	public List<Badge> findDeletedBadge(){
+		return badgeRepo.findByActiveIsFalse();
 	}
 	
 	//ADD
@@ -36,10 +42,13 @@ public class BadgeService {
 		return add(newBadge);
 	}
 	
-	//DELETE
+	//DELETE - DEACTIVATE
 	public boolean delete(int id) {
-		badgeRepo.deleteById(id);
-		return !badgeRepo.findById(id).isPresent();
+		Badge badge = findById(id);
+		if(badge == null) return false;
+		badge.setActive(false);
+		update(badge);
+		return !badge.isActive();
 	}
 	
 }

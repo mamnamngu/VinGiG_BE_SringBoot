@@ -56,7 +56,7 @@ public class WalletController {
 		return ResponseEntity.ok(walletService.findByBalanceBelowThreshold());
 	}
 	
-	@GetMapping("/provider/createDate/{dateMin}/{dateMax}")
+	@GetMapping("/wallets/createDate/{dateMin}/{dateMax}")
 	public ResponseEntity<List<Wallet>> findByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax){
 		return ResponseEntity.ok(walletService.findByCreateDateInterval(dateMin,dateMax));
 	}

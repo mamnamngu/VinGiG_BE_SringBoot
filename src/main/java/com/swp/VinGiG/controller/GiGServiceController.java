@@ -55,11 +55,20 @@ public class GiGServiceController {
 		return ResponseEntity.ok(giGServiceService.findByKeyword(keyword.trim()));
     }
 	
+	//admin
+	@GetMapping("/giGServices/deleted")
+	public ResponseEntity<List<GiGService>> findDeletedServices(){
+		return ResponseEntity.ok(giGServiceService.findDeletedServices());
+	}
+	
 	@PostMapping("/serviceCategory/{id}/giGService")
 	public ResponseEntity<GiGService> createGiGService(@PathVariable int id, @RequestBody GiGService giGService){
 		try {
 			ServiceCategory category = serviceCategoryService.findById(id);
 			if(category == null) return ResponseEntity.notFound().header("message", "Service Category not found. Adding failed").build();
+			
+			if(giGServiceService.findById(giGService.getServiceID()) != null) 
+				return ResponseEntity.badRequest().header("message", "GiGService with such ID already exists").build();
 			
 			giGService.setServiceCategory(category);
 			GiGService savedGiGService = giGServiceService.add(giGService);
@@ -91,6 +100,9 @@ public class GiGServiceController {
 	@DeleteMapping("/giGService/{id}")
 	public ResponseEntity<Void> deleteGiGService(@PathVariable int id){
 		try{
+			ServiceCategory category = serviceCategoryService.findById(id);
+			if(category == null) return ResponseEntity.notFound().header("message", "Service Category not found. Delete failed").build();
+			
 			giGServiceService.delete(id);
 			return ResponseEntity.noContent().header("message", "GiGService deleted successfully").build();
 		}

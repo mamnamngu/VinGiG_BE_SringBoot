@@ -1,7 +1,6 @@
 package com.swp.VinGiG.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,66 +17,59 @@ public class ProviderServiceService {
 	private ProviderServiceRepository providerServiceRepo;
 	
 	//FIND
+	//admin
 	public List<ProviderService> findAll(){
-		return providerServiceRepo.findAll();
+		return providerServiceRepo.findByActiveIsTrue();
+	}
+	
+	public List<ProviderService> findDeletedProviderService(){
+		return providerServiceRepo.findByActiveIsFalse();
 	}
 	
 	public ProviderService findById(long id) {
-		Optional<ProviderService> providerService = providerServiceRepo.findById(id);
-		if(providerService.isPresent()) return providerService.get();
-		else return null;
+		return providerServiceRepo.findByProServiceIDAndActiveIsTrue(id);
 	}
 	
-	//Display all admin and provider-visible ProviderService
+	public List<ProviderService> findByServiceID(int serviceID){
+		return providerServiceRepo.findByServiceServiceIDAndActiveIsTrue(serviceID);
+	}
 	
+	public List<ProviderService> findByRatingInterval(Double lower, Double upper){
+		if(lower == null) lower = (double)Constants.REVIEW_MIN;
+		if(upper == null) upper = (double)Constants.REVIEW_MAX;
+		return providerServiceRepo.findByRatingIntervalAndActiveIsTrue(lower, upper);
+	}
+	
+	//provider
 	public List<com.swp.VinGiG.entity.ProviderService> findByProviderID(long providerID){
-		return providerServiceRepo.findByProviderProviderID(providerID);
+		return providerServiceRepo.findByProviderProviderIDAndActiveIsTrue(providerID);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByServiceID(int serviceID){
-		return providerServiceRepo.findByServiceServiceID(serviceID);
-	}
 
 	public List<com.swp.VinGiG.entity.ProviderService> findByProviderProviderIDAndServiceServiceID(long providerID, int serviceID){
-		return providerServiceRepo.findByProviderProviderIDAndServiceServiceID(providerID,serviceID);
+		return providerServiceRepo.findByProviderProviderIDAndServiceServiceIDAndActiveIsTrue(providerID,serviceID);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByRatingInterval(Long lower, Long upper){
+	//Customer
+	
+	public List<com.swp.VinGiG.entity.ProviderService> findByProviderIDAndServiceIDAndVisible(long providerID, int serviceID){
+		return providerServiceRepo.findByProviderProviderIDAndServiceServiceIDAndVisibleIsTrueAndActiveIsTrue(providerID,serviceID);
+	}
+	
+	public List<ProviderService> findByServiceIDAndAvailabilityAndVisible(int serviceID){
+		return providerServiceRepo.findByServiceServiceIDAndAvailabilityIsTrueAndVisibleIsTrueAndActiveIsTrue(serviceID);
+	}
+	
+	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityAndVisible(int serviceID, Long lower, Long upper){
 		if(lower == null) lower = Constants.DEFAULT_LOWER;
 		if(upper == null) upper = Constants.DEFAULT_UPPER;
-		return providerServiceRepo.findByRatingInterval(lower, upper);
+		return providerServiceRepo.findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrueAndVisibleIsTrueAndActiveIsTrue(serviceID,lower, upper);
 	}
 	
-	public List<com.swp.VinGiG.entity.ProviderService> findByUnitPriceInterval(Long lower, Long upper){
-		if(lower == null) lower = Constants.DEFAULT_LOWER;
-		if(upper == null) upper = Constants.DEFAULT_UPPER;
-		return providerServiceRepo.findByUnitPriceInterval(lower, upper);
-	}
-	
-	//Display all customer-visible ProviderService
-	
-	public List<com.swp.VinGiG.entity.ProviderService> findByProviderProviderIDAndAvailabilityIsTrue(long providerID){
-		return providerServiceRepo.findByProviderProviderIDAndAvailabilityIsTrue(providerID);
-	}
-	
-	public List<com.swp.VinGiG.entity.ProviderService> findByServiceServiceIDAndAvailabilityIsFalse(int serviceID){
-		return providerServiceRepo.findByServiceServiceID(serviceID);
-	}
-
-	public List<com.swp.VinGiG.entity.ProviderService> findByProviderProviderIDAndServiceServiceIDAndAvailabilityIsTrue(long providerID, int serviceID){
-		return providerServiceRepo.findByProviderProviderIDAndServiceServiceIDAndAvailabilityIsTrue(providerID,serviceID);
-	}
-	
-	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(int serviceID, Long lower, Long upper){
-		if(lower == null) lower = Constants.DEFAULT_LOWER;
-		if(upper == null) upper = Constants.DEFAULT_UPPER;
-		return providerServiceRepo.findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(serviceID,lower, upper);
-	}
-	
-	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrue(int serviceID, Long lower, Long upper){
-		if(lower == null) lower = Constants.DEFAULT_LOWER;
-		if(upper == null) upper = Constants.DEFAULT_UPPER;
-		return providerServiceRepo.findByServiceIDByRatingIntervalAndAvailabilityIsTrue(serviceID, lower, upper);
+	public List<com.swp.VinGiG.entity.ProviderService> findByServiceIDByRatingIntervalAndAvailabilityAndVisible(int serviceID, Double lower, Double upper){
+		if(lower == null) lower = (double)Constants.REVIEW_MIN;
+		if(upper == null) upper = (double)Constants.REVIEW_MAX;
+		return providerServiceRepo.findByServiceIDByRatingIntervalAndAvailabilityIsTrueAndVisibleIsTrueAndActiveIsTrue(serviceID, lower, upper);
 	}
 	
 	//ADD
@@ -87,16 +79,35 @@ public class ProviderServiceService {
 	
 	//UPDATE
 	public ProviderService update(ProviderService newProviderService) {
-		return add(newProviderService);
+		return providerServiceRepo.save(newProviderService);
 	}
 	
 	//DELETE
 	public boolean delete(long id) {
-		providerServiceRepo.deleteById(id);
-		return providerServiceRepo.findById(id).isEmpty();
+		ProviderService providerService = findById(id);
+		if(providerService == null) return false;
+		providerService.setActive(false);
+		update(providerService);
+		return !providerService.isActive();	
 	}
 	
-	//Display
+	public List<ProviderService> deleteByProviderID(long providerID){
+		List<ProviderService> ls = findByProviderID(providerID);
+		for(ProviderService x: ls) {
+			x.setActive(false);
+			update(x);
+		}
+		return ls;
+	}
+	
+	public List<ProviderService> deleteByServiceID(int serviceID){
+		List<ProviderService> ls = findByServiceID(serviceID);
+		for(ProviderService x: ls) {
+			x.setActive(false);
+			update(x);
+		}
+		return ls;
+	}
 	
 	//Display
 	public ProviderServiceObject displayRender(ProviderService x) {
@@ -125,4 +136,14 @@ public class ProviderServiceService {
 		
 		return object;
 	}	
+	
+	//Availability
+	public void setAvailability(long providerID, boolean status) {
+		List<ProviderService> ls = findByProviderID(providerID);
+		if(ls == null || ls.size() == 0) return;
+		for(ProviderService x: ls) {
+			x.setAvailability(status);
+			update(x);
+		}
+	}
 }

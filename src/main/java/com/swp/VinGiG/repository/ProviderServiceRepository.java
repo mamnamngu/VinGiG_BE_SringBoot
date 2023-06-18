@@ -13,35 +13,38 @@ import com.swp.VinGiG.entity.ProviderService;
 @Repository
 public interface ProviderServiceRepository extends JpaRepository<ProviderService, Long>, JpaSpecificationExecutor<ProviderService>{
 
-	//Display all admin and provider-visible ProviderService
+	//Admin
 	
-	public List<ProviderService> findByProviderProviderID(long providerID);
+	public List<ProviderService> findByActiveIsTrue();
 	
-	public List<ProviderService> findByServiceServiceID(int serviceID);
+	public List<ProviderService> findByActiveIsFalse();
 	
-	public List<ProviderService> findByProviderProviderIDAndServiceServiceID(long providerID, int serviceID);
-
+	public ProviderService findByProServiceIDAndActiveIsTrue(long proServiceID);
+	
+	public List<ProviderService> findByServiceServiceIDAndActiveIsTrue(int serviceID);
+	
+	@Query("SELECT p FROM ProviderService p WHERE p.rating BETWEEN :lower AND :upper AND p.active IS TRUE")
+	public List<ProviderService> findByRatingIntervalAndActiveIsTrue(@Param("lower") double lower, @Param("upper") double upper);
+	
+//	@Query("SELECT p FROM ProviderService p WHERE p.unitPrice BETWEEN :lower AND :upper")
+//	public List<ProviderService> findByUnitPriceInterval(@Param("lower") long lower, @Param("upper") long upper);
+	
+	//Provider + admin
+	
+	public List<ProviderService> findByProviderProviderIDAndActiveIsTrue(long providerID);
+	
+	public List<ProviderService> findByProviderProviderIDAndServiceServiceIDAndActiveIsTrue(long providerID, int serviceID);
+	
 	//Display all customer-visible ProviderService
 	
-	public List<ProviderService> findByProviderProviderIDAndAvailabilityIsTrue(long providerID);
+	//Customer can view even inavailable services in a provider's profile
+	public List<ProviderService> findByProviderProviderIDAndServiceServiceIDAndVisibleIsTrueAndActiveIsTrue(long providerID, int serviceID);
 	
-	public List<ProviderService> findByServiceServiceIDAndAvailabilityIsTrue(int serviceID);
+	public List<ProviderService> findByServiceServiceIDAndAvailabilityIsTrueAndVisibleIsTrueAndActiveIsTrue(int serviceID);
 	
-	public List<ProviderService> findByProviderProviderIDAndServiceServiceIDAndAvailabilityIsTrue(long providerID, int serviceID);
+	@Query("SELECT p FROM ProviderService p WHERE p.service.getServiceID() = :serviceID AND p.rating BETWEEN :lower AND :upper AND p.availability IS TRUE AND p.visible IS TRUE AND p.active IS TRUE")
+	public List<ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrueAndVisibleIsTrueAndActiveIsTrue(@Param("serviceID") int serviceID, @Param("lower") double lower, @Param("upper") double upper);
 	
-	//Display admin and provider-visible ProviderService by intervals
-	
-	@Query("SELECT p FROM ProviderService p WHERE p.rating BETWEEN :lower AND :upper")
-	public List<ProviderService> findByRatingInterval(@Param("lower") long lower, @Param("upper") long upper);
-	
-	@Query("SELECT p FROM ProviderService p WHERE p.unitPrice BETWEEN :lower AND :upper")
-	public List<ProviderService> findByUnitPriceInterval(@Param("lower") long lower, @Param("upper") long upper);
-	
-	//Display customer-visible ProviderService by intervals
-	
-	@Query("SELECT p FROM ProviderService p WHERE p.service.getServiceID() = :serviceID AND p.rating BETWEEN :lower AND :upper AND p.availability IS TRUE")
-	public List<ProviderService> findByServiceIDByRatingIntervalAndAvailabilityIsTrue(@Param("serviceID") int serviceID, @Param("lower") long lower, @Param("upper") long upper);
-	
-	@Query("SELECT p FROM ProviderService p WHERE p.service.getServiceID() = :serviceID AND p.unitPrice BETWEEN :lower AND :upper AND p.availability IS TRUE")
-	public List<ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrue(@Param("serviceID") int serviceID, @Param("lower") long lower, @Param("upper") long upper);
+	@Query("SELECT p FROM ProviderService p WHERE p.service.getServiceID() = :serviceID AND p.unitPrice BETWEEN :lower AND :upper AND p.availability IS TRUE AND p.visible IS TRUE AND p.active IS TRUE")
+	public List<ProviderService> findByServiceIDByUnitPriceIntervalAndAvailabilityIsTrueAndVisibleIsTrueAndActiveIsTrue(@Param("serviceID") int serviceID, @Param("lower") double lower, @Param("upper") double upper);
 }

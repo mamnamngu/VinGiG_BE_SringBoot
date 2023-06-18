@@ -1,7 +1,6 @@
 package com.swp.VinGiG.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,17 +15,20 @@ public class SubscriptionPlanService {
 	
 	//FIND
 	public List<SubscriptionPlan> findAll(){
-		return planRepo.findAll();
+		return planRepo.findByActiveIsTrue();
 	}
 	
 	public SubscriptionPlan findById(int id) {
-		Optional<SubscriptionPlan> plan = planRepo.findById(id);
-		if(plan.isPresent()) return plan.get();
-		else return null;
+		SubscriptionPlan plan = planRepo.findByPlanIDAndActiveIsTrue(id);
+		return plan;
 	}
 	
 	public List<SubscriptionPlan> findByKeyword(String keyword){
-		return planRepo.findByDescriptionContainingIgnoreCase(keyword);
+		return planRepo.findByDescriptionContainingIgnoreCaseAndActiveIsTrue(keyword);
+	}
+	
+	public List<SubscriptionPlan> findDeletedSubscriptionPlans(){
+		return planRepo.findByActiveIsFalse();
 	}
 	
 	//ADD
@@ -41,7 +43,10 @@ public class SubscriptionPlanService {
 	
 	//DELETE
 	public boolean delete(int id) {
-		planRepo.deleteById(id);
-		return planRepo.findById(id).isEmpty();
+		SubscriptionPlan plan = findById(id);
+		if(plan == null) return false;
+		plan.setActive(false);
+		update(plan);
+		return !plan.isActive();
 	}
 }

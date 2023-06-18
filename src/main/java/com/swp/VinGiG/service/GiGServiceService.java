@@ -1,7 +1,6 @@
 package com.swp.VinGiG.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,21 +15,23 @@ public class GiGServiceService {
 	
 	//FIND
 	public List<GiGService> findAll(){
-		return serviceRepo.findAll();
+		return serviceRepo.findByActiveIsTrue();
 	}
 	
 	public GiGService findById(int id) {
-		Optional<GiGService> service = serviceRepo.findById(id);
-		if(service.isPresent()) return service.get();
-		else return null;
+		return serviceRepo.findByServiceIDAndActiveIsTrue(id);
+	}
+	
+	public List<GiGService> findDeletedServices(){
+		return serviceRepo.findByActiveIsFalse();
 	}
 	
 	public List<GiGService> findByServiceCategory(int serviceCategoryID){
-		return serviceRepo.findByServiceCategoryCategoryID(serviceCategoryID);
+		return serviceRepo.findByServiceCategoryCategoryIDAndActiveIsTrue(serviceCategoryID);
 	}
 	
 	public List<GiGService> findByKeyword(String keyword){
-		return serviceRepo.findByServiceNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword.trim(), keyword.trim());
+		return serviceRepo.findByServiceNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveIsTrue(keyword.trim(), keyword.trim());
 	}
 	
 	//ADD
@@ -45,8 +46,11 @@ public class GiGServiceService {
 	
 	//DELETE
 	public boolean delete(int id) {
-		serviceRepo.deleteById(id);
-		return serviceRepo.findById(id).isEmpty();
+		GiGService service = findById(id);
+		if(service == null) return false;
+		service.setActive(false);
+		update(service);
+		return !service.isActive();
 	}
 	
 }

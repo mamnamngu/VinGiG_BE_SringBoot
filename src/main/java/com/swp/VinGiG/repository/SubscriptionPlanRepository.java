@@ -11,5 +11,11 @@ import com.swp.VinGiG.entity.SubscriptionPlan;
 @Repository
 public interface SubscriptionPlanRepository extends JpaRepository<SubscriptionPlan, Integer>, JpaSpecificationExecutor<SubscriptionPlan>{
 
-	public List<SubscriptionPlan> findByDescriptionContainingIgnoreCase(String keyword);
+	public List<SubscriptionPlan> findByActiveIsTrue();
+	
+	public List<SubscriptionPlan> findByActiveIsFalse();
+	
+	public SubscriptionPlan findByPlanIDAndActiveIsTrue(int planID);
+	
+	public List<SubscriptionPlan> findByDescriptionContainingIgnoreCaseAndActiveIsTrue(String keyword);
 }

@@ -1,5 +1,6 @@
 package com.swp.VinGiG.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,16 +14,22 @@ import com.swp.VinGiG.entity.Provider;
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider, Long>, JpaSpecificationExecutor<Provider>{
 	
-	public List<Provider> findByUsername(String username);
+	public List<Provider> findByUsernameAndActiveIsTrue(String username);
 	
-	public List<Provider> findByBadgeBadgeID(int badgeID);
+	public List<Provider> findByBadgeBadgeIDAndActiveIsTrue(int badgeID);
 	
-	@Query("SELECT p FROM Provider p WHERE p.rating BETWEEN :lower AND :upper")
-	public List<Provider> findByRatingInterval(@Param("lower") double lower, @Param("upper")double upper);
+	@Query("SELECT p FROM Provider p WHERE p.rating BETWEEN :lower AND :upper AND p.active = TRUE")
+	public List<Provider> findByRatingIntervalAndActiveIsTrue(@Param("lower") double lower, @Param("upper")double upper);
 
-	public List<Provider> findByFullNameIgnoreCase(String fullName);
+	public List<Provider> findByFullNameIgnoreCaseAndActiveIsTrue(String fullName);
 	
-	//Update the badge of new Provider
-//	@Query("SELECT p FROM Provider p  WHERE p.badge.badgeID = " + Constants.NEW_PROVIDER_BADGEID + " AND p.createDate < (SELECT DAYADD(DAY, -30, GETDATE()) AS Result)")
-//	public List<Provider> expiredNewProvider();
+	public List<Provider> findByActiveIsFalse();
+	
+	public List<Provider> findByActiveTrue();
+	
+	public Provider findByProviderIDAndActiveIsTrue(long providerID);
+	
+	public List<Provider> findByCreateDateBetween(Date minDate, Date maxDate);
+	
+	public List<Provider> findByBadgeBadgeIDAndCreateDateBetween(int badgeID, Date minDate, Date maxDate);
 }

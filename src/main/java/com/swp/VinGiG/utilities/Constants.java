@@ -41,4 +41,7 @@ public final class Constants {
 	public static final int BOOKING_STATUS_ACCEPTED = 1;
 	public static final int BOOKING_STATUS_COMPLETED = 2;
 	public static final int BOOKING_STATUS_CANCELLED = 3;
+	
+	//Count
+	public static final int DEFAULT_COUNT = 3;
 }

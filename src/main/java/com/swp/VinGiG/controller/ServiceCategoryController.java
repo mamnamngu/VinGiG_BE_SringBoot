@@ -36,9 +36,23 @@ public class ServiceCategoryController {
 		}
 	}
 	
+	@GetMapping("/serviceCategory/{keyword}")
+	public ResponseEntity<List<ServiceCategory>> retrieveServiceCategory(@PathVariable String keyword) {
+		return ResponseEntity.ok(serviceCategoryService.findByKeyword(keyword.trim()));
+	}
+	
+	//admin
+	@GetMapping("/serviceCategories/deleted")
+	public ResponseEntity<List<ServiceCategory>> retrieveDeletedServiceCategorys(){
+		return ResponseEntity.ok(serviceCategoryService.findDeletedCategory());
+    }
+	
 	@PostMapping("/serviceCategory")
 	public ResponseEntity<ServiceCategory> createServiceCategory(@RequestBody ServiceCategory serviceCategory){
 		try {
+			if(serviceCategoryService.findById(serviceCategory.getCategoryID()) != null)
+				return ResponseEntity.badRequest().header("message", "Service Category with such ID already exists").build();
+			
 			ServiceCategory savedServiceCategory = serviceCategoryService.add(serviceCategory);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedServiceCategory);
 		}catch(Exception e) {
@@ -60,6 +74,9 @@ public class ServiceCategoryController {
 	@DeleteMapping("/serviceCategory/{id}")
 	public ResponseEntity<Void> deleteServiceCategory(@PathVariable int id){
 		try{
+			if(serviceCategoryService.findById(id) == null)
+				return ResponseEntity.notFound().header("message", "No Service Category found for such ID").build();
+			
 			serviceCategoryService.delete(id);
 			return ResponseEntity.noContent().header("message", "serviceCategory deleted successfully").build();
 		}

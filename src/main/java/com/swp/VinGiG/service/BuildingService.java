@@ -1,7 +1,6 @@
 package com.swp.VinGiG.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +16,20 @@ public class BuildingService {
 	
 	//FIND
 	public List<Building> findAll(){
-		return buildingRepo.findAll();
+		return buildingRepo.findByActiveIsTrue();
 	}
 	
 	public Building findById(int id) {
-		Optional<Building> building = buildingRepo.findById(id);
-		if(building.isPresent()) return building.get();
-		else return null;
+		Building building = buildingRepo.findByBuildingIDAndActiveIsTrue(id);
+		return building;
 	}
 	
 	public List<Building> findByNote(String note){
-		return buildingRepo.findByNoteContainingIgnoreCase(note);
+		return buildingRepo.findByNoteContainingIgnoreCaseAndActiveIsTrue(note);
+	}
+	
+	public List<Building> findDeletedBuilding(){
+		return buildingRepo.findByActiveIsFalse();
 	}
 	
 	//ADD
@@ -42,7 +44,10 @@ public class BuildingService {
 	
 	//DELETE
 	public boolean delete(int id) {
-		buildingRepo.deleteById(id);
-		return buildingRepo.findById(id).isEmpty();
+		Building building = findById(id);
+		if(building == null) return false;
+		building.setActive(false);
+		update(building);
+		return !building.isActive();
 	}
 }

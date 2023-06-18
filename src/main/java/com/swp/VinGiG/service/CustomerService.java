@@ -2,7 +2,6 @@ package com.swp.VinGiG.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,31 +17,35 @@ public class CustomerService {
 	
 	//FIND
 	public List<Customer> findAll(){
-		return customerRepo.findAll();
+		return customerRepo.findByActiveIsTrue();
 	}
 	
 	public Customer findById(long id) {
-		Optional<Customer> customer = customerRepo.findById(id);
-		if(customer.isPresent()) return customer.get();
-		else return null;
+		return customerRepo.findByCustomerIDAndActiveIsTrue(id);
 	}
 	
-	public List<Customer> findByRatingInterval(double lower, double upper){
-		return customerRepo.findByRatingInterval(lower, upper);
+	public List<Customer> findDeletedCustomers(){
+		return customerRepo.findByActiveIsFalse();
+	}
+	
+	public List<Customer> findByRatingInterval(Long lower, Long upper){
+		if(lower == null) lower = Constants.DEFAULT_LOWER;
+		if(upper == null) upper = Constants.DEFAULT_UPPER;
+		return customerRepo.findByRatingIntervalAndActiveIsTrue(lower, upper);
 	}
 	
 	public List<Customer> findByCreateDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return customerRepo.findByCreateDateInterval(dateMin, dateMax);
+		return customerRepo.findByCreateDateIntervalAndActiveIsTrue(dateMin, dateMax);
 	}
 	
 	public List<Customer> findByUsername(String username){
-		return customerRepo.findByUsername(username);
+		return customerRepo.findByUsernameAndActiveIsTrue(username);
 	}
 	
 	public List<Customer> findByFullNameIgnoreCase(String fullName){
-		return customerRepo.findByUsername(fullName);
+		return customerRepo.findByFullNameIgnoreCaseAndActiveIsTrue(fullName);
 	}
 	
 	//ADD
@@ -57,7 +60,10 @@ public class CustomerService {
 	
 	//DELETE
 	public boolean delete(long id) {
-		customerRepo.deleteById(id);
-		return customerRepo.findById(id).isEmpty();
+		Customer customer = findById(id);
+		if(customer == null) return false;
+		customer.setActive(false);
+		update(customer);
+		return !customer.isActive();
 	}
 }

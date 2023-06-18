@@ -41,9 +41,18 @@ public class BuildingController {
 		return ResponseEntity.ok(buildingService.findByNote(keyword));
     }
 	
+	//admin
+	@GetMapping("/buildings/deleted")
+	public ResponseEntity<List<Building>> findDeletedBuildings(){
+		return ResponseEntity.ok(buildingService.findDeletedBuilding());
+    }
+	
 	@PostMapping("/building")
 	public ResponseEntity<Building> createBuilding(@RequestBody Building building){
 		try {
+			if(buildingService.findById(building.getBuildingID()) != null)
+				return ResponseEntity.notFound().header("message", "Building with such ID already exists").build();
+			
 			Building savedBuilding = buildingService.add(building);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedBuilding);
 		}catch(Exception e) {
@@ -65,6 +74,9 @@ public class BuildingController {
 	@DeleteMapping("/building/{id}")
 	public ResponseEntity<Void> deleteBuilding(@PathVariable int id){
 		try{
+			if(buildingService.findById(id) == null)
+				return ResponseEntity.notFound().header("message", "No Building found for such ID").build();
+			
 			buildingService.delete(id);
 			return ResponseEntity.noContent().header("message", "building deleted successfully").build();
 		}

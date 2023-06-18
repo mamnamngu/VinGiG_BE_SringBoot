@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,11 @@ public class ProviderController {
 		}
 	}
 	
+	@GetMapping("/providers/deleted")
+	public ResponseEntity<List<Provider>> retrieveDeletedProviders(){
+		return ResponseEntity.ok(providerService.findDeletedProviders());
+    }
+	
 	@GetMapping("provider/username/{username}")
 	public ResponseEntity<Provider> retrieveProviderByUserName(@PathVariable String username) {
 		List<Provider> ls = providerService.findByUsername(username);
@@ -71,23 +77,31 @@ public class ProviderController {
 		return ResponseEntity.ok(providerService.findByBadgeID(id));		
 	}
 	
-	
-//	@GetMapping("provider/createDate/{dateMin}/{dateMax}")
-//	public ResponseEntity<List<Provider>> retrieveProviderByCreateDateInterval(@PathVariable Date dateMin, @PathVariable Date dateMax) {
-//		List<Provider> ls = providerService.findByCreateDateInterval(dateMin, dateMax);
-//		if(ls.size() > 0)
-//			return ResponseEntity.status(HttpStatus.OK).body(ls);
-//		else 
-//			return ResponseEntity.notFound().build();
-//	}
-	
 	@GetMapping("provider/rating/{lower}/{upper}")
-	public ResponseEntity<List<Provider>> retrieveProviderByUserName(@PathVariable("lower") double lower, @PathVariable("upper") double upper) {
+	public ResponseEntity<List<Provider>> retrieveProviderByRatingInterval(@PathVariable("lower") double lower, @PathVariable("upper") double upper) {
 		List<Provider> ls = providerService.findByRatingInterval(lower, upper);
 		if(ls.size() > 0)
 			return ResponseEntity.status(HttpStatus.OK).body(ls);
 		else 
 			return ResponseEntity.notFound().build();
+	}
+	
+	@GetMapping("provider/createDate/{dateMin}/{dateMax}")
+	public ResponseEntity<List<Provider>> retrieveProviderByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
+		List<Provider> ls = providerService.findByCreateDateInterval(dateMin, dateMax);
+		if(ls.size() > 0)
+			return ResponseEntity.status(HttpStatus.OK).body(ls);
+		else 
+			return ResponseEntity.notFound().build();
+	}
+	
+	@GetMapping("providers/resetExpiredNewProvider")
+	public ResponseEntity<List<Provider>> resetExpiredNewProvider(){
+		try {
+			return ResponseEntity.ok(providerService.resetNewProviderBadge());
+		}catch(Exception e) {
+			return ResponseEntity.internalServerError().header("message", "Error occured during the rest process").build();
+		}
 	}
 	
 	@PostMapping("building/{buildingID}/badge/{badgeID}/provider")
@@ -100,6 +114,9 @@ public class ProviderController {
 			Badge badge = badgeService.findById(badgeID);
 			if(badge == null)
 				return ResponseEntity.notFound().header("message", "No Badge found with such ID").build();
+			
+			if(providerService.findById(provider.getProviderID()) != null)
+				return ResponseEntity.badRequest().header("message", "Provider with such ID already exists").build();
 			
 			provider.setBuilding(building);
 			provider.setBadge(badge);
@@ -131,8 +148,13 @@ public class ProviderController {
 	@DeleteMapping("/provider/{id}")
 	public ResponseEntity<Void> deleteProvider(@PathVariable int id){
 		try{
-			providerService.delete(id);
-			return ResponseEntity.noContent().header("message", "provider deleted successfully").build();
+			if(providerService.findById(id) == null)
+			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
+		
+			if(providerService.delete(id))
+				return ResponseEntity.noContent().header("message", "provider deleted successfully").build();
+			
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "provider deletion failed").build();
 		}
 		catch(Exception e){
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "provider deletion failed").build();

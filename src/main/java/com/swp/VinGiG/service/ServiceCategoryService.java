@@ -1,7 +1,6 @@
 package com.swp.VinGiG.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,17 +15,19 @@ public class ServiceCategoryService {
 	
 	//FIND
 	public List<ServiceCategory> findAll(){
-		return serviceCategoryRepo.findAll();
+		return serviceCategoryRepo.findByActiveIsTrue();
 	}
 	
 	public ServiceCategory findById(int id) {
-		Optional<ServiceCategory> serviceCategory = serviceCategoryRepo.findById(id);
-		if(serviceCategory.isPresent()) return serviceCategory.get();
-		else return null;
+		return serviceCategoryRepo.findByCategoryIDAndActiveIsTrue(id);
 	}
 	
 	public List<ServiceCategory> findByKeyword(String keyword){
-		return serviceCategoryRepo.findByCategoryNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword.trim(), keyword.trim());
+		return serviceCategoryRepo.findByCategoryNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveIsTrue(keyword.trim(), keyword.trim());
+	}
+	
+	public List<ServiceCategory> findDeletedCategory(){
+		return serviceCategoryRepo.findByActiveIsFalse();
 	}
 	
 	//ADD
@@ -41,8 +42,11 @@ public class ServiceCategoryService {
 	
 	//DELETE
 	public boolean delete(int id) {
-		serviceCategoryRepo.deleteById(id);
-		return serviceCategoryRepo.findById(id).isEmpty();
+		ServiceCategory category = findById(id);
+		if(category == null) return false;
+		category.setActive(false);
+		update(category);
+		return !category.isActive();
 	}
 	
 }

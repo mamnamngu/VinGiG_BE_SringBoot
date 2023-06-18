@@ -36,9 +36,24 @@ public class BadgeController {
 		}
 	}
 	
+	@GetMapping("/badges/{keyword}")
+	public ResponseEntity<List<Badge>> retrieveBadge(@PathVariable String keyword) {
+		List<Badge> badgeLs = badgeService.findByNameOrDescription(keyword);
+		return ResponseEntity.ok(badgeLs);
+	}
+	
+	@GetMapping("/badges/deleted")
+	public ResponseEntity<List<Badge>> retrieveBadge() {
+		List<Badge> badgeLs = badgeService.findDeletedBadge();
+		return ResponseEntity.ok(badgeLs);
+	}
+	
 	@PostMapping("/badge")
 	public ResponseEntity<Badge> createBadge(@RequestBody Badge badge){
 		try {
+			if(badgeService.findById(badge.getBadgeID()) != null) 
+				return ResponseEntity.badRequest().header("message", "Badge with such ID already exists").build();
+				
 			Badge savedBadge = badgeService.add(badge);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedBadge);
 		}catch(Exception e) {
@@ -60,6 +75,7 @@ public class BadgeController {
 	@DeleteMapping("/badge/{id}")
 	public ResponseEntity<Void> deleteBadge(@PathVariable int id){
 		try{
+			if(badgeService.findById(id) == null) return ResponseEntity.notFound().header("message", "No Badge found for such ID. Deletion failed").build();
 			badgeService.delete(id);
 			return ResponseEntity.noContent().header("message", "badge deleted successfully").build();
 		}

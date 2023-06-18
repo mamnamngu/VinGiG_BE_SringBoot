@@ -11,5 +11,11 @@ import com.swp.VinGiG.entity.ServiceCategory;
 @Repository
 public interface ServiceCategoryRepository extends JpaRepository<ServiceCategory, Integer>, JpaSpecificationExecutor<ServiceCategory>{
 
-	public List<ServiceCategory> findByCategoryNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String categoryName, String description);
+	public ServiceCategory findByCategoryIDAndActiveIsTrue(int categoryID);
+	
+	public List<ServiceCategory> findByActiveIsTrue();
+	
+	public List<ServiceCategory> findByActiveIsFalse();
+	
+	public List<ServiceCategory> findByCategoryNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveIsTrue(String categoryName, String description);
 }

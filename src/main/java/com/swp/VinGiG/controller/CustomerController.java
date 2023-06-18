@@ -33,6 +33,11 @@ public class CustomerController {
 		return ResponseEntity.ok(customerService.findAll());
     }
 	
+	@GetMapping("/customers/deleted")
+	public ResponseEntity<List<Customer>> retrieveDeletedCustomers(){
+		return ResponseEntity.ok(customerService.findDeletedCustomers());
+    }
+	
 	@GetMapping("/customer/{id}")
 	public ResponseEntity<Customer> retrieveCustomer(@PathVariable int id) {
 		Customer customer = customerService.findById(id);
@@ -72,7 +77,7 @@ public class CustomerController {
 	}
 	
 	@GetMapping("customer/rating/{lower}/{upper}")
-	public ResponseEntity<List<Customer>> retrieveCustomerByUserName(@PathVariable double lower, @PathVariable double upper) {
+	public ResponseEntity<List<Customer>> retrieveCustomerByUserName(@PathVariable long lower, @PathVariable long upper) {
 		List<Customer> ls = customerService.findByRatingInterval(lower, upper);
 		if(ls.size() > 0)
 			return ResponseEntity.status(HttpStatus.OK).body(ls);
@@ -86,6 +91,10 @@ public class CustomerController {
 			Building building = buildingService.findById(id);
 			if(building == null)
 				return ResponseEntity.notFound().header("message", "No Building found with such ID").build();
+			
+			if(customerService.findById(customer.getCustomerID()) != null)
+				return ResponseEntity.badRequest().header("message", "Customer with such ID already exists").build();
+			
 			
 			customer.setBuilding(building);
 			Customer savedCustomer = customerService.add(customer);
@@ -112,6 +121,9 @@ public class CustomerController {
 	@DeleteMapping("/customer/{id}")
 	public ResponseEntity<Void> deleteCustomer(@PathVariable int id){
 		try{
+			if(customerService.findById(id) == null)
+				return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
+			
 			customerService.delete(id);
 			return ResponseEntity.noContent().header("message", "customer deleted successfully").build();
 		}

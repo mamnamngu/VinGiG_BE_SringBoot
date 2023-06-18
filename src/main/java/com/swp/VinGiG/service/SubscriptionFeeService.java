@@ -58,18 +58,21 @@ public class SubscriptionFeeService {
 	
 	//ADD
 	public SubscriptionFee add(SubscriptionFee subscriptionFee) {
-		//create transaction
-		Transaction transaction = new Transaction();
-		transaction.setAmount(0); //////////////////////////////////////////////////////////
-		transaction.setDate(Constants.currentDate());
-		transaction.setDeposit(null);
-		transaction.setSubscriptionFee(subscriptionFee);
-		transaction.setBookingFee(null);
+		subscriptionFee.setAmount(subscriptionFee.getPlan().getPrice());
+		subscriptionFee.setDate(Constants.currentDate());
 		
-		List<Wallet> wallet = walletService.findByProviderId(subscriptionFee.getProvider().getProviderID());
-		if(wallet == null || wallet.size() == 0) return null;
-		transaction.setWallet(wallet.get(0));
-		transactionService.add(transaction);
+		//create transaction
+//		Transaction transaction = new Transaction();
+//		transaction.setAmount(0); //////////////////////////////////////////////////////////
+//		transaction.setDate(Constants.currentDate());
+//		transaction.setDeposit(null);
+//		transaction.setSubscriptionFee(subscriptionFee);
+//		transaction.setBookingFee(null);
+		
+//		List<Wallet> wallet = walletService.findByProviderId(subscriptionFee.getProvider().getProviderID());
+//		if(wallet == null || wallet.size() == 0) return null;
+//		transaction.setWallet(wallet.get(0));
+//		transactionService.add(transaction);
 		
 		return subscriptionFeeRepo.save(subscriptionFee);
 	}

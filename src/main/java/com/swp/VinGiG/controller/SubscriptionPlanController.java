@@ -35,9 +35,22 @@ public class SubscriptionPlanController {
 		else return ResponseEntity.notFound().build();
 	}
 	
+	@GetMapping("/subscriptionPlan/{keyword}")
+	public ResponseEntity<List<SubscriptionPlan>> retrievePlanByKeyword(@PathVariable String keyword) {
+		return ResponseEntity.ok(planService.findByKeyword(keyword));
+	}
+	
+	@GetMapping("/subscriptionPlans/deleted")
+	public ResponseEntity<List<SubscriptionPlan>> retrieveDeletedPlans(){
+		return ResponseEntity.ok(planService.findDeletedSubscriptionPlans());
+	}
+	
 	@PostMapping("/subscriptionPlan")
 	public ResponseEntity<SubscriptionPlan> createPlan(@RequestBody SubscriptionPlan plan){
 		try {
+			if(planService.findById(plan.getPlanID()) != null)
+				return ResponseEntity.notFound().header("message", "Plan with such ID already exists").build();
+			
 			SubscriptionPlan newPlan = planService.add(plan);
 			return ResponseEntity.status(HttpStatus.CREATED).body(newPlan);
 		}catch(Exception e) {
@@ -58,6 +71,9 @@ public class SubscriptionPlanController {
 	@DeleteMapping("/subscriptionPlan/{id}")
 	public ResponseEntity<Void> deletePlan(@PathVariable int id){
 		try {
+			if(planService.findById(id) == null)
+				return ResponseEntity.notFound().header("message", "No Plan found for such ID").build();
+			
 			planService.delete(id);
 			return ResponseEntity.noContent().header("message", "Subscription Plan deleted successfully").build();
 		}catch(Exception e) {
