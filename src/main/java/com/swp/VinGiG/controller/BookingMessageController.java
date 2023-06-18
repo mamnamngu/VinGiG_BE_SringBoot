@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingMessage;
 import com.swp.VinGiG.service.BookingMessageService;
 import com.swp.VinGiG.service.BookingService;
+import com.swp.VinGiG.view.BookingMessageBox;
 
 @RestController
 public class BookingMessageController {
@@ -59,8 +61,19 @@ public class BookingMessageController {
 	
 	//Getting all Booking that have Message for Customer
 	@GetMapping("customer/{id}/bookingMessage")
-	public ResponseEntity<List<Booking>> retrieveBookingMessageBycustomerID(@PathVariable long id){
-		return ResponseEntity.ok(bookingMessageService.findBookingHasBookingMessageForCustomer(id));
+	public ResponseEntity<List<BookingMessageBox>> retrieveBookingMessageBycustomerID(@PathVariable long id){
+		List<Booking> ls = bookingMessageService.findBookingHasBookingMessageForCustomer(id);
+		List<BookingMessageBox> list = new ArrayList<BookingMessageBox>();
+		for(Booking x: ls) {
+			BookingMessageBox y = new BookingMessageBox();
+			y.setBookingID(x.getBookingID());
+			y.setProviderID(x.getProviderService().getProvider().getProviderID());
+			y.setFullName(x.getProviderService().getProvider().getFullName());
+			y.setServiceID(x.getProviderService().getService().getServiceID());
+			y.setServiceName(x.getProviderService().getService().getServiceName());
+			list.add(y);
+		}
+		return ResponseEntity.ok(list);
 	}
 	
 	//Creating a new Message by Provider and Customer
