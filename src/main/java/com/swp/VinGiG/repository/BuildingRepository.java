@@ -12,10 +12,10 @@ import com.swp.VinGiG.entity.Building;
 public interface BuildingRepository extends JpaRepository<Building, Integer>, JpaSpecificationExecutor<Building>{
 
 	public Building findByBuildingIDAndActiveIsTrue(int buildingID);
+
+	public List<Building> findByActiveIsFalse();
 	
 	public List<Building> findByActiveIsTrue();
-	
-	public List<Building> findByActiveIsFalse();
 	
 	public List<Building> findByNoteContainingIgnoreCaseAndActiveIsTrue(String note);
 	

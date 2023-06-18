@@ -24,8 +24,12 @@ public class BuildingController {
 	@GetMapping("/buildings")
 	public ResponseEntity<List<Building>> retrieveAllBuildings(){
 		return ResponseEntity.ok(buildingService.findAll());
-    }
+    }		
 	
+	@GetMapping("/buildings/{keyword}")
+	public ResponseEntity<List<Building>> retrieveBuildingsByKeyword(@PathVariable String keyword){
+		return ResponseEntity.ok(buildingService.findByNote(keyword));
+    }
 	@GetMapping("/building/{id}")
 	public ResponseEntity<Building> retrieveBuilding(@PathVariable int id) {
 		Building building = buildingService.findById(id);
@@ -36,17 +40,24 @@ public class BuildingController {
 		}
 	}
 	
-	@GetMapping("/buildings/{keyword}")
-	public ResponseEntity<List<Building>> retrieveBuildingsByKeyword(@PathVariable String keyword){
-		return ResponseEntity.ok(buildingService.findByNote(keyword));
-    }
-	
 	//admin
 	@GetMapping("/buildings/deleted")
 	public ResponseEntity<List<Building>> findDeletedBuildings(){
 		return ResponseEntity.ok(buildingService.findDeletedBuilding());
     }
 	
+	
+	@PutMapping("/building")
+	public ResponseEntity<Building> updateBuilding(@RequestBody Building building){
+		if(buildingService.findById(building.getBuildingID()) == null)
+			return ResponseEntity.notFound().header("message", "No Building found for such ID").build();
+		
+		Building updatedBuilding = buildingService.update(building);
+		if(updatedBuilding != null)
+			return ResponseEntity.ok(updatedBuilding);
+		else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
+
 	@PostMapping("/building")
 	public ResponseEntity<Building> createBuilding(@RequestBody Building building){
 		try {
@@ -60,17 +71,6 @@ public class BuildingController {
 		}
 	}
 	
-	@PutMapping("/building")
-	public ResponseEntity<Building> updateBuilding(@RequestBody Building building){
-		if(buildingService.findById(building.getBuildingID()) == null)
-			return ResponseEntity.notFound().header("message", "No Building found for such ID").build();
-		
-		Building updatedBuilding = buildingService.update(building);
-		if(updatedBuilding != null)
-			return ResponseEntity.ok(updatedBuilding);
-		else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	}
-	
 	@DeleteMapping("/building/{id}")
 	public ResponseEntity<Void> deleteBuilding(@PathVariable int id){
 		try{
@@ -78,10 +78,10 @@ public class BuildingController {
 				return ResponseEntity.notFound().header("message", "No Building found for such ID").build();
 			
 			buildingService.delete(id);
-			return ResponseEntity.noContent().header("message", "building deleted successfully").build();
+			return ResponseEntity.noContent().header("message", "Building deleted successfully").build();
 		}
 		catch(Exception e){
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "building deletion failed").build();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "Building deletion failed").build();
 		}
 	}
 }
