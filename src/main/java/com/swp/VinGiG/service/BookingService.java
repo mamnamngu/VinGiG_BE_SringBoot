@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Booking;
+import com.swp.VinGiG.entity.BookingFee;
 import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.repository.BookingRepository;
@@ -27,6 +28,9 @@ public class BookingService {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private BookingFeeService bookingFeeService;
 	
 
 	//FIND
@@ -58,7 +62,7 @@ public class BookingService {
 	}
 	
 	//rating for customer
-	public double ratingAverageForCustomerByCustomerID(long customerID) {
+	private double ratingAverageForCustomerByCustomerID(long customerID) {
 		List<Booking> providersRatingBooking = bookingRepo.findByCustomerCustomerIDAndProvidersRatingIsNotNull(customerID);
 		double total = 0;
 		for(Booking booking: providersRatingBooking)
@@ -67,7 +71,7 @@ public class BookingService {
 	}
 	
 	//rating for provider
-	public double ratingAverageForProviderByProviderID(long providerID) {
+	private double ratingAverageForProviderByProviderID(long providerID) {
 		List<com.swp.VinGiG.entity.ProviderService> proService = providerServiceService.findByProviderID(providerID);
 		double total = 0;
 		int bookingNo = 0;
@@ -79,7 +83,7 @@ public class BookingService {
 	}
 	
 	//rating for providerService
-	public double ratingAverageForProviderServiceByProServiceID(long proServiceID) {
+	private double ratingAverageForProviderServiceByProServiceID(long proServiceID) {
 		List<Booking> customersRatingBooking = bookingRepo.findByProviderServiceProServiceIDAndCustomersRatingIsNotNull(proServiceID);
 		double total = 0;
 		for(Booking booking: customersRatingBooking)
@@ -88,7 +92,7 @@ public class BookingService {
 	}
 	
 	//bookingNo for providerService
-	public int bookingNoByProServiceID(long proServiceID) {
+	private int bookingNoByProServiceID(long proServiceID) {
 		return bookingRepo.countByProviderServiceProServiceIDAndStatus(proServiceID, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
@@ -146,6 +150,13 @@ public class BookingService {
 		
 		//Set the availability of all other Provider Service of such Provider to FALSE
 		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), false);
+		
+		//Create a new Booking Fee
+		BookingFee bookingFee = new BookingFee();
+		bookingFee.setAmount(booking.getProviderService().getService().getFee());
+		bookingFee.setBooking(booking);
+		bookingFee.setDate(Constants.currentDate());
+		bookingFeeService.add(bookingFee);
 		return booking;
 	}
 	
@@ -207,5 +218,58 @@ public class BookingService {
 		customerService.update(c);
 
 		return booking;
+	}
+	
+	//UPDATE ratings and bookingNo
+	public void updateCustomerRating(Customer customer) {
+		if(customer == null) return;
+		
+		double newRating = ratingAverageForCustomerByCustomerID(customer.getCustomerID());
+		customer.setRating(newRating);
+		customerService.update(customer);
+	}
+	
+	public void updateProviderRating(Provider provider) {
+		if(provider == null) return;
+		
+		double newRating = ratingAverageForProviderByProviderID(provider.getProviderID());
+		provider.setRating(newRating);
+		providerService.update(provider);
+	}
+	
+	public void updateProviderServiceRating(com.swp.VinGiG.entity.ProviderService providerService) {
+		if(providerService == null) return;
+		
+		double newRating = ratingAverageForProviderServiceByProServiceID(providerService.getProServiceID());
+		providerService.setRating(newRating);
+		providerServiceService.update(providerService);
+	}
+	
+	public void updateProviderServiceBookingNo(long proServiceID) {
+		com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(proServiceID);
+		if(providerService == null) return;
+		
+		int newBookingNo = bookingNoByProServiceID(proServiceID);
+		providerService.setBookingNo(newBookingNo);
+		providerServiceService.update(providerService);
+	}
+	
+	//Weekly update
+	public void weeklyCustomerRatingUpdate() {
+		List<Customer> ls = customerService.findAll();
+		for(Customer x: ls)
+			updateCustomerRating(x);
+	}
+	
+	public void weeklyProviderRatingUpdate() {
+		List<Provider> ls = providerService.findAll();
+		for(Provider x: ls)
+			updateProviderRating(x);
+	}
+	
+	public void weeklyProviderServiceRatingUpdate() {
+		List<com.swp.VinGiG.entity.ProviderService> ls = providerServiceService.findAll();
+		for(com.swp.VinGiG.entity.ProviderService x: ls)
+			updateProviderServiceRating(x);
 	}
 }

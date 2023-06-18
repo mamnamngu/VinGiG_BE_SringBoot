@@ -52,6 +52,12 @@ public final class Constants {
 	public static final boolean SENDBY_CUSTOMER = true;
 	public static final boolean SENDBY_PROVIDER = false;
 	
+	//Booking Actions
+	public static final String BOOKING_ACCEPT = "accept";
+	public static final String BOOKING_COMPLETE = "complete";
+	public static final String BOOKING_DECLINE = "decline";
+	public static final String BOOKING_CANCEL = "cancel";
+	
 	//Date format
 	public static final Date strToDate(String dateStr) {
 		 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");	
