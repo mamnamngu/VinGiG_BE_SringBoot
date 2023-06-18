@@ -27,8 +27,10 @@ public class BookingService {
 	
 	@Autowired
 	private CustomerService customerService;
+	
 
 	//FIND
+	//admin
 	public List<Booking> findAll(){
 		return bookingRepo.findAll();
 	}
@@ -39,17 +41,20 @@ public class BookingService {
 		else return null;
 	}
 	
-	public List<Booking> findByDate(Date date){
-		return bookingRepo.findByDate(date);
+	public List<Booking> findByDate(Date date, Integer status){
+		if(date == null) date = Constants.currentDate();
+		if(status == null) status = Constants.BOOKING_STATUS_COMPLETED;
+		
+		return bookingRepo.findByDateAndStatus(date, status);
 	}
 	
 	//FINDING CURRENT ACTIVITY FOR CUSTOMER AND PROVIDER
-	public List<Booking> findByProServiceIDGoingOn(long proServiceID){
-		return bookingRepo.findByProviderServiceProServiceID(proServiceID);
+	public List<Booking> findByProviderIDGoingOn(long providerID){
+		return bookingRepo.findByProviderServiceProviderProviderIDAndStatus(providerID, Constants.BOOKING_STATUS_PENDING);
 	}
 	
 	public List<Booking> findByCustomerIDGoingOn(long customerID){
-		return bookingRepo.findByCustomerCustomerID(customerID);
+		return bookingRepo.findByCustomerCustomerIDAndStatus(customerID, Constants.BOOKING_STATUS_PENDING);
 	}
 	
 	//rating for customer
@@ -63,8 +68,7 @@ public class BookingService {
 	
 	//rating for provider
 	public double ratingAverageForProviderByProviderID(long providerID) {
-		ProviderServiceService pss = new ProviderServiceService();
-		List<com.swp.VinGiG.entity.ProviderService> proService = pss.findByProviderID(providerID);
+		List<com.swp.VinGiG.entity.ProviderService> proService = providerServiceService.findByProviderID(providerID);
 		double total = 0;
 		int bookingNo = 0;
 		for(com.swp.VinGiG.entity.ProviderService ps: proService) {
@@ -85,7 +89,7 @@ public class BookingService {
 	
 	//bookingNo for providerService
 	public int bookingNoByProServiceID(long proServiceID) {
-		return bookingRepo.countByProviderServiceProServiceID(proServiceID);
+		return bookingRepo.countByProviderServiceProServiceIDAndStatus(proServiceID, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
 	//display reviews for a providerService
@@ -93,18 +97,18 @@ public class BookingService {
 		return bookingRepo.findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(proServiceID);
 	}
 	
-	//display booking by customerID over a time interval
+	//display booking history by customerID over a time interval
 	public List<Booking> findByCustomerIDByDateInterval(long customerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByCustomerIDByDateInterval(customerID, dateMin, dateMax);
+		return bookingRepo.findByCustomerIDByDateIntervalAndStatus(customerID, dateMin, dateMax, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
 	//display booking by proServiceID over a time interval
 	public List<Booking> findByProServiceIDByDateInterval(long proServiceID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByProServiceIDByDateInterval(proServiceID, dateMin, dateMax);
+		return bookingRepo.findByProServiceIDByDateIntervalAndStatus(proServiceID, dateMin, dateMax, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
 	//ADD
@@ -115,7 +119,7 @@ public class BookingService {
 	
 	//UPDATE for admin
 	public Booking update(Booking newBooking) {
-		return add(newBooking);
+		return bookingRepo.save(newBooking);
 	}
 	
 	//DELETE
@@ -127,30 +131,28 @@ public class BookingService {
 	//BUSINESS CORE
 	//Customer place a Booking
 	public Booking placeBooking(Booking booking) {
-		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(false);
+		if(findById(booking.getBookingID()) != null) return null;
+		//Open Web Socket
+		
+		booking.setStatus(Constants.BOOKING_STATUS_PENDING);
 		return add(booking);
 	}
 	
 	//Provider accept a Booking
 	public Booking acceptBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(true);
+		booking.setStatus(Constants.BOOKING_STATUS_ACCEPTED);
 		update(booking);
 		
 		//Set the availability of all other Provider Service of such Provider to FALSE
-		List<com.swp.VinGiG.entity.ProviderService> psList = providerServiceService.findByProviderID(booking.getProviderService().getProvider().getProviderID());
-		for(com.swp.VinGiG.entity.ProviderService x: psList) {
-			x.setAvailability(false);
-			providerServiceService.update(x);
-		}
+		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), false);
 		return booking;
 	}
 	
 	//Provider decline a Booking
 	public Booking declineBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(false);
+		booking.setStatus(Constants.BOOKING_STATUS_DECLINED);
 		update(booking);
 		return booking;
 	}
@@ -158,16 +160,18 @@ public class BookingService {
 	//Provider confirm the completion of a Booking
 	public Booking completeBooking(Booking booking, Long total) {
 		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(true);
+		booking.setStatus(Constants.BOOKING_STATUS_COMPLETED);
 		if(total != null) booking.setTotal(total);
 		update(booking);
 		
 		//Set the availability of all other Provider Service of such Provider to TRUE
-		List<com.swp.VinGiG.entity.ProviderService> psList = providerServiceService.findByProviderID(booking.getProviderService().getProvider().getProviderID());
-		for(com.swp.VinGiG.entity.ProviderService x: psList) {
-			x.setAvailability(true);
-			providerServiceService.update(x);
-		}
+		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), true);
+		
+		
+		//Update BookingNo
+		com.swp.VinGiG.entity.ProviderService proService = booking.getProviderService();
+		proService.setBookingNo(bookingNoByProServiceID(proService.getProServiceID()));
+		providerServiceService.update(proService);
 		return booking;
 	}
 	

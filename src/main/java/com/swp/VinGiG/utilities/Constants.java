@@ -1,5 +1,7 @@
 package com.swp.VinGiG.utilities;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -40,8 +42,25 @@ public final class Constants {
 	public static final int BOOKING_STATUS_PENDING = 0;
 	public static final int BOOKING_STATUS_ACCEPTED = 1;
 	public static final int BOOKING_STATUS_COMPLETED = 2;
-	public static final int BOOKING_STATUS_CANCELLED = 3;
+	public static final int BOOKING_STATUS_DECLINED = 3;
+	public static final int BOOKING_STATUS_CANCELLED = 4;
 	
 	//Count
 	public static final int DEFAULT_COUNT = 3;
+	
+	//Booking Message
+	public static final boolean SENDBY_CUSTOMER = true;
+	public static final boolean SENDBY_PROVIDER = false;
+	
+	//Date format
+	public static final Date strToDate(String dateStr) {
+		 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");	
+	     try {
+	         Date date = dateFormat.parse(dateStr);
+	         return date;
+	     } catch (ParseException e) {
+	         System.out.println("Error parsing date: " + e.getMessage());
+	     }
+	     return null;
+     }
 }
