@@ -18,4 +18,5 @@ public interface BadgeRepository extends JpaRepository<Badge, Integer>, JpaSpeci
 	public List<Badge> findByActiveIsFalse();
 	
 	public List<Badge> findByBadgeNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndActiveIsTrue(String name, String description);
+
 }
