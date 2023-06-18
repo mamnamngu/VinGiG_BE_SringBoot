@@ -29,4 +29,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, JpaSp
 	public List<Customer> findByActiveIsTrue();
 	
 	public List<Customer> findByActiveIsFalse();
+	
+	public Customer findByUsernameAndPassword(String username, String password);
 }

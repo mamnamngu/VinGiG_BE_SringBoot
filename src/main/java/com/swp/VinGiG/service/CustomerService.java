@@ -48,6 +48,11 @@ public class CustomerService {
 		return customerRepo.findByFullNameIgnoreCaseAndActiveIsTrue(fullName);
 	}
 	
+	public Customer login(String username, String password) {
+		if(username == null || password == null) return null;
+		return customerRepo.findByUsernameAndPassword(username, password);
+	}
+	
 	//ADD
 	public Customer add(Customer customer) {
 		return customerRepo.save(customer);
