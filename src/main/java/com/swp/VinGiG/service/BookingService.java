@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Booking;
+import com.swp.VinGiG.entity.BookingFee;
 import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.repository.BookingRepository;
@@ -27,8 +28,13 @@ public class BookingService {
 	
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private BookingFeeService bookingFeeService;
+	
 
 	//FIND
+	//admin
 	public List<Booking> findAll(){
 		return bookingRepo.findAll();
 	}
@@ -39,21 +45,24 @@ public class BookingService {
 		else return null;
 	}
 	
-	public List<Booking> findByDate(Date date){
-		return bookingRepo.findByDate(date);
+	public List<Booking> findByDate(Date date, Integer status){
+		if(date == null) date = Constants.currentDate();
+		if(status == null) status = Constants.BOOKING_STATUS_COMPLETED;
+		
+		return bookingRepo.findByDateAndStatus(date, status);
 	}
 	
 	//FINDING CURRENT ACTIVITY FOR CUSTOMER AND PROVIDER
-	public List<Booking> findByProServiceIDGoingOn(long proServiceID){
-		return bookingRepo.findByProviderServiceProServiceID(proServiceID);
+	public List<Booking> findByProviderIDGoingOn(long providerID){
+		return bookingRepo.findByProviderServiceProviderProviderIDAndStatus(providerID, Constants.BOOKING_STATUS_PENDING);
 	}
 	
 	public List<Booking> findByCustomerIDGoingOn(long customerID){
-		return bookingRepo.findByCustomerCustomerID(customerID);
+		return bookingRepo.findByCustomerCustomerIDAndStatus(customerID, Constants.BOOKING_STATUS_PENDING);
 	}
 	
 	//rating for customer
-	public double ratingAverageForCustomerByCustomerID(long customerID) {
+	private double ratingAverageForCustomerByCustomerID(long customerID) {
 		List<Booking> providersRatingBooking = bookingRepo.findByCustomerCustomerIDAndProvidersRatingIsNotNull(customerID);
 		double total = 0;
 		for(Booking booking: providersRatingBooking)
@@ -62,9 +71,8 @@ public class BookingService {
 	}
 	
 	//rating for provider
-	public double ratingAverageForProviderByProviderID(long providerID) {
-		ProviderServiceService pss = new ProviderServiceService();
-		List<com.swp.VinGiG.entity.ProviderService> proService = pss.findByProviderID(providerID);
+	private double ratingAverageForProviderByProviderID(long providerID) {
+		List<com.swp.VinGiG.entity.ProviderService> proService = providerServiceService.findByProviderID(providerID);
 		double total = 0;
 		int bookingNo = 0;
 		for(com.swp.VinGiG.entity.ProviderService ps: proService) {
@@ -75,7 +83,7 @@ public class BookingService {
 	}
 	
 	//rating for providerService
-	public double ratingAverageForProviderServiceByProServiceID(long proServiceID) {
+	private double ratingAverageForProviderServiceByProServiceID(long proServiceID) {
 		List<Booking> customersRatingBooking = bookingRepo.findByProviderServiceProServiceIDAndCustomersRatingIsNotNull(proServiceID);
 		double total = 0;
 		for(Booking booking: customersRatingBooking)
@@ -84,8 +92,8 @@ public class BookingService {
 	}
 	
 	//bookingNo for providerService
-	public int bookingNoByProServiceID(long proServiceID) {
-		return bookingRepo.countByProviderServiceProServiceID(proServiceID);
+	private int bookingNoByProServiceID(long proServiceID) {
+		return bookingRepo.countByProviderServiceProServiceIDAndStatus(proServiceID, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
 	//display reviews for a providerService
@@ -93,18 +101,18 @@ public class BookingService {
 		return bookingRepo.findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(proServiceID);
 	}
 	
-	//display booking by customerID over a time interval
+	//display booking history by customerID over a time interval
 	public List<Booking> findByCustomerIDByDateInterval(long customerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByCustomerIDByDateInterval(customerID, dateMin, dateMax);
+		return bookingRepo.findByCustomerIDByDateIntervalAndStatus(customerID, dateMin, dateMax, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
 	//display booking by proServiceID over a time interval
 	public List<Booking> findByProServiceIDByDateInterval(long proServiceID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByProServiceIDByDateInterval(proServiceID, dateMin, dateMax);
+		return bookingRepo.findByProServiceIDByDateIntervalAndStatus(proServiceID, dateMin, dateMax, Constants.BOOKING_STATUS_COMPLETED);
 	}
 	
 	//ADD
@@ -115,7 +123,7 @@ public class BookingService {
 	
 	//UPDATE for admin
 	public Booking update(Booking newBooking) {
-		return add(newBooking);
+		return bookingRepo.save(newBooking);
 	}
 	
 	//DELETE
@@ -127,30 +135,35 @@ public class BookingService {
 	//BUSINESS CORE
 	//Customer place a Booking
 	public Booking placeBooking(Booking booking) {
-		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(false);
+		if(findById(booking.getBookingID()) != null) return null;
+		//Open Web Socket
+		
+		booking.setStatus(Constants.BOOKING_STATUS_PENDING);
 		return add(booking);
 	}
 	
 	//Provider accept a Booking
 	public Booking acceptBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(true);
+		booking.setStatus(Constants.BOOKING_STATUS_ACCEPTED);
 		update(booking);
 		
 		//Set the availability of all other Provider Service of such Provider to FALSE
-		List<com.swp.VinGiG.entity.ProviderService> psList = providerServiceService.findByProviderID(booking.getProviderService().getProvider().getProviderID());
-		for(com.swp.VinGiG.entity.ProviderService x: psList) {
-			x.setAvailability(false);
-			providerServiceService.update(x);
-		}
+		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), false);
+		
+		//Create a new Booking Fee
+		BookingFee bookingFee = new BookingFee();
+		bookingFee.setAmount(booking.getProviderService().getService().getFee());
+		bookingFee.setBooking(booking);
+		bookingFee.setDate(Constants.currentDate());
+		bookingFeeService.add(bookingFee);
 		return booking;
 	}
 	
 	//Provider decline a Booking
 	public Booking declineBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(false);
+		booking.setStatus(Constants.BOOKING_STATUS_DECLINED);
 		update(booking);
 		return booking;
 	}
@@ -158,16 +171,18 @@ public class BookingService {
 	//Provider confirm the completion of a Booking
 	public Booking completeBooking(Booking booking, Long total) {
 		if(findById(booking.getBookingID()) == null) return null;
-//		booking.setStatus(true);
+		booking.setStatus(Constants.BOOKING_STATUS_COMPLETED);
 		if(total != null) booking.setTotal(total);
 		update(booking);
 		
 		//Set the availability of all other Provider Service of such Provider to TRUE
-		List<com.swp.VinGiG.entity.ProviderService> psList = providerServiceService.findByProviderID(booking.getProviderService().getProvider().getProviderID());
-		for(com.swp.VinGiG.entity.ProviderService x: psList) {
-			x.setAvailability(true);
-			providerServiceService.update(x);
-		}
+		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), true);
+		
+		
+		//Update BookingNo
+		com.swp.VinGiG.entity.ProviderService proService = booking.getProviderService();
+		proService.setBookingNo(bookingNoByProServiceID(proService.getProServiceID()));
+		providerServiceService.update(proService);
 		return booking;
 	}
 	
@@ -203,5 +218,58 @@ public class BookingService {
 		customerService.update(c);
 
 		return booking;
+	}
+	
+	//UPDATE ratings and bookingNo
+	public void updateCustomerRating(Customer customer) {
+		if(customer == null) return;
+		
+		double newRating = ratingAverageForCustomerByCustomerID(customer.getCustomerID());
+		customer.setRating(newRating);
+		customerService.update(customer);
+	}
+	
+	public void updateProviderRating(Provider provider) {
+		if(provider == null) return;
+		
+		double newRating = ratingAverageForProviderByProviderID(provider.getProviderID());
+		provider.setRating(newRating);
+		providerService.update(provider);
+	}
+	
+	public void updateProviderServiceRating(com.swp.VinGiG.entity.ProviderService providerService) {
+		if(providerService == null) return;
+		
+		double newRating = ratingAverageForProviderServiceByProServiceID(providerService.getProServiceID());
+		providerService.setRating(newRating);
+		providerServiceService.update(providerService);
+	}
+	
+	public void updateProviderServiceBookingNo(long proServiceID) {
+		com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(proServiceID);
+		if(providerService == null) return;
+		
+		int newBookingNo = bookingNoByProServiceID(proServiceID);
+		providerService.setBookingNo(newBookingNo);
+		providerServiceService.update(providerService);
+	}
+	
+	//Weekly update
+	public void weeklyCustomerRatingUpdate() {
+		List<Customer> ls = customerService.findAll();
+		for(Customer x: ls)
+			updateCustomerRating(x);
+	}
+	
+	public void weeklyProviderRatingUpdate() {
+		List<Provider> ls = providerService.findAll();
+		for(Provider x: ls)
+			updateProviderRating(x);
+	}
+	
+	public void weeklyProviderServiceRatingUpdate() {
+		List<com.swp.VinGiG.entity.ProviderService> ls = providerServiceService.findAll();
+		for(com.swp.VinGiG.entity.ProviderService x: ls)
+			updateProviderServiceRating(x);
 	}
 }

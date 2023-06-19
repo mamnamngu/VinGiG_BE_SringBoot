@@ -138,12 +138,13 @@ public class ProviderServiceService {
 	}	
 	
 	//Availability
-	public void setAvailability(long providerID, boolean status) {
+	public List<ProviderService> setAvailability(long providerID, boolean status) {
 		List<ProviderService> ls = findByProviderID(providerID);
-		if(ls == null || ls.size() == 0) return;
+		if(ls == null || ls.size() == 0) return null;
 		for(ProviderService x: ls) {
 			x.setAvailability(status);
 			update(x);
 		}
+		return ls;
 	}
 }

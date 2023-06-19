@@ -15,64 +15,333 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp.VinGiG.entity.Booking;
+import com.swp.VinGiG.entity.Building;
+import com.swp.VinGiG.entity.Customer;
+import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.BookingService;
+import com.swp.VinGiG.service.BuildingService;
+import com.swp.VinGiG.service.CustomerService;
+import com.swp.VinGiG.service.ProviderService;
+import com.swp.VinGiG.service.ProviderServiceService;
+import com.swp.VinGiG.utilities.Constants;
 
 @RestController
 public class BookingController {
 	@Autowired
 	private BookingService bookingService;
-	
+
+	@Autowired
+	private CustomerService customerService;
+
+	@Autowired
+	private ProviderService providerService;
+
+	@Autowired
+	private BuildingService buildingService;
+
+	@Autowired
+	private ProviderServiceService providerServiceService;
+
 	@GetMapping("/bookings")
-	public List<Booking> retreiveAllBookings(){
+	public List<Booking> retreiveAllBookings() {
 		return bookingService.findAll();
 	}
-	
+
 	@GetMapping("/booking/{id}")
 	public ResponseEntity<Booking> retrieveBooking(@PathVariable int id) {
 		Booking booking = bookingService.findById(id);
-		if(booking != null) {
+		if (booking != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(booking);
-		}else {
+		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	@GetMapping("/booking/{date}")
-	public ResponseEntity<List<Booking>> retrieveBooking(@PathVariable Date date) {
-		List<Booking> booking = bookingService.findByDate(date);
-		try{
+
+	@GetMapping("/booking/date/{date}/status/{status}")
+	public ResponseEntity<List<Booking>> retrieveBooking(@PathVariable("date") String dateStr,
+			@PathVariable("status") Integer status) {
+		Date date = Constants.strToDate(dateStr);
+		List<Booking> booking = bookingService.findByDate(date, status);
+		try {
 			return ResponseEntity.status(HttpStatus.OK).body(booking);
-		}catch(Exception e) {
+		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}
 	}
-	
-	@PostMapping("building/{buildingID}/customer/{customerID}/providerService/{proServiceID}/booking")
-	public ResponseEntity<Booking> createBooking(@RequestBody Booking booking){
+
+	// FIND CURRENT ACTIVITY
+	// Customer
+	@GetMapping("/customer/{id}/bookings/currentActivity")
+	public ResponseEntity<List<Booking>> findByCustomerIDGoingOn(@PathVariable("id") long id) {
+		Customer customer = customerService.findById(id);
+		if (customer == null)
+			return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
+		return ResponseEntity.ok(bookingService.findByCustomerIDGoingOn(id));
+	}
+
+	// Provider
+	@GetMapping("/provider/{id}/bookings/currentActivity")
+	public ResponseEntity<List<Booking>> findByProviderIDGoingOn(@PathVariable("id") long id) {
+		Provider provider = providerService.findById(id);
+		if (provider == null)
+			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
+		return ResponseEntity.ok(bookingService.findByProviderIDGoingOn(id));
+	}
+
+	// BOOKING HISTORY
+	// Customer
+	@GetMapping("/customer/{id}/bookings/history/{dateMin}/{dateMax}")
+	public ResponseEntity<List<Booking>> findByCustomerIDByDateInterval(@PathVariable("id") long id,
+			@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+
+		Customer customer = customerService.findById(id);
+		if (customer == null)
+			return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
+		return ResponseEntity.ok(bookingService.findByCustomerIDByDateInterval(id, dateMin, dateMax));
+	}
+
+	// Provider
+	@GetMapping("/provider/{id}/bookings/history/{dateMin}/{dateMax}")
+	public ResponseEntity<List<Booking>> findByProServiceIDByDateInterval(@PathVariable("id") long id,
+			@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+
+		Provider provider = providerService.findById(id);
+		if (provider == null)
+			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
+		return ResponseEntity.ok(bookingService.findByProServiceIDByDateInterval(id, dateMin, dateMax));
+	}
+
+	// DISPLAY REVIEW
+	@GetMapping("/providerService/{id}/bookings/reviews")
+	public ResponseEntity<List<Booking>> displayReviewByProServiceID(@PathVariable("id") long id) {
+		com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(id);
+		if (providerService == null)
+			return ResponseEntity.notFound().header("message", "No Provider Service found for such ID").build();
+		return ResponseEntity.ok(bookingService.reviewsByProServiceID(id));
+	}
+
+	// WEEKLY UPDATE RATINGS AND BOOKING NO
+	// Provider Service
+	@GetMapping("/providerServices/bookings/updateReview")
+	public ResponseEntity<Void> weeklyProviderServiceRatingUpdate() {
 		try {
-			Booking savedBooking = bookingService.add(booking);
-			return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking);
-		}catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "Failed to add new booking").build();
+			bookingService.weeklyProviderServiceRatingUpdate();
+			return ResponseEntity.noContent().header("message", "Update review successfully").build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header("message", "Failed to update review").build();
 		}
 	}
-	
-	@PutMapping("/booking")
-	public ResponseEntity<Booking> updateBooking(@RequestBody Booking booking){
-		Booking updatedBooking = bookingService.update(booking);
-		if(updatedBooking != null)
-			return ResponseEntity.ok(updatedBooking);
-		else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+	// Provider Service
+	@GetMapping("/customers/bookings/updateReview")
+	public ResponseEntity<Void> weeklyCustomerRatingUpdate() {
+		try {
+			bookingService.weeklyCustomerRatingUpdate();
+			return ResponseEntity.noContent().header("message", "Update review successfully").build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header("message", "Failed to update review").build();
+		}
 	}
-	
+
+	// Provider Service
+	@GetMapping("/providers/bookings/updateReview")
+	public ResponseEntity<Void> weeklyProviderRatingUpdate() {
+		try {
+			bookingService.weeklyProviderRatingUpdate();
+			return ResponseEntity.noContent().header("message", "Update review successfully").build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header("message", "Failed to update review").build();
+		}
+	}
+
+	// CREATE BOOKING
+	@PostMapping("building/{buildingID}/customer/{customerID}/providerService/{proServiceID}/booking")
+	public ResponseEntity<Booking> placeBooking(@PathVariable("buildingID") int buildingID,
+			@PathVariable("customerID") long customerID, @PathVariable("proServiceID") long proServiceID,
+			@RequestBody Booking booking) {
+		try {
+			if (bookingService.findById(booking.getBookingID()) != null)
+				return ResponseEntity.badRequest().header("message", "Booking with such ID already exists").build();
+
+			Building building = buildingService.findById(buildingID);
+			if (building == null)
+				return ResponseEntity.notFound().header("message", "No Building found for such buildingID").build();
+
+			Customer customer = customerService.findById(customerID);
+			if (customer == null)
+				return ResponseEntity.notFound().header("message", "No Customer found for such customerID").build();
+
+			com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(proServiceID);
+			if (providerService == null)
+				return ResponseEntity.notFound().header("message", "No Provider Service found for such proServiceID")
+						.build();
+
+			booking.setBuilding(building);
+			booking.setCustomer(customer);
+			booking.setProviderService(providerService);
+
+			Booking savedBooking = bookingService.placeBooking(booking);
+			return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header("message", "Failed to add new booking").build();
+		}
+	}
+
+	@PutMapping("building/{buildingID}/customer/{customerID}/providerService/{proServiceID}/booking")
+	public ResponseEntity<Booking> updateBooking(@PathVariable("buildingID") int buildingID,
+			@PathVariable("customerID") long customerID, @PathVariable("proServiceID") long proServiceID,
+			@RequestBody Booking booking) {
+		if (bookingService.findById(booking.getBookingID()) == null)
+			return ResponseEntity.badRequest().header("message", "No Booking with such ID found").build();
+
+		Building building = buildingService.findById(buildingID);
+		if (building == null)
+			return ResponseEntity.notFound().header("message", "No Building found for such buildingID").build();
+
+		Customer customer = customerService.findById(customerID);
+		if (customer == null)
+			return ResponseEntity.notFound().header("message", "No Customer found for such customerID").build();
+
+		com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(proServiceID);
+		if (providerService == null)
+			return ResponseEntity.notFound().header("message", "No Provider Service found for such proServiceID")
+					.build();
+
+		booking.setBuilding(building);
+		booking.setCustomer(customer);
+		booking.setProviderService(providerService);
+
+		Booking updatedBooking = bookingService.update(booking);
+		if (updatedBooking != null)
+			return ResponseEntity.ok(updatedBooking);
+		else
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	}
+
+	@PutMapping("/providerService/{proServiceID}/booking/{bookingID}/action/{action}/total/{total}")
+	public ResponseEntity<Booking> acceptBooking(@PathVariable("proServiceID") long proServiceID,
+			@PathVariable("bookingID") long bookingID, @PathVariable("action") String action,
+			@PathVariable(name = "total", required = false) Long total) {
+		try {
+			com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(proServiceID);
+			if (providerService == null)
+				return ResponseEntity.notFound().header("message", "No Provider Service found for such proServiceID")
+						.build();
+
+			Booking booking = bookingService.findById(bookingID);
+			if (booking == null)
+				return ResponseEntity.notFound().header("message", "No Booking found for such proServiceID").build();
+
+			if (booking.getProviderService().getProServiceID() != providerService.getProServiceID())
+				return ResponseEntity.badRequest()
+						.header("message", "This Provider Service does not have the authority to accept this Booking")
+						.build();
+
+			// ACTIONS
+			Booking temp = null;
+			switch (action) {
+			case Constants.BOOKING_ACCEPT:
+				temp = bookingService.acceptBooking(booking);
+				break;
+
+			case Constants.BOOKING_DECLINE:
+				temp = bookingService.declineBooking(booking);
+				break;
+
+			case Constants.BOOKING_COMPLETE:
+				temp = bookingService.completeBooking(booking, total);
+				break;
+			}
+			if (temp != null)
+				return ResponseEntity.ok(temp);
+			else
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	// CUSTOMER REVIEW
+	@PutMapping("/customer/{customerID}/booking/{bookingID}/content/{content}/rating/{rating}")
+	public ResponseEntity<Booking> reviewBookingByCustomerID(@PathVariable("customerID") long customerID,
+			@PathVariable("bookingID") long bookingID, @PathVariable("content") String content,
+			@PathVariable("rating") Integer rating) {
+		try {
+			Customer customer = customerService.findById(customerID);
+			if (customer == null)
+				return ResponseEntity.notFound().header("message", "No Customer found for such customerID").build();
+
+			Booking booking = bookingService.findById(bookingID);
+			if (booking == null)
+				return ResponseEntity.notFound().header("message", "No Booking found for such proServiceID").build();
+
+			if (customer.getCustomerID() != booking.getCustomer().getCustomerID()
+					|| booking.getStatus() != Constants.BOOKING_STATUS_COMPLETED)
+				return ResponseEntity.badRequest()
+						.header("message", "Customer with such ID has no permission to leave a review on this booking!")
+						.build();
+
+			Booking rvBooking = bookingService.reviewBookingByCustomerID(customerID, booking, content, rating);
+			if (rvBooking != null)
+				return ResponseEntity.ok(rvBooking);
+			else
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	// PROVIDER REVIEW
+	@PutMapping("/provider/{providerID}/booking/{bookingID}/content/{content}/rating/{rating}")
+	public ResponseEntity<Booking> reviewBookingByProviderID(@PathVariable("providerID") long providerID,
+			@PathVariable("bookingID") long bookingID, @PathVariable("content") String content,
+			@PathVariable("rating") Integer rating) {
+		try {
+			Provider provider = providerService.findById(providerID);
+			if (provider == null)
+				return ResponseEntity.notFound().header("message", "No Provider found for such providerID").build();
+
+			Booking booking = bookingService.findById(bookingID);
+			if (booking == null)
+				return ResponseEntity.notFound().header("message", "No Booking found for such proServiceID").build();
+
+			if (provider.getProviderID() != booking.getProviderService().getProvider().getProviderID()
+					|| booking.getStatus() != Constants.BOOKING_STATUS_COMPLETED)
+				return ResponseEntity.badRequest()
+						.header("message", "Provider with such ID has no permission to leave a review on this booking!")
+						.build();
+
+			Booking rvBooking = bookingService.reviewBookingByCustomerID(providerID, booking, content, rating);
+			if (rvBooking != null)
+				return ResponseEntity.ok(rvBooking);
+			else
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@DeleteMapping("/booking/{id}")
-	public ResponseEntity<Void> deleteBooking(@PathVariable int id){
-		try{
+	public ResponseEntity<Void> deleteBooking(@PathVariable int id) {
+		try {
+			if (bookingService.findById(id) == null)
+				return ResponseEntity.badRequest().header("message", "No Booking with such ID found").build();
+
 			bookingService.delete(id);
 			return ResponseEntity.noContent().header("message", "booking deleted successfully").build();
-		}
-		catch(Exception e){
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "booking deletion failed").build();
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "booking deletion failed")
+					.build();
 		}
 	}
 }
