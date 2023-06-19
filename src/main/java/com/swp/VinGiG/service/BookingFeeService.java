@@ -35,7 +35,7 @@ public class BookingFeeService {
 	}
 	
 	public List<BookingFee> findByDateInterval(Date dateMin, Date dateMax){
-		return bookingFeeRepo.findByDateInterval(dateMin, dateMax);
+		return bookingFeeRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
 	public List<BookingFee> findByProviderIDDateInterval(long providerID, Date dateMin, Date dateMax){
