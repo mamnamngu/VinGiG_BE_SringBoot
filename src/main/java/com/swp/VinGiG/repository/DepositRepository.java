@@ -10,15 +10,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.swp.VinGiG.entity.Deposit;
+import com.swp.VinGiG.entity.SubscriptionFee;
 
 @Repository
 public interface DepositRepository  extends JpaRepository<Deposit, Long>, JpaSpecificationExecutor<Deposit>{
 
-	@Query("SELECT d FROM Deposit d WHERE d.provider.getProviderID() = :providerID AND d.date BETWEEN :dateMin AND :dateMax")
-	public List<Deposit> findByProviderIDInterval(@Param("providerID") long providerID, @Param("dateMin") Date dateMin, @Param("dateMax") Date dateMax);
-
-	@Query("SELECT d FROM Deposit d WHERE d.date BETWEEN :dateMin AND :dateMax")
-	public List<Deposit> findByDateInterval(@Param("dateMin") Date dateMin, @Param("dateMax") Date dateMax);
 
 	public List<Deposit> findByMethod(String method);
+	
+	public List<Deposit> findByProviderProviderIDAndDateBetween(long providerID, Date dateMin, Date dateMax);
+	public List<Deposit> findByDateBetween(Date dateMin, Date dateMax);
 }

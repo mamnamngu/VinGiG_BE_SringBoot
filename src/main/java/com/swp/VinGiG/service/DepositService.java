@@ -31,13 +31,13 @@ public class DepositService {
 	public List<Deposit> findByProviderIDDateInterval(long ProviderID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
-		return depositRepo.findByProviderIDInterval(ProviderID, dateMin, dateMax);
+		return depositRepo.findByProviderProviderIDAndDateBetween(ProviderID, dateMin, dateMax);
 	}
 	
 	public List<Deposit> findByDateInterval(Date dateMin,Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
-		return depositRepo.findByDateInterval(dateMin, dateMax);
+		return depositRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
 	public List<Deposit> findByMethod(String method){
