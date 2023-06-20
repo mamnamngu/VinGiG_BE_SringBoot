@@ -90,7 +90,7 @@ public class Provider implements Serializable{
 	private boolean active;
 	
 	@Column(name = "role", columnDefinition = "NVARCHAR(10) DEFAULT 'provider'", nullable = false)
-	private boolean role;
+	private String role;
 	
 	//RELATIONSHIP SETUP
 	

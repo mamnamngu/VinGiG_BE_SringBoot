@@ -89,7 +89,7 @@ public class Customer implements Serializable{
 	private boolean active;
 	
 	@Column(name = "role", columnDefinition = "NVARCHAR(10) DEFAULT 'customer'", nullable = false)
-	private boolean role;
+	private String role;
 	
 	//RELATIONSHIP SETUP
 	

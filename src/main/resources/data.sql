@@ -4,7 +4,7 @@ INSERT INTO Badge(badgeName, description, benefit, active) VALUES ('VinGiG Certi
 INSERT INTO Badge(badgeName, description, benefit, active) VALUES ('Best Provider', N'Dành cho 1 provider có lượt booking cao nhất của 1 tháng. Badge kéo dài trong 1 tháng', '0.8', 1);
 INSERT INTO Badge(badgeName, description, benefit, active) VALUES ('Top-rated Provider', N'Dành cho những provider nào có trên 80 booking/ tháng và rating > 4.5 sao. Badge kéo dài trong 1 tháng', '0.9', 1);
 INSERT INTO Badge(badgeName, description, benefit, active) VALUES ('Preferred Provider', N'Dành cho những provider nào có trên 60 booking/ tháng và rating > 4 sao. Badge kéo dài trong 1 tháng', '0.95', 1);
-INSERT INTO Badge(badgeName, description, benefit, active) VALUES ('Promising Provider', N'Dành cho những provider mới tham gia VinGiG. Badge kéo dài trong 1 tuần.', '0.9');
+INSERT INTO Badge(badgeName, description, benefit, active) VALUES ('Promising Provider', N'Dành cho những provider mới tham gia VinGiG. Badge kéo dài trong 1 tuần.', '0.9', 1);
 
 --Insert SubscriptionPlan
 INSERT INTO SubscriptionPlan (description, duration, price) VALUES (N'Gói Tháng', '30', '50000');
@@ -1972,7 +1972,7 @@ INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
 
 (438, 1, N'Tôi muốn biết thời gian hoàn thành công việc thay bóng đèn.', '2023-06-15 09:00:00'),
 (438, 0, N'Thời gian hoàn thành công việc thay bóng đèn phụ thuộc vào số lượng và đặc điểm riêng của từng trường hợp. Vui lòng cung cấp thông tin chi tiết để chúng tôi đưa ra thời gian hoàn thành cụ thể.', '2023-06-15 09:05:00'),
-(438, 1, N'Tôi có 3 bóng đèn cần thay, vui lòng xác định thời gian hoàn thành.', '2023-06-15 09:10:00'),
+(438, 1, N'Tôi có 3 bóng đèn cần thay, vui lòng xác định thời gian hoàn thành.', '2023-06-15 09:10:00');
 
 --Thay kiếng cửa--
 INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
@@ -2001,7 +2001,7 @@ INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
 (460, 1, N'Tôi muốn biết quy trình thay kiếng cửa và thời gian hoàn thành công việc.', '2023-06-15 14:00:00'),
 (460, 0, N'Quy trình thay kiếng cửa bao gồm kiểm tra kích thước, gỡ bỏ kiếng cũ, lắp đặt kiếng mới và kiểm tra lại.', '2023-06-15 14:05:00'),
 (460, 1, N'Thời gian hoàn thành công việc là bao lâu?', '2023-06-15 14:10:00'),
-(460, 0, N'Đối với việc thay kiếng cửa, thời gian hoàn thành dự kiến là 6 giờ.', '2023-06-15 14:15:00')
+(460, 0, N'Đối với việc thay kiếng cửa, thời gian hoàn thành dự kiến là 6 giờ.', '2023-06-15 14:15:00');
 
 --Combo việc nhà: rửa chén, quét dọn, lau nhà, vệ sinh toilet--
 INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
@@ -2136,7 +2136,7 @@ INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
 (714, 1, N'Tôi muốn biết giá cả của dịch vụ Vệ sinh vết thương', '2023-06-15 09:00:00'),
 (714, 0, N'Giá cả của dịch vụ Vệ sinh vết thương sẽ phụ thuộc vào diện tích và độ nghiêm trọng của vết thương', '2023-06-15 09:05:00'),
 (714, 1, N'Vậy, có giá cả cụ thể cho từng trường hợp không?', '2023-06-15 09:10:00'),
-(714, 0, N'Có, chúng tôi sẽ cung cấp giá cả cụ thể sau khi kiểm tra vết thương của bạn', '2023-06-15 09:15:00'),
+(714, 0, N'Có, chúng tôi sẽ cung cấp giá cả cụ thể sau khi kiểm tra vết thương của bạn', '2023-06-15 09:15:00');
 	 
 INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
 (716, 1, N'Tôi muốn đặt dịch vụ thăm khám bệnh tại gia.', '2023-06-14 16:00:00'),
@@ -2233,7 +2233,7 @@ INSERT INTO BookingMessage (bookingID, sendBy, content, [time]) VALUES
 (876, 1, N'Tôi muốn biết phạm vi dịch vụ Giặt xả quần áo của bạn.', '2023-06-15 09:00:00'),
 (876, 0, N'Dịch vụ Giặt xả quần áo của chúng tôi phục vụ trong khu vực nội thành thành phố.', '2023-06-15 09:05:00'),
 (876, 1, N'Vậy có thể đặt dịch vụ bất kỳ ngày nào?', '2023-06-15 09:10:00'),
-(876, 0, N'Có, chúng tôi nhận đặt dịch vụ Giặt xả quần áo trong khoảng thời gian từ thứ Hai đến Chủ nhật.', '2023-06-15 09:15:00');
+(876, 0, N'Có, chúng tôi nhận đặt dịch vụ Giặt xả quần áo trong khoảng thời gian từ thứ Hai đến Chủ nhật.', '2023-06-15 09:15:00'),
 	
 (899, 1, N'Tôi đã đặt dịch vụ Giặt xả quần áo.', '2023-06-15 14:00:00'),
 (899, 0, N'Cảm ơn bạn đã đặt dịch vụ! Chúng tôi sẽ liên hệ để thống nhất thời gian và thông tin chi tiết về đơn hàng của bạn.', '2023-06-15 14:05:00'),
