@@ -17,8 +17,7 @@ public interface BookingFeeRepository  extends JpaRepository<BookingFee, Long>, 
 	
 	public List<BookingFee> findByDate(Date date);
 	
-	
 	public List<BookingFee> findByDateBetween(Date dateMin, Date dateMax);
-//	@Query("SELECT b FROM BookingFee b WHERE b.date BETWEEN :dateMin AND :dateMax")
-//	public List<BookingFee> findByBookingIDDateInterval(@Param("bookingID") long bookingID, @Param("dateMin") java.util.Date dateMin, @Param("dateMax") java.util.Date dateMax);
+
+	public List<BookingFee> findByBookingBookingIDAndDateBetween(long bookingID, Date dateMin, Date dateMax);
 }

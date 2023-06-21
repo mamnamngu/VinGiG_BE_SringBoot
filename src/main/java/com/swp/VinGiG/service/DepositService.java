@@ -40,8 +40,8 @@ public class DepositService {
 		return depositRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
-	public List<Deposit> findByMethod(String method){
-		return depositRepo.findByMethod(method);
+	public List<Deposit> findByMethod(String method, Date dateMin, Date dateMax){
+		return depositRepo.findByMethodAndDateBetween(method, dateMin, dateMax);
 	}
 	
 	//ADD
