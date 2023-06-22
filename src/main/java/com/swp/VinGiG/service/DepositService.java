@@ -41,6 +41,8 @@ public class DepositService {
 	}
 	
 	public List<Deposit> findByMethod(String method, Date dateMin, Date dateMax){
+		if(dateMin == null) dateMin = Constants.START_DATE;
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return depositRepo.findByMethodAndDateBetween(method, dateMin, dateMax);
 	}
 	

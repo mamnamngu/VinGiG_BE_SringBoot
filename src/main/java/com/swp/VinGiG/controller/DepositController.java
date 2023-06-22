@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.swp.VinGiG.entity.Deposit;
 import com.swp.VinGiG.service.DepositService;
+import com.swp.VinGiG.utilities.Constants;
 
 public class DepositController {
 	@Autowired
@@ -56,9 +57,11 @@ public class DepositController {
 			return ResponseEntity.notFound().build();
 	
 	}
-	@GetMapping("/deposit/{method}")
-	public ResponseEntity<List<Deposit>> findByfindByMethod(@PathVariable String method){
-		List<Deposit> ls = depositService.findByMethod(method);
+	@GetMapping("/deposit/{method}/date/{dateMin}/{dateMax}")
+	public ResponseEntity<List<Deposit>> findByfindByMethod(@PathVariable("method") String method, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr){
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		List<Deposit> ls = depositService.findByMethod(method, dateMin, dateMax);
 		if(ls.size() > 0)
 			return ResponseEntity.status(HttpStatus.OK).body(ls);
 		else 

@@ -1,10 +1,9 @@
 package com.swp.VinGiG.entity;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -54,8 +53,7 @@ public class BookingMessage implements Serializable{
 	private String content;
 	
 	@Column(name = "time")
-	@Convert(converter = com.swp.VinGiG.utilities.ZonedDateTimeConverter.class)
-	private ZonedDateTime time;
+	private Date time;
 	
 	//RELATIONSHIP SETUP
 	
