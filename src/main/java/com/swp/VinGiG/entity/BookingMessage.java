@@ -58,7 +58,7 @@ public class BookingMessage implements Serializable{
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Booking.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "bookingID", referencedColumnName = "bookingID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "bookingID", referencedColumnName = "bookingID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Booking booking;
