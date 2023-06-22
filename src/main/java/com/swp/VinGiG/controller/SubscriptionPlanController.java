@@ -35,7 +35,7 @@ public class SubscriptionPlanController {
 		else return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("/subscriptionPlan/{keyword}")
+	@GetMapping("/subscriptionPlans/keyword/{keyword}")
 	public ResponseEntity<List<SubscriptionPlan>> retrievePlanByKeyword(@PathVariable String keyword) {
 		return ResponseEntity.ok(planService.findByKeyword(keyword));
 	}

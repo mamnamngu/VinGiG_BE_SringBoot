@@ -36,7 +36,7 @@ public class ServiceCategoryController {
 		}
 	}
 	
-	@GetMapping("/serviceCategory/{keyword}")
+	@GetMapping("/serviceCategories/keyword/{keyword}")
 	public ResponseEntity<List<ServiceCategory>> retrieveServiceCategory(@PathVariable String keyword) {
 		return ResponseEntity.ok(serviceCategoryService.findByKeyword(keyword.trim()));
 	}
