@@ -136,7 +136,6 @@ public class BookingService {
 	//Customer place a Booking
 	public Booking placeBooking(Booking booking) {
 		if(findById(booking.getBookingID()) != null) return null;
-		//Open Web Socket
 		
 		booking.setStatus(Constants.BOOKING_STATUS_PENDING);
 		return add(booking);

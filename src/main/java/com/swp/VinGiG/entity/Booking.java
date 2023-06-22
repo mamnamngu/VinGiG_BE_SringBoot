@@ -88,7 +88,7 @@ public class Booking implements Serializable{
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Customer.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "customerID", referencedColumnName = "customerID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "customerID", referencedColumnName = "customerID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Customer customer;
@@ -100,7 +100,7 @@ public class Booking implements Serializable{
 	private Building building;
 	
 	@ManyToOne(targetEntity = ProviderService.class, fetch = FetchType.EAGER)
-	@JoinColumn(name = "proServiceID", referencedColumnName = "proServiceID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "proServiceID", referencedColumnName = "proServiceID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private ProviderService providerService;

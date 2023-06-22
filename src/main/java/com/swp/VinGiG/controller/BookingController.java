@@ -186,6 +186,7 @@ public class BookingController {
 			booking.setBuilding(building);
 			booking.setCustomer(customer);
 			booking.setProviderService(providerService);
+			booking.setDate(Constants.currentDate());
 
 			Booking savedBooking = bookingService.placeBooking(booking);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking);
