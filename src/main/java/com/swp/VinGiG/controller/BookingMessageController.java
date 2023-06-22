@@ -17,6 +17,7 @@ import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingMessage;
 import com.swp.VinGiG.service.BookingMessageService;
 import com.swp.VinGiG.service.BookingService;
+import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.BookingMessageBox;
 
 @RestController
@@ -84,6 +85,8 @@ public class BookingMessageController {
 			if(booking == null) return ResponseEntity.notFound().header("message", "Booking not found. Adding message failed").build();
 			
 			bookingMessage.setBooking(booking);
+			
+			if(bookingMessage.getTime() == null) bookingMessage.setTime(Constants.currentDate());
 			BookingMessage savedMessage = bookingMessageService.add(bookingMessage);
 			if(savedMessage != null)
 				return ResponseEntity.status(HttpStatus.CREATED).body(savedMessage);
