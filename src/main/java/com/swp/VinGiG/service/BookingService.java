@@ -316,9 +316,8 @@ public class BookingService {
 			y.setBuildingID(building.getBuildingID());
 			y.setBuildingName(building.getBuildingName());
 			
-			List<Image> imageLs = imageService.findByProviderServiceID(proService.getProServiceID());
-			y.setImage(imageLs.get(0).getLink());		
-			
+			List<Image> lis = imageService.findByProviderServiceID(x.getProviderService().getProServiceID());	
+			y.setImage(lis.get(0).getLink());
 			list.add(y);
 		}
 		return list;
