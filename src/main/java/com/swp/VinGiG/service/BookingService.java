@@ -14,6 +14,7 @@ import com.swp.VinGiG.entity.BookingFee;
 import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.entity.GiGService;
+import com.swp.VinGiG.entity.Image;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.repository.BookingRepository;
 import com.swp.VinGiG.utilities.Constants;
@@ -35,6 +36,9 @@ public class BookingService {
 	
 	@Autowired
 	private BookingFeeService bookingFeeService;
+	
+	@Autowired
+	private ImageService imageService;
 	
 
 	//FIND
@@ -311,6 +315,10 @@ public class BookingService {
 			Building building = x.getBuilding();
 			y.setBuildingID(building.getBuildingID());
 			y.setBuildingName(building.getBuildingName());
+			
+			List<Image> imageLs = imageService.findByProviderServiceID(proService.getProServiceID());
+			y.setImage(imageLs.get(0).getLink());		
+			
 			list.add(y);
 		}
 		return list;

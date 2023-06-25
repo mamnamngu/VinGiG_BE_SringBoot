@@ -72,6 +72,7 @@ public class BookingMessageController {
 			y.setFullName(x.getProviderService().getProvider().getFullName());
 			y.setServiceID(x.getProviderService().getService().getServiceID());
 			y.setServiceName(x.getProviderService().getService().getServiceName());
+			y.setAvatar(x.getProviderService().getProvider().getAvatar());
 			list.add(y);
 		}
 		return ResponseEntity.ok(list);

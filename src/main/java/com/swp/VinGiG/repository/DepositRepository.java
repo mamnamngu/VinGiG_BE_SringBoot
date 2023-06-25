@@ -12,7 +12,6 @@ import com.swp.VinGiG.entity.Deposit;
 @Repository
 public interface DepositRepository  extends JpaRepository<Deposit, Long>, JpaSpecificationExecutor<Deposit>{
 
-
 	public List<Deposit> findByMethodAndDateBetween(String method, Date dateMin, Date dateMax);
 	
 	public List<Deposit> findByProviderProviderIDAndDateBetween(long providerID, Date dateMin, Date dateMax);

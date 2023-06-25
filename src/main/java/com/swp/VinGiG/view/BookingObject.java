@@ -48,4 +48,7 @@ public class BookingObject {
 	//Building
 	private int buildingID;
 	private String buildingName;
+	
+	//Image
+	private String image;
 }

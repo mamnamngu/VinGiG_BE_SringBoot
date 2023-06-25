@@ -1,10 +1,12 @@
 package com.swp.VinGiG.service;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp.VinGiG.entity.Image;
 import com.swp.VinGiG.entity.ProviderService;
 import com.swp.VinGiG.repository.ProviderServiceRepository;
 import com.swp.VinGiG.utilities.Constants;
@@ -15,6 +17,9 @@ public class ProviderServiceService {
 
 	@Autowired
 	private ProviderServiceRepository providerServiceRepo;
+	
+	@Autowired
+	private ImageService imageService;
 	
 	//FIND
 	//admin
@@ -131,9 +136,8 @@ public class ProviderServiceService {
 		object.setBadgeName(x.getProvider().getBadge().getBadgeName());
 		
 		//Image
-		object.setImageID(0);
-		object.setLink("https://cleaningspaces.net/wp-content/uploads/2020/10/house-cleaning-services.jpeg");
-		
+		List<Image> ls = imageService.findByProviderServiceID(x.getProServiceID());
+		object.setLink(ls.get(0).getLink());
 		return object;
 	}	
 	

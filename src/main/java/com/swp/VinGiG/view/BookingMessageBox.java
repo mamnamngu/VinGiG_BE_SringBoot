@@ -31,6 +31,7 @@ public class BookingMessageBox implements Serializable{
 	//Provider
 	private long providerID;
 	private String fullName;
+	private String avatar;
 	
 	//GiGService
 	private long serviceID;

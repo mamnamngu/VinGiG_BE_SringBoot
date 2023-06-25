@@ -26,7 +26,7 @@ public class CountService {
 	}
 	
 	public List<Count> findByProviderID(long providerID) {
-		return countRepo.findByProviderProviderID(providerID);
+		return countRepo.findByProviderProviderIDAndActiveIsTrue(providerID);
 	}
 	
 	//ADD

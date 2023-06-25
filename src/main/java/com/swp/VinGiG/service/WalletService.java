@@ -29,7 +29,7 @@ public class WalletService {
 	}
 	
 	public List<Wallet> findByProviderId(long providerID) {
-		return walletRepo.findByProviderProviderID(providerID);
+		return walletRepo.findByProviderProviderIDAndActiveIsTrue(providerID);
 	}
 	
 	public List<Wallet> findByBalanceBelowThreshold(){
@@ -39,13 +39,13 @@ public class WalletService {
 	public List<Wallet> findByCreateDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return walletRepo.findByCreateDateInterval(dateMin,dateMax);
+		return walletRepo.findByCreateDateBetweenAndActiveIsTrue(dateMin,dateMax);
 	}
 	
 	public List<Wallet> findByBalanceInterval(Long lower, Long upper){
 		if(lower == null) lower = Constants.DEFAULT_LOWER;
 		if(upper == null) upper = Constants.DEFAULT_UPPER;		
-		return walletRepo.findByBalanceInterval(lower, upper);
+		return walletRepo.findByBalanceBetweenAndActiveIsTrue(lower, upper);
 	}
 	
 	//ADD
