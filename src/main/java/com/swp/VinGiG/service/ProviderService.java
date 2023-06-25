@@ -52,7 +52,7 @@ public class ProviderService {
 	public List<Provider> findByRatingInterval(Double lower, Double upper){
 		if(lower == null) lower = (double)Constants.REVIEW_MIN;
 		if(upper == null) upper = (double)Constants.REVIEW_MAX;
-		return providerRepo.findByRatingIntervalAndActiveIsTrue(lower, upper);
+		return providerRepo.findByRatingBetweenAndActiveIsTrue(lower, upper);
 	}
 	
 	public List<Provider> findByCreateDateInterval(Date dateMin, Date dateMax){
@@ -76,6 +76,11 @@ public class ProviderService {
 		cal.add(Calendar.DAY_OF_YEAR, 30);
 		Date cutoffDate = cal.getTime();
 		return providerRepo.findByBadgeBadgeIDAndCreateDateBetween(Constants.NEW_PROVIDER_BADGEID, cutoffDate, currentDate);
+	}
+	
+	public Provider login(String username, String password) {
+		if(username == null || password == null) return null;
+		return providerRepo.findByUsernameAndPassword(username, password);
 	}
 	
 	//ADD

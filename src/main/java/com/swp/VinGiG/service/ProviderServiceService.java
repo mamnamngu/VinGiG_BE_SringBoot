@@ -42,7 +42,7 @@ public class ProviderServiceService {
 	public List<ProviderService> findByRatingInterval(Double lower, Double upper){
 		if(lower == null) lower = (double)Constants.REVIEW_MIN;
 		if(upper == null) upper = (double)Constants.REVIEW_MAX;
-		return providerServiceRepo.findByRatingIntervalAndActiveIsTrue(lower, upper);
+		return providerServiceRepo.findByRatingBetweenAndActiveIsTrue(lower, upper);
 	}
 	
 	//provider

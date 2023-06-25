@@ -23,12 +23,8 @@ public interface ProviderServiceRepository extends JpaRepository<ProviderService
 	
 	public List<ProviderService> findByServiceServiceIDAndActiveIsTrue(int serviceID);
 	
-	@Query("SELECT p FROM ProviderService p WHERE p.rating BETWEEN :lower AND :upper AND p.active IS TRUE")
-	public List<ProviderService> findByRatingIntervalAndActiveIsTrue(@Param("lower") double lower, @Param("upper") double upper);
-	
-//	@Query("SELECT p FROM ProviderService p WHERE p.unitPrice BETWEEN :lower AND :upper")
-//	public List<ProviderService> findByUnitPriceInterval(@Param("lower") long lower, @Param("upper") long upper);
-	
+	public List<ProviderService> findByRatingBetweenAndActiveIsTrue(double lower, double upper);
+
 	//Provider + admin
 	
 	public List<ProviderService> findByProviderProviderIDAndActiveIsTrue(long providerID);

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp.VinGiG.entity.Customer;
+import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.CustomerService;
 import com.swp.VinGiG.service.ProviderService;
 
@@ -24,6 +25,9 @@ public class LoginController {
 		if(role.equalsIgnoreCase("customer")){
 			Customer customer = customerService.login(username, password);
 			return ResponseEntity.ok(customer);
+		}else if(role.equalsIgnoreCase("provider")) {
+			Provider provider = providerService.login(username, password);
+			return ResponseEntity.ok(provider);
 		}
 		return ResponseEntity.notFound().build();
 	}

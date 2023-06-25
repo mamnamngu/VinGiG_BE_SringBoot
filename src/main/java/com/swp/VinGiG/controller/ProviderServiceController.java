@@ -35,45 +35,69 @@ public class ProviderServiceController {
 
 	//ADMIN
 	@GetMapping("/providerServices")
-	public ResponseEntity<List<ProviderService>> retrieveAllProviderServices() {
-		return ResponseEntity.ok(providerServiceService.findAll());
+	public ResponseEntity<List<ProviderServiceObject>> retrieveAllProviderServices() {
+		List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
+		List<ProviderService> proServiceList = providerServiceService.findAll();
+		for(ProviderService x: proServiceList) {
+			ls.add(providerServiceService.displayRender(x));
+		}
+		return ResponseEntity.ok(ls);
 	}
 	
 	@GetMapping("/providerServices/deleted")
-	public ResponseEntity<List<ProviderService>> retrieveDeletedProviderServices() {
-		return ResponseEntity.ok(providerServiceService.findDeletedProviderService());
+	public ResponseEntity<List<ProviderServiceObject>> retrieveDeletedProviderServices() {
+		List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
+		List<ProviderService> proServiceList = providerServiceService.findDeletedProviderService();
+		for(ProviderService x: proServiceList) {
+			ls.add(providerServiceService.displayRender(x));
+		}
+		return ResponseEntity.ok(ls);
 	}
 
 	@GetMapping("/providerService/{id}")
-	public ResponseEntity<ProviderService> retrieveProviderService(@PathVariable int id) {
+	public ResponseEntity<ProviderServiceObject> retrieveProviderService(@PathVariable int id) {
 		ProviderService providerService = providerServiceService.findById(id);
 		if (providerService != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(providerService);
+			return ResponseEntity.status(HttpStatus.OK).body(providerServiceService.displayRender(providerService));
 		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("/giGService/{id}/providerServices")
-	public ResponseEntity<List<ProviderService>> findByServiceID(@PathVariable("id") int id){
+	public ResponseEntity<List<ProviderServiceObject>> findByServiceID(@PathVariable("id") int id){
 		GiGService service = giGServiceService.findById(id);
 		if(service == null)
 			return ResponseEntity.notFound().header("message", "No GiGService found for such ID").build();
-		
-		return ResponseEntity.ok(providerServiceService.findByServiceID(id));
+		List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
+		List<ProviderService> proServiceList = providerServiceService.findByServiceID(id);
+		for(ProviderService x: proServiceList) {
+			ls.add(providerServiceService.displayRender(x));
+		}
+		return ResponseEntity.ok(ls);
 	}
 	
 	@GetMapping("/providerServices/rating/{lower}/{upper}")
-	public ResponseEntity<List<ProviderService>> findByRatingInterval(@PathVariable("lower") Double lower, @PathVariable("upper") Double upper) {
-		return ResponseEntity.ok(providerServiceService.findByRatingInterval(lower, upper));
+	public ResponseEntity<List<ProviderServiceObject>> findByRatingInterval(@PathVariable("lower") Double lower, @PathVariable("upper") Double upper) {
+		List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
+		List<ProviderService> proServiceList = providerServiceService.findByRatingInterval(lower, upper);
+		for(ProviderService x: proServiceList) {
+			ls.add(providerServiceService.displayRender(x));
+		}
+		return ResponseEntity.ok(ls);
 	}
 
 	//PROVIDER
 	@GetMapping("/provider/{id}/providerServices")
-	public ResponseEntity<List<ProviderService>> findByProviderID(@PathVariable long id) {
+	public ResponseEntity<List<ProviderServiceObject>> findByProviderID(@PathVariable long id) {
 		Provider provider = providerService.findById(id);
 		if (provider != null) {
-			return ResponseEntity.ok(providerServiceService.findByProviderID(id));
+			List<ProviderServiceObject> ls = new ArrayList<ProviderServiceObject>();
+			List<ProviderService> proServiceList = providerServiceService.findByProviderID(id);
+			for(ProviderService x: proServiceList) {
+				ls.add(providerServiceService.displayRender(x));
+			}
+			return ResponseEntity.ok(ls);
 		} else
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
 	}
