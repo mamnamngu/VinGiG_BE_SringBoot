@@ -56,8 +56,20 @@ public class BookingMessageController {
 	
 	//Getting all Booking that have Message for Provider
 	@GetMapping("provider/{id}/bookingMessage")
-	public ResponseEntity<List<Booking>> retrieveBookingMessageByproviderID(@PathVariable long id){
-		return ResponseEntity.ok(bookingMessageService.findBookingHasBookingMessageForProvider(id));
+	public ResponseEntity<List<BookingMessageBox>> retrieveBookingMessageByproviderID(@PathVariable long id){
+		List<Booking> ls = bookingMessageService.findBookingHasBookingMessageForProvider(id);
+		List<BookingMessageBox> list = new ArrayList<BookingMessageBox>();
+		for(Booking x: ls) {
+			BookingMessageBox y = new BookingMessageBox();
+			y.setBookingID(x.getBookingID());
+			y.setProviderID(x.getProviderService().getProvider().getProviderID());
+			y.setFullName(x.getProviderService().getProvider().getFullName());
+			y.setServiceID(x.getProviderService().getService().getServiceID());
+			y.setServiceName(x.getProviderService().getService().getServiceName());
+			y.setAvatar(x.getProviderService().getProvider().getAvatar());
+			list.add(y);
+		}
+		return ResponseEntity.ok(list);
 	}
 	
 	//Getting all Booking that have Message for Customer
