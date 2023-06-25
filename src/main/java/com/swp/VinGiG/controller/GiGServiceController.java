@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.swp.VinGiG.entity.GiGService;
 import com.swp.VinGiG.entity.ServiceCategory;
 import com.swp.VinGiG.service.GiGServiceService;
 import com.swp.VinGiG.service.ServiceCategoryService;
+import com.swp.VinGiG.view.GiGServiceObject;
 
 @RestController
 public class GiGServiceController {
@@ -28,37 +30,49 @@ public class GiGServiceController {
 	private ServiceCategoryService serviceCategoryService;
 	
 	@GetMapping("/giGServices")
-	public ResponseEntity<List<GiGService>> retrieveAllGiGServices(){
-		return ResponseEntity.ok(giGServiceService.findAll());
+	public ResponseEntity<List<GiGServiceObject>> retrieveAllGiGServices(){
+		List<GiGService> ls = giGServiceService.findAll();
+		List<GiGServiceObject> list = giGServiceService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/giGService/{id}")
-	public ResponseEntity<GiGService> retrieveGiGService(@PathVariable int id) {
+	public ResponseEntity<GiGServiceObject> retrieveGiGService(@PathVariable int id) {
 		GiGService giGService = giGServiceService.findById(id);
 		if(giGService != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(giGService);
+			List<GiGService> ls = new ArrayList<>();
+			ls.add(giGService);
+			List<GiGServiceObject> list = giGServiceService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("/serviceCategory/{id}/giGServices")
-	public ResponseEntity<List<GiGService>> retrieveAllGiGServicesOfCategory(@PathVariable int id){
+	public ResponseEntity<List<GiGServiceObject>> retrieveAllGiGServicesOfCategory(@PathVariable int id){
 		ServiceCategory category = serviceCategoryService.findById(id);
-		if(category != null)
-			return ResponseEntity.ok(giGServiceService.findByServiceCategory(id));
+		if(category != null) {
+			List<GiGService> ls = giGServiceService.findByServiceCategory(id);
+			List<GiGServiceObject> list = giGServiceService.display(ls);
+			return ResponseEntity.ok(list);
+		}
 		else return ResponseEntity.notFound().header("message", "No Service Category found for such ID").build();
     }
 	
 	@GetMapping("/giGServices/{keyword}")
-	public ResponseEntity<List<GiGService>> retrieveGiGServicesByKeyword(@PathVariable String keyword){
-		return ResponseEntity.ok(giGServiceService.findByKeyword(keyword.trim()));
+	public ResponseEntity<List<GiGServiceObject>> retrieveGiGServicesByKeyword(@PathVariable String keyword){
+		List<GiGService> ls = giGServiceService.findByKeyword(keyword.trim());
+		List<GiGServiceObject> list = giGServiceService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	//admin
 	@GetMapping("/giGServices/deleted")
-	public ResponseEntity<List<GiGService>> findDeletedServices(){
-		return ResponseEntity.ok(giGServiceService.findDeletedServices());
+	public ResponseEntity<List<GiGServiceObject>> findDeletedServices(){
+		List<GiGService> ls = giGServiceService.findDeletedServices();
+		List<GiGServiceObject> list = giGServiceService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 	
 	@PostMapping("/serviceCategory/{id}/giGService")

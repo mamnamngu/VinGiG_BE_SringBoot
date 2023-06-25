@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.repository.BookingRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.BookingObject;
 
 @Service
 public class BookingService {
@@ -270,5 +272,22 @@ public class BookingService {
 		List<com.swp.VinGiG.entity.ProviderService> ls = providerServiceService.findAll();
 		for(com.swp.VinGiG.entity.ProviderService x: ls)
 			updateProviderServiceRating(x);
+	}
+	
+	//Display
+	
+	public List<BookingObject> display(List<Booking> ls){
+		List<BookingObject> list = new ArrayList<BookingObject>();
+		for(Booking x: ls) {
+			BookingObject y = new BookingObject();
+			y.setBookingID(x.getBookingID());
+			y.setApartment(x.getApartment());
+			y.setUnitPrice(x.getUnitPrice());
+			y.setTotal(x.getTotal());
+			y.setStatus(x.getStatus());
+			y.setDate(x.getDate());
+			y.setProvidersRating(x.getProvidersRating());
+		}
+		return list;
 	}
 }

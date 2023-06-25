@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.BookingFee;
+import com.swp.VinGiG.entity.GiGService;
+import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.repository.BookingFeeRepository;
+import com.swp.VinGiG.view.BookingFeeObject;
 
 @Service
 public class BookingFeeService {
@@ -57,5 +61,28 @@ public class BookingFeeService {
 	public boolean delete(long id) {
 		bookingFeeRepo.deleteById(id);
 		return bookingFeeRepo.findById(id).isEmpty();
+	}
+	
+	//DISPLAY
+	public List<BookingFeeObject> display(List<BookingFee> ls){
+		List<BookingFeeObject> list = new ArrayList<>();
+		for(BookingFee x: ls) {
+			BookingFeeObject y = new BookingFeeObject();
+			y.setBookingFeeID(x.getBookingFeeID());
+			y.setAmount(x.getAmount());
+			y.setDate(x.getDate());
+			y.setBookingID(x.getBooking().getBookingID());
+			
+			GiGService service = x.getBooking().getProviderService().getService();				
+			y.setServiceID(service.getServiceID());
+			y.setServiceName(service.getServiceName());
+			
+			Provider provider = x.getBooking().getProviderService().getProvider();
+			y.setProviderID(provider.getProviderID());
+			y.setFullName(provider.getFullName());
+			
+			list.add(y);
+		}
+		return list;
 	}
 }

@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.GiGService;
 import com.swp.VinGiG.repository.GiGServiceRepository;
+import com.swp.VinGiG.view.GiGServiceObject;
 
 @Service
 public class GiGServiceService {
@@ -53,4 +55,23 @@ public class GiGServiceService {
 		return !service.isActive();
 	}
 	
+	//DISPLAY
+	public List<GiGServiceObject> display(List<GiGService> ls){
+		List<GiGServiceObject> list = new ArrayList<GiGServiceObject>();
+		for(GiGService x: ls) {
+			GiGServiceObject y = new GiGServiceObject();
+			y.setServiceID(x.getServiceID());
+			y.setServiceName(x.getServiceName());
+			y.setDescription(x.getDescription());
+			y.setUnit(x.getUnit());
+			y.setPriceMin(x.getPriceMin());
+			y.setPriceMax(x.getPriceMax());
+			y.setFee(x.getFee());
+			y.setActive(x.isActive());
+			y.setCategoryID(x.getServiceCategory().getCategoryID());
+			y.setCategoryName(x.getServiceCategory().getCategoryName());
+			list.add(y);
+		}
+		return list;
+	}
 }
