@@ -21,8 +21,6 @@ public class CustomerObject {
 
 	//Customer
 	private long customerID;
-	private String username;
-	private String password;
 	private String fullName;
 	private Date dob;
 	private String avatar;

@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.service.BuildingService;
 import com.swp.VinGiG.service.CustomerService;
+import com.swp.VinGiG.view.CustomerObject;
 
 @RestController
 public class CustomerController {
@@ -29,59 +31,70 @@ public class CustomerController {
 	private BuildingService buildingService;
 	
 	@GetMapping("/customers")
-	public ResponseEntity<List<Customer>> retrieveAllCustomers(){
-		return ResponseEntity.ok(customerService.findAll());
+	public ResponseEntity<List<CustomerObject>> retrieveAllCustomers(){
+		List<Customer> ls = customerService.findAll();
+		List<CustomerObject> list = customerService.display(ls);
+		return ResponseEntity.ok(list);
     }
-	
+
 	@GetMapping("/customers/deleted")
-	public ResponseEntity<List<Customer>> retrieveDeletedCustomers(){
-		return ResponseEntity.ok(customerService.findDeletedCustomers());
+	public ResponseEntity<List<CustomerObject>> retrieveDeletedCustomers(){
+		List<Customer> ls = customerService.findDeletedCustomers();
+		List<CustomerObject> list = customerService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/customer/{id}")
-	public ResponseEntity<Customer> retrieveCustomer(@PathVariable int id) {
+	public ResponseEntity<CustomerObject> retrieveCustomer(@PathVariable int id) {
 		Customer customer = customerService.findById(id);
 		if(customer != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(customer);
+			List<Customer> ls = new ArrayList<>();
+			ls.add(customer);
+			List<CustomerObject> list = customerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("customer/username/{username}")
-	public ResponseEntity<Customer> retrieveCustomerByUserName(@PathVariable String username) {
+	public ResponseEntity<CustomerObject> retrieveCustomerByUserName(@PathVariable String username) {
 		List<Customer> ls = customerService.findByUsername(username);
 		if(ls.size() > 0) {
-			return ResponseEntity.status(HttpStatus.OK).body(ls.get(0));
+			List<CustomerObject> list = customerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("customer/fullName/{fullName}")
-	public ResponseEntity<List<Customer>> retrieveCustomerByFullName(@PathVariable String fullName) {
+	public ResponseEntity<List<CustomerObject>> retrieveCustomerByFullName(@PathVariable String fullName) {
 		List<Customer> ls = customerService.findByFullNameIgnoreCase(fullName);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else
+		if(ls.size() > 0) {
+			List<CustomerObject> list = customerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
+		}else
 			return ResponseEntity.notFound().build();
 	}
 	
 	@GetMapping("customer/createDate/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Customer>> retrieveCustomerByCreateDateInterval(@PathVariable Date dateMin, @PathVariable Date dateMax) {
+	public ResponseEntity<List<CustomerObject>> retrieveCustomerByCreateDateInterval(@PathVariable Date dateMin, @PathVariable Date dateMax) {
 		List<Customer> ls = customerService.findByCreateDateInterval(dateMin, dateMax);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
+		if(ls.size() > 0) {
+			List<CustomerObject> list = customerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
+		}else 
 			return ResponseEntity.notFound().build();
 	}
 	
 	@GetMapping("customer/rating/{lower}/{upper}")
-	public ResponseEntity<List<Customer>> retrieveCustomerByUserName(@PathVariable long lower, @PathVariable long upper) {
+	public ResponseEntity<List<CustomerObject>> retrieveCustomerByUserName(@PathVariable long lower, @PathVariable long upper) {
 		List<Customer> ls = customerService.findByRatingInterval(lower, upper);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
+		if(ls.size() > 0) {
+			List<CustomerObject> list = customerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
+		}else 
 			return ResponseEntity.notFound().build();
 	}
 	

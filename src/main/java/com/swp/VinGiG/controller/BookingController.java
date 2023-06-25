@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.swp.VinGiG.service.CustomerService;
 import com.swp.VinGiG.service.ProviderService;
 import com.swp.VinGiG.service.ProviderServiceService;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.BookingObject;
 
 @RestController
 public class BookingController {
@@ -43,27 +45,33 @@ public class BookingController {
 	private ProviderServiceService providerServiceService;
 
 	@GetMapping("/bookings")
-	public List<Booking> retreiveAllBookings() {
-		return bookingService.findAll();
+	public ResponseEntity<List<BookingObject>> retreiveAllBookings() {
+		List<Booking> ls = bookingService.findAll();
+		List<BookingObject> list = bookingService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/booking/{id}")
-	public ResponseEntity<Booking> retrieveBooking(@PathVariable int id) {
+	public ResponseEntity<BookingObject> retrieveBooking(@PathVariable int id) {
 		Booking booking = bookingService.findById(id);
 		if (booking != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(booking);
+			List<Booking> ls = new ArrayList<>();
+			ls.add(booking);
+			List<BookingObject> list = bookingService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 
 	@GetMapping("/booking/date/{date}/status/{status}")
-	public ResponseEntity<List<Booking>> retrieveBooking(@PathVariable("date") String dateStr,
+	public ResponseEntity<List<BookingObject>> retrieveBooking(@PathVariable("date") String dateStr,
 			@PathVariable("status") Integer status) {
-		Date date = Constants.strToDate(dateStr);
-		List<Booking> booking = bookingService.findByDate(date, status);
+		Date date = Constants.strToDate(dateStr);	
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(booking);
+			List<Booking> ls = bookingService.findByDate(date, status);
+			List<BookingObject> list = bookingService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}
@@ -72,26 +80,31 @@ public class BookingController {
 	// FIND CURRENT ACTIVITY
 	// Customer
 	@GetMapping("/customer/{id}/bookings/currentActivity")
-	public ResponseEntity<List<Booking>> findByCustomerIDGoingOn(@PathVariable("id") long id) {
+	public ResponseEntity<List<BookingObject>> findByCustomerIDGoingOn(@PathVariable("id") long id) {
 		Customer customer = customerService.findById(id);
 		if (customer == null)
 			return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
-		return ResponseEntity.ok(bookingService.findByCustomerIDGoingOn(id));
+		
+		List<Booking> ls = bookingService.findByCustomerIDGoingOn(id);
+		List<BookingObject> list = bookingService.display(ls);	
+		return ResponseEntity.ok(list);
 	}
 
 	// Provider
 	@GetMapping("/provider/{id}/bookings/currentActivity")
-	public ResponseEntity<List<Booking>> findByProviderIDGoingOn(@PathVariable("id") long id) {
+	public ResponseEntity<List<BookingObject>> findByProviderIDGoingOn(@PathVariable("id") long id) {
 		Provider provider = providerService.findById(id);
 		if (provider == null)
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
-		return ResponseEntity.ok(bookingService.findByProviderIDGoingOn(id));
+		List<Booking> ls = bookingService.findByProviderIDGoingOn(id);
+		List<BookingObject> list = bookingService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	// BOOKING HISTORY
 	// Customer
 	@GetMapping("/customer/{id}/bookings/history/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Booking>> findByCustomerIDByDateInterval(@PathVariable("id") long id,
+	public ResponseEntity<List<BookingObject>> findByCustomerIDByDateInterval(@PathVariable("id") long id,
 			@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
 		Date dateMin = Constants.strToDate(dateMinStr);
 		Date dateMax = Constants.strToDate(dateMaxStr);
@@ -99,12 +112,15 @@ public class BookingController {
 		Customer customer = customerService.findById(id);
 		if (customer == null)
 			return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
-		return ResponseEntity.ok(bookingService.findByCustomerIDByDateInterval(id, dateMin, dateMax));
+		
+		List<Booking> ls = bookingService.findByCustomerIDByDateInterval(id, dateMin, dateMax);
+		List<BookingObject> list = bookingService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	// Provider
 	@GetMapping("/provider/{id}/bookings/history/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Booking>> findByProServiceIDByDateInterval(@PathVariable("id") long id,
+	public ResponseEntity<List<BookingObject>> findByProServiceIDByDateInterval(@PathVariable("id") long id,
 			@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
 		Date dateMin = Constants.strToDate(dateMinStr);
 		Date dateMax = Constants.strToDate(dateMaxStr);
@@ -112,16 +128,22 @@ public class BookingController {
 		Provider provider = providerService.findById(id);
 		if (provider == null)
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
-		return ResponseEntity.ok(bookingService.findByProServiceIDByDateInterval(id, dateMin, dateMax));
+		
+		List<Booking> ls = bookingService.findByProServiceIDByDateInterval(id, dateMin, dateMax);
+		List<BookingObject> list = bookingService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	// DISPLAY REVIEW
 	@GetMapping("/providerService/{id}/bookings/reviews")
-	public ResponseEntity<List<Booking>> displayReviewByProServiceID(@PathVariable("id") long id) {
+	public ResponseEntity<List<BookingObject>> displayReviewByProServiceID(@PathVariable("id") long id) {
 		com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(id);
 		if (providerService == null)
 			return ResponseEntity.notFound().header("message", "No Provider Service found for such ID").build();
-		return ResponseEntity.ok(bookingService.reviewsByProServiceID(id));
+		
+		List<Booking> ls = bookingService.reviewsByProServiceID(id);
+		List<BookingObject> list = bookingService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	// WEEKLY UPDATE RATINGS AND BOOKING NO

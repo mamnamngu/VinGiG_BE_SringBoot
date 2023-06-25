@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Badge;
+import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Count;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.ProviderRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.ProviderObject;
 
 @Service
 public class ProviderService {
@@ -120,6 +123,36 @@ public class ProviderService {
 			update(x);
 		}
 		return ls;
+	}
+	
+	//DISPLAY
+	public List<ProviderObject> display(List<Provider> ls){
+		List<ProviderObject> list = new ArrayList<>();
+		for(Provider x: ls) {
+			ProviderObject y = new ProviderObject();
+			y.setProviderID(x.getProviderID());
+			y.setFullName(x.getFullName());
+			y.setAvatar(x.getAvatar());
+			y.setGender(x.isGender());
+			y.setEmail(x.getEmail());
+			y.setPhone(x.getPhone());
+			y.setAddress(x.getAddress());
+			y.setCreateDate(x.getCreateDate());
+			y.setRating(x.getRating());
+			y.setActive(x.isActive());
+			y.setRole(x.getRole());
+			
+			Badge badge = x.getBadge();
+			y.setBadgeID(badge.getBadgeID());
+			y.setBadgeName(badge.getBadgeName());
+			
+			Building building = x.getBuilding();
+			y.setBuildingID(building.getBuildingID());
+			y.setBuildingName(building.getBuildingName());
+			
+			list.add(y);
+		}
+		return list;
 	}
 	
 }

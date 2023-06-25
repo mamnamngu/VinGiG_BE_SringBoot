@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingFee;
+import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Customer;
+import com.swp.VinGiG.entity.GiGService;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.repository.BookingRepository;
 import com.swp.VinGiG.utilities.Constants;
@@ -287,6 +289,29 @@ public class BookingService {
 			y.setStatus(x.getStatus());
 			y.setDate(x.getDate());
 			y.setProvidersRating(x.getProvidersRating());
+			y.setProvidersReview(x.getProvidersReview());
+			y.setCustomersRating(x.getCustomersRating());
+			y.setCustomersReview(x.getCustomersReview());
+			
+			Customer customer = x.getCustomer();
+			y.setCustomerID(customer.getCustomerID());
+			y.setCustomerFullName(customer.getFullName());
+			
+			com.swp.VinGiG.entity.ProviderService proService = x.getProviderService();
+			y.setProServiceID(proService.getProServiceID());
+			
+			Provider provider = proService.getProvider();
+			y.setProviderID(provider.getProviderID());
+			y.setProviderFullName(provider.getFullName());
+			
+			GiGService service = proService.getService();
+			y.setServiceID(service.getServiceID());
+			y.setServiceName(service.getServiceName());
+		
+			Building building = x.getBuilding();
+			y.setBuildingID(building.getBuildingID());
+			y.setBuildingName(building.getBuildingName());
+			list.add(y);
 		}
 		return list;
 	}

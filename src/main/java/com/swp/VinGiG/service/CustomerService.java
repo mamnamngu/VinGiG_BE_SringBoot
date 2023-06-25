@@ -1,14 +1,17 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.repository.CustomerRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.CustomerObject;
 
 @Service
 public class CustomerService {
@@ -70,5 +73,31 @@ public class CustomerService {
 		customer.setActive(false);
 		update(customer);
 		return !customer.isActive();
+	}
+	
+	//DISPLAY
+	public List<CustomerObject> display(List<Customer> ls){
+		List<CustomerObject> list = new ArrayList<>();
+		for(Customer x: ls) {
+			CustomerObject y = new CustomerObject();
+			y.setCustomerID(x.getCustomerID());
+			y.setFullName(x.getFullName());
+			y.setDob(x.getDob());
+			y.setAvatar(x.getAvatar());
+			y.setGender(x.isGender());
+			y.setEmail(x.getEmail());
+			y.setPhone(x.getPhone());
+			y.setAddress(x.getAddress());
+			y.setCreateDate(x.getCreateDate());
+			y.setRating(x.getRating());
+			y.setActive(x.isActive());
+			y.setRole(x.getRole());
+			
+			Building building = x.getBuilding();
+			y.setBuildingID(building.getBuildingID());
+			y.setBuildingName(building.getBuildingName());
+			list.add(y);
+		}
+		return list;
 	}
 }

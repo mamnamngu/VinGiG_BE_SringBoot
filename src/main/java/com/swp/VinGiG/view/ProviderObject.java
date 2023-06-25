@@ -20,8 +20,6 @@ import lombok.ToString;
 public class ProviderObject {
 	//Provider
 	private long providerID;
-	private String username;
-	private String password;
 	private boolean gender;
 	private String avatar;
 	private double rating;

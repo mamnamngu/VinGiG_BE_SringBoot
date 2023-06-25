@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.BadgeService;
 import com.swp.VinGiG.service.BuildingService;
 import com.swp.VinGiG.service.ProviderService;
+import com.swp.VinGiG.view.ProviderObject;
 
 @RestController
 public class ProviderController {
@@ -33,72 +35,88 @@ public class ProviderController {
 	private BadgeService badgeService;
 	
 	@GetMapping("/providers")
-	public ResponseEntity<List<Provider>> retrieveAllProviders(){
-		return ResponseEntity.ok(providerService.findAll());
+	public ResponseEntity<List<ProviderObject>> retrieveAllProviders(){
+		List<Provider> ls = providerService.findAll();
+		List<ProviderObject> list = providerService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/provider/{id}")
-	public ResponseEntity<Provider> retrieveProvider(@PathVariable int id) {
+	public ResponseEntity<ProviderObject> retrieveProvider(@PathVariable int id) {
 		Provider provider = providerService.findById(id);
 		if(provider != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(provider);
+			List<Provider> ls = new ArrayList<>();
+			ls.add(provider);
+			List<ProviderObject> list = providerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("/providers/deleted")
-	public ResponseEntity<List<Provider>> retrieveDeletedProviders(){
-		return ResponseEntity.ok(providerService.findDeletedProviders());
+	public ResponseEntity<List<ProviderObject>> retrieveDeletedProviders(){
+		List<Provider> ls = providerService.findDeletedProviders();
+		List<ProviderObject> list = providerService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("provider/username/{username}")
-	public ResponseEntity<Provider> retrieveProviderByUserName(@PathVariable String username) {
+	public ResponseEntity<ProviderObject> retrieveProviderByUserName(@PathVariable String username) {
 		List<Provider> ls = providerService.findByUsername(username);
 		if(ls.size() > 0) {
-			return ResponseEntity.status(HttpStatus.OK).body(ls.get(0));
+			List<ProviderObject> list = providerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("provider/fullName/{fullName}")
-	public ResponseEntity<List<Provider>> retrieveProviderByFullName(@PathVariable String fullName) {
+	public ResponseEntity<List<ProviderObject>> retrieveProviderByFullName(@PathVariable String fullName) {
 		List<Provider> ls = providerService.findByFullNameIgnoreCase(fullName);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
+		if(ls.size() > 0) {
+			List<ProviderObject> list = providerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
+		}
 		else
 			return ResponseEntity.notFound().build();
 	}
 	
 	@GetMapping("badge/{id}/providers")
-	public ResponseEntity<List<Provider>> findProviderByBadge(@PathVariable("id") int id){
+	public ResponseEntity<List<ProviderObject>> findProviderByBadge(@PathVariable("id") int id){
 		if(badgeService.findById(id) == null) return ResponseEntity.notFound().header("message", "No Badge found for such ID").build();
-		return ResponseEntity.ok(providerService.findByBadgeID(id));		
+		List<Provider> ls = providerService.findByBadgeID(id);
+		List<ProviderObject> list = providerService.display(ls);
+		return ResponseEntity.ok(list);		
 	}
 	
 	@GetMapping("provider/rating/{lower}/{upper}")
-	public ResponseEntity<List<Provider>> retrieveProviderByRatingInterval(@PathVariable("lower") double lower, @PathVariable("upper") double upper) {
+	public ResponseEntity<List<ProviderObject>> retrieveProviderByRatingInterval(@PathVariable("lower") double lower, @PathVariable("upper") double upper) {
 		List<Provider> ls = providerService.findByRatingInterval(lower, upper);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
+		if(ls.size() > 0) {
+			List<ProviderObject> list = providerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
+		}else 
 			return ResponseEntity.notFound().build();
 	}
 	
 	@GetMapping("provider/createDate/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Provider>> retrieveProviderByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
+	public ResponseEntity<List<ProviderObject>> retrieveProviderByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
 		List<Provider> ls = providerService.findByCreateDateInterval(dateMin, dateMax);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
+		if(ls.size() > 0) {
+			List<ProviderObject> list = providerService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list);
+		}else 
 			return ResponseEntity.notFound().build();
 	}
 	
 	@GetMapping("providers/resetExpiredNewProvider")
-	public ResponseEntity<List<Provider>> resetExpiredNewProvider(){
+	public ResponseEntity<List<ProviderObject>> resetExpiredNewProvider(){
 		try {
-			return ResponseEntity.ok(providerService.resetNewProviderBadge());
+			List<Provider> ls = providerService.resetNewProviderBadge();
+			List<ProviderObject> list = providerService.display(ls);
+			return ResponseEntity.ok(list);
 		}catch(Exception e) {
 			return ResponseEntity.internalServerError().header("message", "Error occured during the rest process").build();
 		}
