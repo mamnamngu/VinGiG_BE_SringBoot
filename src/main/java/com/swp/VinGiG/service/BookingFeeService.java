@@ -8,16 +8,32 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingFee;
 import com.swp.VinGiG.entity.GiGService;
 import com.swp.VinGiG.entity.Provider;
+import com.swp.VinGiG.entity.Transaction;
+import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.BookingFeeRepository;
+import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.BookingFeeObject;
 
 @Service
 public class BookingFeeService {
 	@Autowired
 	private BookingFeeRepository bookingFeeRepo;
+	
+	@Autowired
+	private BookingService bookingService;
+	
+	@Autowired
+	private ProviderService providerService;
+	
+	@Autowired
+	private WalletService walletService;
+	
+	@Autowired
+	private TransactionService transactionService;
 	
 	//FIND
 	public List<BookingFee> findAll(){
@@ -39,22 +55,59 @@ public class BookingFeeService {
 	}
 	
 	public List<BookingFee> findByDateInterval(Date dateMin, Date dateMax){
+		if(dateMin == null) dateMin = Constants.START_DATE;
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return bookingFeeRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
 	public List<BookingFee> findByProviderIDDateInterval(long providerID, Date dateMin, Date dateMax){
-		
-		return null;
+		if(dateMin == null) dateMin = Constants.START_DATE;
+		if(dateMax == null) dateMax = Constants.currentDate();
+		Provider provider = providerService.findById(providerID);
+		if(provider == null) return null;
+		List<Booking> ls = bookingService.findByProServiceIDByDateInterval(providerID, null, dateMax);
+		List<BookingFee> list = new ArrayList<>();
+		for(Booking x: ls) {
+			List<BookingFee> fee = bookingFeeRepo.findByBookingBookingID(x.getBookingID());
+			if(fee.get(0).getDate().before(dateMax) && fee.get(0).getDate().after(dateMin))
+			list.addAll(fee);
+		}
+		return list;
 	}
 	
 	//ADD
-	public BookingFee add(BookingFee BookingFee) {
-		return bookingFeeRepo.save(BookingFee);
+	public BookingFee add(BookingFee bookingFee) {
+		bookingFee.setDate(Constants.currentDate());
+		bookingFee.setAmount(bookingFee.getBooking().getProviderService().getService().getFee());
+		
+		//Create a transaction
+		Transaction transaction = new Transaction();
+		transaction.setBookingFee(bookingFee);
+		transaction.setDate(Constants.currentDate());
+		transaction.setAmount(bookingFee.getAmount()*Constants.TRANSACTION_SUBTRACT_FACTOR);
+		
+		Provider provider = bookingFee.getBooking().getProviderService().getProvider();
+		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
+		if(wallet == null || wallet.size() == 0) return null;
+		transaction.setWallet(wallet.get(0));
+		
+		//save father object in db
+		BookingFee tmp = bookingFeeRepo.save(bookingFee);
+		
+		//save Transaction
+		Transaction output = transactionService.add(transaction);
+		
+		if(output == null) {
+			delete(tmp.getBookingFeeID());
+			return null;
+		}
+		
+		return tmp;
 	}
 	
 	//UPDATE
 	public BookingFee update(BookingFee newBookingFee) {
-		return add(newBookingFee);
+		return bookingFeeRepo.save(newBookingFee);
 	}
 	
 	//DELETE
@@ -84,5 +137,15 @@ public class BookingFeeService {
 			list.add(y);
 		}
 		return list;
+	}
+	
+	//BACKGROUND WORKER
+	public List<BookingFee> regularDelete(){
+		Date currentDate = Constants.currentDate();
+		List<BookingFee> ls = findByDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+		for(BookingFee x: ls) {
+			delete(x.getBookingFeeID());
+		}
+		return ls;
 	}
 }

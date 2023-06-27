@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -7,11 +8,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.SubscriptionFee;
+import com.swp.VinGiG.entity.SubscriptionPlan;
 import com.swp.VinGiG.entity.Transaction;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.SubscriptionFeeRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.SubscriptionFeeObject;
 
 @Service
 public class SubscriptionFeeService {
@@ -61,20 +65,28 @@ public class SubscriptionFeeService {
 		subscriptionFee.setAmount(subscriptionFee.getPlan().getPrice());
 		subscriptionFee.setDate(Constants.currentDate());
 		
-		//create transaction
-//		Transaction transaction = new Transaction();
-//		transaction.setAmount(0); //////////////////////////////////////////////////////////
-//		transaction.setDate(Constants.currentDate());
-//		transaction.setDeposit(null);
-//		transaction.setSubscriptionFee(subscriptionFee);
-//		transaction.setBookingFee(null);
+		//Create a transaction
+		Transaction transaction = new Transaction();
+		transaction.setAmount(subscriptionFee.getAmount()*Constants.TRANSACTION_SUBTRACT_FACTOR);
+		transaction.setDate(Constants.currentDate());
+		transaction.setSubscriptionFee(subscriptionFee);
 		
-//		List<Wallet> wallet = walletService.findByProviderId(subscriptionFee.getProvider().getProviderID());
-//		if(wallet == null || wallet.size() == 0) return null;
-//		transaction.setWallet(wallet.get(0));
-//		transactionService.add(transaction);
+		Provider provider = subscriptionFee.getProvider();
+		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
+		if(wallet == null || wallet.size() == 0) return null;
+		transaction.setWallet(wallet.get(0));
 		
-		return subscriptionFeeRepo.save(subscriptionFee);
+		//save father object
+		SubscriptionFee tmp = subscriptionFeeRepo.save(subscriptionFee);
+		
+		//save Transaction
+		Transaction output = transactionService.add(transaction);
+		if(output == null) {
+			delete(tmp.getSubID());
+			return null;
+		}
+		
+		return tmp;
 	}
 	
 	//UPDATE
@@ -86,5 +98,37 @@ public class SubscriptionFeeService {
 	public boolean delete(long id) {
 		subscriptionFeeRepo.deleteById(id);
 		return !subscriptionFeeRepo.findById(id).isPresent();
+	}
+	
+	//DISPLAY
+	public List<SubscriptionFeeObject> display(List<SubscriptionFee> ls){
+		List<SubscriptionFeeObject> list = new ArrayList<>();
+		for(SubscriptionFee x: ls) {
+			SubscriptionFeeObject y = new SubscriptionFeeObject();
+			y.setSubID(x.getSubID());
+			y.setAmount(x.getAmount());
+			y.setDate(x.getDate());
+			
+			SubscriptionPlan plan = x.getPlan();
+			y.setPlanID(plan.getPlanID());
+			y.setDescription(plan.getDescription());
+			
+			Provider provider = x.getProvider();
+			y.setProviderID(provider.getProviderID());
+			y.setFullName(provider.getFullName());
+			
+			list.add(y);
+		}
+		return list;
+	}
+	
+	//BACKGROUND WORKER
+	public List<SubscriptionFee> regularDelete(){
+		Date currentDate = Constants.currentDate();	
+		List<SubscriptionFee> ls = findByDateInterval(Constants.subtractDay(currentDate, Constants.SUBSCRIPTIONFEE_DELETION),currentDate);	
+		for(SubscriptionFee x: ls) {
+			delete(x.getSubID());
+		}
+		return ls;
 	}
 }

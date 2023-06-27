@@ -124,7 +124,7 @@ public class BookingService {
 	}
 	
 	//ADD
-	public Booking add(Booking booking) {
+	private Booking add(Booking booking) {
 		return bookingRepo.save(booking);
 	}
 	
@@ -152,27 +152,44 @@ public class BookingService {
 	//Provider accept a Booking
 	public Booking acceptBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(Constants.BOOKING_STATUS_ACCEPTED);
-		update(booking);
-		
-		//Set the availability of all other Provider Service of such Provider to FALSE
-		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), false);
 		
 		//Create a new Booking Fee
 		BookingFee bookingFee = new BookingFee();
 		bookingFee.setAmount(booking.getProviderService().getService().getFee());
 		bookingFee.setBooking(booking);
 		bookingFee.setDate(Constants.currentDate());
-		bookingFeeService.add(bookingFee);
-		return booking;
+		BookingFee output = bookingFeeService.add(bookingFee);
+		
+		if(output == null) return null;
+		
+		//Update booking status
+		booking.setStatus(Constants.BOOKING_STATUS_ACCEPTED);
+		
+		//Set the availability of all other Provider Service of such Provider to FALSE
+		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), false);
+		
+		return update(booking);
 	}
 	
 	//Provider decline a Booking
 	public Booking declineBooking(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
 		booking.setStatus(Constants.BOOKING_STATUS_DECLINED);
-		update(booking);
-		return booking;
+		
+		return update(booking);
+	}
+	
+	//Provider cancel a booking
+	public Booking cancelBooking(Booking booking) {
+		if(findById(booking.getBookingID()) == null) return null;
+		booking.setStatus(Constants.BOOKING_STATUS_CANCELLED);
+		
+		//SUSPEND THE PROVIDER'S ACCOUNT FOR 1 HOUR
+		
+		//Set the availability of all other Provider Service of such Provider to TRUE
+		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), true);
+				
+		return update(booking);
 	}
 	
 	//Provider confirm the completion of a Booking

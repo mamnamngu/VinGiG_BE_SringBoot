@@ -30,6 +30,10 @@ public class ImageService {
 		return imageRepo.findByProviderServiceProServiceID(proServiceID);
 	}
 	
+	public Image findProviderServiceAvatarByProviderServiceID(long proServiceID) {
+		return findByProviderServiceID(proServiceID).get(0);
+	}
+	
 	//ADD
 	public Image add(Image image) {
 		return imageRepo.save(image);

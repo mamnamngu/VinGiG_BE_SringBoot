@@ -1,5 +1,6 @@
 package com.swp.VinGiG.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ import com.swp.VinGiG.entity.BookingMessage;
 public interface BookingMessageRepository  extends JpaRepository<BookingMessage, Long>, JpaSpecificationExecutor<BookingMessage>{
 
 	public List<BookingMessage> findByBookingBookingIDOrderByTimeAsc(long bookingID);
+	
+	public List<BookingMessage> findByTimeBetween(Date dateMin, Date dateMax);
 }

@@ -21,6 +21,7 @@ import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.BadgeService;
 import com.swp.VinGiG.service.BuildingService;
 import com.swp.VinGiG.service.ProviderService;
+import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.ProviderObject;
 
 @RestController
@@ -102,7 +103,9 @@ public class ProviderController {
 	}
 	
 	@GetMapping("provider/createDate/{dateMin}/{dateMax}")
-	public ResponseEntity<List<ProviderObject>> retrieveProviderByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
+	public ResponseEntity<List<ProviderObject>> retrieveProviderByCreateDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
 		List<Provider> ls = providerService.findByCreateDateInterval(dateMin, dateMax);
 		if(ls.size() > 0) {
 			List<ProviderObject> list = providerService.display(ls);

@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.swp.VinGiG.entity.Count;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.CountService;
 import com.swp.VinGiG.service.ProviderService;
+import com.swp.VinGiG.view.CountObject;
 
 @RestController
 public class CountController {
@@ -28,36 +30,54 @@ public class CountController {
 	private ProviderService providerService;
 	
 	@GetMapping("/counts")
-	public ResponseEntity<List<Count>> retrieveAllCounts(){
-		return ResponseEntity.ok(countService.findAll());
+	public ResponseEntity<List<CountObject>> retrieveAllCounts(){
+		List<Count> ls = countService.findAll();
+		List<CountObject> list = countService.display(ls);
+		return ResponseEntity.ok(list);
+    }
+	
+	@GetMapping("/counts/deleted")
+	public ResponseEntity<List<CountObject>> retrieveAllDeletedCounts(){
+		List<Count> ls = countService.findDeletedCount();
+		List<CountObject> list = countService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/count/{id}")
-	public ResponseEntity<Count> retrieveCount(@PathVariable long id) {
+	public ResponseEntity<CountObject> retrieveCount(@PathVariable long id) {
 		Count count = countService.findById(id);
 		if(count != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(count);
+			List<Count> ls = new ArrayList<>();
+			ls.add(count);
+			List<CountObject> list = countService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("/provider/{id}/counts")
-	public ResponseEntity<List<Count>> retrieveAllCountsOfCategory(@PathVariable long id){
+	public ResponseEntity<List<CountObject>> findByProviderID(@PathVariable long id){
 		Provider provider = providerService.findById(id);
-		if(provider != null)
-			return ResponseEntity.ok(countService.findByProviderID(id));
-		else return ResponseEntity.notFound().build();
+		if(provider != null) {
+			List<Count> ls = countService.findByProviderID(id);
+			List<CountObject> list = countService.display(ls);
+			return ResponseEntity.ok(list);
+		}else return ResponseEntity.notFound().build();
     }
 	
 	@GetMapping("/provider/countUnderThreshold")
-	public ResponseEntity<List<Count>> countUnderThreshold(){
-		return ResponseEntity.ok(countService.countUnderThreshold());
+	public ResponseEntity<List<CountObject>> countUnderThreshold(){
+		List<Count> ls = countService.countUnderThreshold();
+		List<CountObject> list = countService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/provider/expiredCount")
-	public ResponseEntity<List<Count>> expiredCount(){
-		return ResponseEntity.ok(countService.expiredCount());
+	public ResponseEntity<List<CountObject>> expiredCount(){
+		List<Count> ls = countService.expiredCount();
+		List<CountObject> list = countService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/provider/dailyDecrement")
@@ -71,7 +91,9 @@ public class CountController {
 		try {
 			Provider provider = providerService.findById(id);
 			if(provider == null) return ResponseEntity.notFound().header("message", "Provider not found. Adding failed").build();
-			
+
+			if(countService.findById(count.getCountID()) != null) return ResponseEntity.notFound().header("message", "Count with such ID already exists").build();
+
 			count.setProvider(provider);
 			Count savedCount = countService.add(count);
 			if(savedCount != null)
@@ -103,6 +125,8 @@ public class CountController {
 	@DeleteMapping("/count/{id}")
 	public ResponseEntity<Void> deleteCount(@PathVariable long id){
 		try{
+			if(countService.findById(id) == null) return ResponseEntity.notFound().header("message", "Count with such ID not found.").build();
+			
 			countService.delete(id);
 			return ResponseEntity.noContent().header("message", "Count deleted successfully").build();
 		}

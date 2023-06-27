@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -7,10 +8,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.Transaction;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.TransactionRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.TransactionObject;
 
 @Service
 public class TransactionService {
@@ -53,7 +56,7 @@ public class TransactionService {
 		return transactionRepo.findTypeBookingFeeDateInterval(dateMin, dateMax);
 	}
 	
-	public List<Transaction> findBySubscriptionFeeDateInterval(Date dateMin, Date dateMax){
+	public List<Transaction> findByTypeSubscriptionFeeDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
 		return transactionRepo.findBySubscriptionFeeDateInterval(dateMin, dateMax);
@@ -102,7 +105,7 @@ public class TransactionService {
 		Wallet wallet = walletService.findById(transaction.getWallet().getWalletID());
 		if(wallet == null) return null;
 		if((wallet.getBalance() + transaction.getAmount()) < 0) return null;
-		
+
 		//transaction into wallet's balance
 		wallet.setBalance(wallet.getBalance() + transaction.getAmount());
 		walletService.update(wallet);
@@ -121,4 +124,45 @@ public class TransactionService {
 		return transactionRepo.findById(id).isEmpty();
 	}
 
+	//DISPLAY
+	public List<TransactionObject> display(List<Transaction> ls){
+		List<TransactionObject> list = new ArrayList<>();
+		for(Transaction x: ls) {
+			TransactionObject y = new TransactionObject();
+			y.setTransactionID(x.getTransactionID());
+			y.setAmount(x.getAmount());
+			y.setDate(x.getDate());
+			
+			Provider provider = x.getWallet().getProvider();
+			y.setProviderID(provider.getProviderID());
+			y.setProviderFullName(provider.getFullName());
+			
+			y.setDepositID(x.getDeposit().getDepositID());
+			
+			y.setSubID(x.getSubscriptionFee().getSubID());
+			
+			y.setBookingFeeID(x.getBookingFee().getBookingFeeID());
+			
+			list.add(y);
+		}
+		return list;
+	}
+		
+	//BACKGROUND WORKER
+	public List<Transaction> regularDelete(){
+		Date currentDate = Constants.currentDate();
+		List<Transaction> lsDeposit = findTypeDepositDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+		List<Transaction> lsBookingFee = findTypeBookingFeeDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+		List<Transaction> lsSubscriptionFee = findByTypeSubscriptionFeeDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+
+		List<Transaction> ls = new ArrayList<>();
+		ls.addAll(lsDeposit);
+		ls.addAll(lsBookingFee);
+		ls.addAll(lsSubscriptionFee);
+		
+		for(Transaction x: ls) {
+			delete(x.getTransactionID());
+		}
+		return ls;
+	}
 }

@@ -19,6 +19,7 @@ import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.service.BuildingService;
 import com.swp.VinGiG.service.CustomerService;
+import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.CustomerObject;
 
 @RestController
@@ -79,7 +80,10 @@ public class CustomerController {
 	}
 	
 	@GetMapping("customer/createDate/{dateMin}/{dateMax}")
-	public ResponseEntity<List<CustomerObject>> retrieveCustomerByCreateDateInterval(@PathVariable Date dateMin, @PathVariable Date dateMax) {
+	public ResponseEntity<List<CustomerObject>> retrieveCustomerByCreateDateInterval(@PathVariable String dateMinStr, @PathVariable String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
 		List<Customer> ls = customerService.findByCreateDateInterval(dateMin, dateMax);
 		if(ls.size() > 0) {
 			List<CustomerObject> list = customerService.display(ls);

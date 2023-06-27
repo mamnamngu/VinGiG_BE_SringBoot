@@ -1,6 +1,7 @@
 package com.swp.VinGiG.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingMessage;
 import com.swp.VinGiG.repository.BookingMessageRepository;
+import com.swp.VinGiG.utilities.Constants;
 
 @Service
 public class BookingMessageService {
@@ -60,19 +62,30 @@ public class BookingMessageService {
 		return list;
 	}
 	
+	public List<BookingMessage> findByTimeInterval(Date dateMin, Date dateMax){
+		if(dateMin == null) dateMin = Constants.START_DATE;
+		if(dateMax == null) dateMax = Constants.currentDate();
+		return bookingMessageRepo.findByTimeBetween(dateMin, dateMax);
+	}
+	
 	//ADD
 	public BookingMessage add(BookingMessage bookingMessage) {
 		return bookingMessageRepo.save(bookingMessage);
 	}
 	
-//	//UPDATE
-//	public BookingMessage update(BookingMessage newBookingMessage) {
-//		return add(newBookingMessage);
-//	}
-	
 	//DELETE
 	public boolean delete(long id) {
 		bookingMessageRepo.deleteById(id);
 		return bookingMessageRepo.findById(id).isEmpty();
+	}
+	
+	//BACKGROUND WORKER
+	public List<BookingMessage> regularDelete(){
+		Date currentDate = Constants.currentDate();
+		List<BookingMessage> ls = findByTimeInterval(Constants.subtractDay(currentDate, Constants.BOOKINGMESSAGE_DELETION),currentDate);
+		for(BookingMessage x: ls) {
+			delete(x.getMessageID());
+		}
+		return ls;
 	}
 }

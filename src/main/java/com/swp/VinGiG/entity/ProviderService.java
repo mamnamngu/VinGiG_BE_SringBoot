@@ -75,7 +75,7 @@ public class ProviderService implements Serializable{
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Provider provider;

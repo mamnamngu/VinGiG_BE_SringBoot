@@ -1,5 +1,6 @@
 package com.swp.VinGiG.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -8,14 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Deposit;
+import com.swp.VinGiG.entity.Provider;
+import com.swp.VinGiG.entity.Transaction;
+import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.DepositRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.DepositObject;
 
 @Service
 public class DepositService {
 
 	@Autowired
 	private DepositRepository depositRepo;
+	
+	@Autowired
+	private WalletService walletService;
+	
+	@Autowired
+	private TransactionService transactionService;
 	
 	//FIND
 	public List<Deposit> findAll(){
@@ -49,8 +60,30 @@ public class DepositService {
 	//ADD
 	public Deposit add(Deposit deposit) {
 		
-		//Add transaction
-		return depositRepo.save(deposit);
+		deposit.setDate(Constants.currentDate());
+		
+		//Create a transaction
+		Transaction transaction = new Transaction();
+		transaction.setDeposit(deposit);
+		transaction.setDate(Constants.currentDate());
+		transaction.setAmount(deposit.getAmount());
+		
+		Provider provider = deposit.getProvider();
+		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
+		if(wallet == null || wallet.size() == 0) return null;
+		transaction.setWallet(wallet.get(0));
+		
+		//save father object
+		Deposit tmp = depositRepo.save(deposit);
+		
+		//save Transaction
+		Transaction output = transactionService.add(transaction);
+		if(output == null) {
+			delete(tmp.getDepositID());
+			return null;
+		}
+				
+		return tmp;
 	}
 	
 	//UPDATE
@@ -62,5 +95,34 @@ public class DepositService {
 	public boolean delete(long id) {
 		depositRepo.deleteById(id);
 		return !depositRepo.findById(id).isPresent();
+	}
+	
+	//DISPLAY
+	public List<DepositObject> display(List<Deposit> ls){
+		List<DepositObject> list = new ArrayList<>();
+		for(Deposit x: ls) {
+			DepositObject y = new DepositObject();
+			y.setDepositID(x.getDepositID());
+			y.setAmount(x.getAmount());
+			y.setDate(x.getDate());
+			y.setMethod(x.getMethod());
+			
+			Provider provider = x.getProvider();
+			y.setProviderID(provider.getProviderID());
+			y.setFullName(provider.getFullName());
+			
+			list.add(y);
+		}
+		return list;
+	}
+	
+	//BACKGROUND WORKER
+	public List<Deposit> regularDelete(){
+		Date currentDate = Constants.currentDate();	
+		List<Deposit> ls = findByDateInterval(Constants.subtractDay(currentDate, Constants.DEPOSIT_DELETION),currentDate);
+		for(Deposit x: ls) {
+			delete(x.getDepositID());
+		}
+		return ls;
 	}
 }

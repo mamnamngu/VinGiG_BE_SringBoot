@@ -18,7 +18,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long>, JpaSpecif
 	
 	public List<Wallet> findByActiveIsFalse();
 	
-	public List<Wallet> findByWalletIDAndActiveIsTrue(long walletID);
+	public Wallet findByWalletIDAndActiveIsTrue(long walletID);
 	
 	public List<Wallet> findByProviderProviderIDAndActiveIsTrue(long providerID);
 	

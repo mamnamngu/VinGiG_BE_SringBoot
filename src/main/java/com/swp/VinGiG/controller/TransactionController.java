@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.swp.VinGiG.service.SubscriptionFeeService;
 import com.swp.VinGiG.service.TransactionService;
 import com.swp.VinGiG.service.WalletService;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.TransactionObject;
 
 @RestController
 public class TransactionController {
@@ -43,15 +45,20 @@ public class TransactionController {
 	private SubscriptionFeeService subscriptionFeeService;
 	
 	@GetMapping("/transactions")
-	public ResponseEntity<List<Transaction>> retrieveAllTransactions(){
-		return ResponseEntity.ok(transactionService.findAll());
+	public ResponseEntity<List<TransactionObject>> retrieveAllTransactions(){
+		List<Transaction> ls = transactionService.findAll();
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/transaction/{id}")
-	public ResponseEntity<Transaction> retrieveTransaction(@PathVariable long id) {
+	public ResponseEntity<TransactionObject> retrieveTransaction(@PathVariable long id) {
 		Transaction transaction = transactionService.findById(id);
 		if(transaction != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
+			List<Transaction> ls = new ArrayList<>();
+			ls.add(transaction);
+			List<TransactionObject> list = transactionService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
@@ -59,68 +66,84 @@ public class TransactionController {
 	
 	//Admin
 	@GetMapping("/transaction/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findByDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findByDateInterval(dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction found within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findByDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findByDateInterval(dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);	
 	}
 	
 	@GetMapping("/transaction/deposit/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findTypeDepositDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findTypeDepositDateInterval(dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction found for Deposit within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findTypeDepositDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findTypeDepositDateInterval(dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	@GetMapping("/transaction/bookingFee/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findTypeBookingFeeDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findTypeBookingFeeDateInterval(dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction found for Booking Fee within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findTypeBookingFeeDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findTypeBookingFeeDateInterval(dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	@GetMapping("/transaction/subscriptionFee/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findBySubscriptionFeeDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findBySubscriptionFeeDateInterval(dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction found for Subscription Fee within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findBySubscriptionFeeDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findByTypeSubscriptionFeeDateInterval(dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	//Provider
 	@GetMapping("/transaction/provider/{id}/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findByProviderIDDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findByProviderIDDateInterval(id, dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction for such Provider found within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findByProviderIDDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findByProviderIDDateInterval(id, dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	@GetMapping("/transaction/provider/{id}/deposit/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findByProviderIDTypeDepositDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findByProviderIDTypeDepositDateInterval(id, dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction for Deposit for such Provider found within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findByProviderIDTypeDepositDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findByProviderIDTypeDepositDateInterval(id, dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	@GetMapping("/transaction/provider/{id}/bookingFee/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findByProviderIDTypeBookingFeeDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findByProviderIDTypeBookingFeeDateInterval(id, dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction for Booking Fee for such Provider found within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findByProviderIDTypeBookingFeeDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findByProviderIDTypeBookingFeeDateInterval(id, dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	@GetMapping("/transaction/provider/{id}/subscriptionFee/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Transaction>> findByProviderIDBySubscriptionFeeDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
-		List<Transaction> transaction = transactionService.findByProviderIDBySubscriptionFeeDateInterval(id, dateMin, dateMax);
-		if(transaction.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(transaction);
-		return ResponseEntity.notFound().header("message", "No Transaction for Subscription Fee for such Provider found within such Date interval").build();
+	public ResponseEntity<List<TransactionObject>> findByProviderIDBySubscriptionFeeDateInterval(@PathVariable("id") long id, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transaction> ls = transactionService.findByProviderIDBySubscriptionFeeDateInterval(id, dateMin, dateMax);
+		List<TransactionObject> list = transactionService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
 	@PostMapping("/walletID/{walletID}/type/{type}/{id}/transaction")

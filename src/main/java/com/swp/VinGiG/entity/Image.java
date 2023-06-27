@@ -52,7 +52,7 @@ public class Image implements Serializable{
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = ProviderService.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "proServiceID", referencedColumnName = "proServiceID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "proServiceID", referencedColumnName = "proServiceID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private ProviderService providerService;

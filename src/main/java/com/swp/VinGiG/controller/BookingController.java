@@ -273,6 +273,7 @@ public class BookingController {
 			switch (action) {
 			case Constants.BOOKING_ACCEPT:
 				temp = bookingService.acceptBooking(booking);
+				if(temp == null) return ResponseEntity.badRequest().header("message", "Failed to make a transaction to thr provider's account").build();
 				break;
 
 			case Constants.BOOKING_DECLINE:
@@ -281,6 +282,10 @@ public class BookingController {
 
 			case Constants.BOOKING_COMPLETE:
 				temp = bookingService.completeBooking(booking, total);
+				break;
+				
+			case Constants.BOOKING_CANCEL:
+				temp = bookingService.cancelBooking(booking);
 				break;
 			}
 			if (temp != null)

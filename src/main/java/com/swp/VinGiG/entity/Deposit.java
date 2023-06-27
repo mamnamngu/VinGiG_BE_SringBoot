@@ -60,7 +60,7 @@ public class Deposit implements Serializable{
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Provider provider;

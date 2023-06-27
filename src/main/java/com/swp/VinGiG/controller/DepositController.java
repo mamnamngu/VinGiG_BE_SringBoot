@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,63 +15,80 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.swp.VinGiG.entity.Deposit;
+import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.DepositService;
+import com.swp.VinGiG.service.ProviderService;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.DepositObject;
 
 public class DepositController {
 	@Autowired
 	private DepositService depositService;
 	
+	@Autowired
+	private ProviderService providerService;
+	
 	
 	@GetMapping("/deposits")
-	public ResponseEntity<List<Deposit>> retrieveAllDeposits(){
-		return ResponseEntity.ok(depositService.findAll());
+	public ResponseEntity<List<DepositObject>> retrieveAllDeposits(){
+		List<Deposit> ls = depositService.findAll();
+		List<DepositObject> list = depositService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/deposit/{id}")
-	public ResponseEntity<Deposit> retrieveDeposit(@PathVariable int id) {
+	public ResponseEntity<DepositObject> retrieveDeposit(@PathVariable int id) {
 		Deposit deposit = depositService.findById(id);
 		if(deposit != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(deposit);
+			List<Deposit> ls = new ArrayList<>();
+			ls.add(deposit);
+			List<DepositObject> list = depositService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
-	@GetMapping("/provider/{id}/deposit/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Deposit>> findByProviderIDInterval(@PathVariable long id, @PathVariable Date dateMin, @PathVariable Date dateMax ){
-
-		List<Deposit> ls = depositService.findByProviderIDDateInterval(id,dateMin, dateMax);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
-			return ResponseEntity.notFound().build();
-	
-	}
-	@GetMapping("/deposit/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Deposit>> findByDateInterval( @PathVariable Date dateMin, @PathVariable Date dateMax ){
-
-		List<Deposit> ls = depositService.findByDateInterval(dateMin, dateMax);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
-			return ResponseEntity.notFound().build();
-	
-	}
-	@GetMapping("/deposit/{method}/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Deposit>> findByfindByMethod(@PathVariable("method") String method, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr){
+	@GetMapping("/provider/{id}/deposit/date/{dateMin}/{dateMax}")
+	public ResponseEntity<List<DepositObject>> findByProviderIDInterval(@PathVariable long id, @PathVariable String dateMinStr, @PathVariable String dateMaxStr){
 		Date dateMin = Constants.strToDate(dateMinStr);
 		Date dateMax = Constants.strToDate(dateMaxStr);
-		List<Deposit> ls = depositService.findByMethod(method, dateMin, dateMax);
-		if(ls.size() > 0)
-			return ResponseEntity.status(HttpStatus.OK).body(ls);
-		else 
-			return ResponseEntity.notFound().build();
+		
+		List<Deposit> ls = depositService.findByProviderIDDateInterval(id,dateMin, dateMax);
+		List<DepositObject> list = depositService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
-	@PostMapping("/deposit")
-	public ResponseEntity<Deposit> createBuilding(@RequestBody Deposit deposit){
+	@GetMapping("/deposit/date/{dateMin}/{dateMax}")
+	public ResponseEntity<List<DepositObject>> findByDateInterval( @PathVariable String dateMinStr, @PathVariable String dateMaxStr){
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Deposit> ls = depositService.findByDateInterval(dateMin, dateMax);
+		List<DepositObject> list = depositService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+	
+	@GetMapping("/deposit/method/{method}/date/{dateMin}/{dateMax}")
+	public ResponseEntity<List<DepositObject>> findByfindByMethod(@PathVariable("method") String method, @PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr){
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Deposit> ls = depositService.findByMethod(method, dateMin, dateMax);
+		List<DepositObject> list = depositService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+	
+	@PostMapping("/provider/{id}/deposit")
+	public ResponseEntity<Deposit> createDeposit(@PathVariable("id") long id, @RequestBody Deposit deposit){
 		try {
+			Provider provider = providerService.findById(id);
+			if(provider == null) return ResponseEntity.notFound().header("message", "No Provider with such ID found").build();
+			
+			if(depositService.findById(deposit.getDepositID()) != null)
+				return ResponseEntity.badRequest().header("message", "Deposit with such ID already exists.").build();
+			
+			deposit.setProvider(provider);
 			Deposit saveDeposit = depositService.add(deposit);
 			return ResponseEntity.status(HttpStatus.CREATED).body(saveDeposit);
 		}catch(Exception e) {
@@ -78,11 +96,15 @@ public class DepositController {
 		}
 	}
 	
-	@PutMapping("/deposit")
-	public ResponseEntity<Deposit> updateBuilding(@RequestBody Deposit deposit){
+	@PutMapping("/provider/{id}/deposit")
+	public ResponseEntity<Deposit> updateDeposit(@PathVariable("id") long id, @RequestBody Deposit deposit){
 		if(depositService.findById(deposit.getDepositID()) == null)
 			return ResponseEntity.notFound().header("message", "No Deposit found for such ID").build();
 		
+		Provider provider = providerService.findById(id);
+		if(provider == null) return ResponseEntity.notFound().header("message", "No Provider with such ID found").build();
+
+		deposit.setProvider(provider);
 		Deposit updatedDeposit = depositService.update(deposit);
 		if(updatedDeposit!= null)
 			return ResponseEntity.ok(updatedDeposit);
@@ -92,6 +114,9 @@ public class DepositController {
 	@DeleteMapping("/deposit/{id}")
 	public ResponseEntity<Void> deleteDeposit(@PathVariable int id){
 		try{
+			if(depositService.findById(id) == null)
+				return ResponseEntity.notFound().header("message", "No Deposit found for such ID").build();
+			
 			depositService.delete(id);
 			return ResponseEntity.noContent().header("message", "deposit deleted successfully").build();
 		}

@@ -55,34 +55,34 @@ public class Transaction implements Serializable{
 //	@Column(name = "subID", nullable = true, insertable = false, updatable = false)
 //	private long subID;
 	
-	@Column(name = "amount", nullable = false, insertable = false, updatable = false)
+	@Column(name = "amount", nullable = false, insertable = true, updatable = false)
 	private long amount;
 	
-	@Column(name = "date", nullable = false, insertable = false, updatable = false)
+	@Column(name = "date", nullable = false, insertable = true, updatable = false)
 	private Date date;
 	
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Wallet.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "walletID", referencedColumnName = "walletID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "walletID", referencedColumnName = "walletID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Wallet wallet;
 	
 	@ManyToOne(targetEntity = BookingFee.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "bookingFeeID", referencedColumnName = "bookingFeeID", nullable = true, insertable = false, updatable = false)
+	@JoinColumn(name = "bookingFeeID", referencedColumnName = "bookingFeeID", nullable = true, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private BookingFee bookingFee;
 	
 	@ManyToOne(targetEntity = Deposit.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "depositID", referencedColumnName = "depositID", nullable = true, insertable = false, updatable = false)
+	@JoinColumn(name = "depositID", referencedColumnName = "depositID", nullable = true, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Deposit deposit;
 	
 	@ManyToOne(targetEntity = SubscriptionFee.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "subID", referencedColumnName = "subID", nullable = true, insertable = false, updatable = false)
+	@JoinColumn(name = "subID", referencedColumnName = "subID", nullable = true, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private SubscriptionFee subscriptionFee;

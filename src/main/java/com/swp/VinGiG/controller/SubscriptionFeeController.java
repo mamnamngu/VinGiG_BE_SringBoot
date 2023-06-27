@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import com.swp.VinGiG.entity.SubscriptionPlan;
 import com.swp.VinGiG.service.ProviderService;
 import com.swp.VinGiG.service.SubscriptionFeeService;
 import com.swp.VinGiG.service.SubscriptionPlanService;
+import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.SubscriptionFeeObject;
 
 @RestController
 public class SubscriptionFeeController {
@@ -33,15 +36,20 @@ public class SubscriptionFeeController {
 	private SubscriptionPlanService subscriptionPlanService;
 
 	@GetMapping("/subscriptionFees")
-	public ResponseEntity<List<SubscriptionFee>> retrieveAllSubscriptionFees() {
-		return ResponseEntity.ok(subscriptionFeeService.findAll());
+	public ResponseEntity<List<SubscriptionFeeObject>> retrieveAllSubscriptionFees() {
+		List<SubscriptionFee> ls = subscriptionFeeService.findAll();
+		List<SubscriptionFeeObject> list = subscriptionFeeService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	@GetMapping("/subscriptionFee/{id}")
-	public ResponseEntity<SubscriptionFee> retrieveSubscriptionFee(@PathVariable int id) {
+	public ResponseEntity<SubscriptionFeeObject> retrieveSubscriptionFee(@PathVariable int id) {
 		SubscriptionFee subscriptionFee = subscriptionFeeService.findById(id);
 		if (subscriptionFee != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(subscriptionFee);
+			List<SubscriptionFee> ls = new ArrayList<>();
+			ls.add(subscriptionFee);
+			List<SubscriptionFeeObject> list = subscriptionFeeService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		} else {
 			return ResponseEntity.notFound().build();
 		}
@@ -49,29 +57,43 @@ public class SubscriptionFeeController {
 
 	// admin
 	@GetMapping("/subscriptionFees/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<SubscriptionFee>> findByDateInterval(@PathVariable("dateMin") Date dateMin,
-			@PathVariable("dateMax") Date dateMax) {
-		return ResponseEntity.ok(subscriptionFeeService.findByDateInterval(dateMin, dateMax));
+	public ResponseEntity<List<SubscriptionFeeObject>> findByDateInterval(@PathVariable("dateMin") String dateMinStr,
+			@PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		List<SubscriptionFee> ls = subscriptionFeeService.findByDateInterval(dateMin, dateMax);
+		List<SubscriptionFeeObject> list = subscriptionFeeService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 
 	// admin
 	@GetMapping("/subscriptionPlan/{id}/subscriptionFees/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<SubscriptionFee>> findByPlanIDDateInterval(@PathVariable("id") int id,
-			@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
+	public ResponseEntity<List<SubscriptionFeeObject>> findByPlanIDDateInterval(@PathVariable("id") int id,
+			@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {	
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
 		SubscriptionPlan plan = subscriptionPlanService.findById(id);
 		if (plan != null) {
-			return ResponseEntity.ok(subscriptionFeeService.findByPlanPlanIDAndDateBetween(id, dateMin, dateMax));
+			List<SubscriptionFee> ls = subscriptionFeeService.findByPlanPlanIDAndDateBetween(id, dateMin, dateMax);
+			List<SubscriptionFeeObject> list = subscriptionFeeService.display(ls);
+			return ResponseEntity.ok(list);
 		} else
 			return ResponseEntity.notFound().header("message", "No Subscription Plan found for such ID").build();
 	}
 
 	// provider
 	@GetMapping("/provider/{id}/subscriptionFees/date/{dateMin}/{dateMax}")
-	public ResponseEntity<List<SubscriptionFee>> findByProviderIDDateInterval(@PathVariable("id") long id,
-			@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax) {
+	public ResponseEntity<List<SubscriptionFeeObject>> findByProviderIDDateInterval(@PathVariable("id") long id,
+			@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
 		Provider provider = providerService.findById(id);
 		if (provider != null) {
-			return ResponseEntity.ok(subscriptionFeeService.findByProviderIDDateInterval(id, dateMin, dateMax));
+			List<SubscriptionFee> ls = subscriptionFeeService.findByProviderIDDateInterval(id, dateMin, dateMax);
+			List<SubscriptionFeeObject> list = subscriptionFeeService.display(ls);
+			return ResponseEntity.ok(list);
 		} else
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
 	}
@@ -86,6 +108,9 @@ public class SubscriptionFeeController {
 			Provider provider = providerService.findById(providerID);
 			if (provider == null)
 				return ResponseEntity.notFound().header("message", "No Provider found for such providerID").build();
+
+			if (subscriptionFeeService.findById(subscriptionFee.getSubID()) == null)
+				return ResponseEntity.badRequest().header("message", "SubscriptionFee with such ID already exists").build();
 
 			subscriptionFee.setPlan(plan);
 			subscriptionFee.setProvider(provider);
@@ -125,6 +150,9 @@ public class SubscriptionFeeController {
 	@DeleteMapping("/subscriptionFee/{id}")
 	public ResponseEntity<Void> deleteSubscriptionFee(@PathVariable int id) {
 		try {
+			if (subscriptionFeeService.findById(id) == null)
+				return ResponseEntity.notFound().header("message", "No SubscriptionFee found for such ID").build();
+
 			subscriptionFeeService.delete(id);
 			return ResponseEntity.noContent().header("message", "subscriptionFee deleted successfully").build();
 		} catch (Exception e) {

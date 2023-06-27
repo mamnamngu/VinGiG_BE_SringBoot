@@ -60,13 +60,13 @@ public class SubscriptionFee implements Serializable{
 	//RELATIONSHIP SETUP
 	
 	@ManyToOne(targetEntity = Provider.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "providerID", referencedColumnName = "providerID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private Provider provider;
 	
 	@ManyToOne(targetEntity = SubscriptionPlan.class, fetch = FetchType.LAZY)
-	@JoinColumn(name = "planID", referencedColumnName = "planID", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "planID", referencedColumnName = "planID", nullable = false, insertable = true, updatable = false)
 	@JsonIgnore
 	@ToString.Exclude
 	private SubscriptionPlan plan;

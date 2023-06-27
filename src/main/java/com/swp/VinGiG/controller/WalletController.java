@@ -1,5 +1,6 @@
 package com.swp.VinGiG.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.service.ProviderService;
 import com.swp.VinGiG.service.WalletService;
+import com.swp.VinGiG.view.WalletObject;
 
 @Controller
 public class WalletController {
@@ -28,42 +30,63 @@ public class WalletController {
 	@Autowired
 	private ProviderService providerService;
 	
+	//Admin
 	@GetMapping("/wallets")
-	public ResponseEntity<List<Wallet>> retrieveAllWallets(){
-		return ResponseEntity.ok(walletService.findAll());
+	public ResponseEntity<List<WalletObject>> retrieveAllWallets(){
+		List<Wallet> ls = walletService.findAll();
+		List<WalletObject> list = walletService.display(ls);
+		return ResponseEntity.ok(list);
+    }
+	
+	@GetMapping("/wallets/deleted")
+	public ResponseEntity<List<WalletObject>> retrieveAllDeletedWallets(){
+		List<Wallet> ls = walletService.findDeletedWallet();
+		List<WalletObject> list = walletService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	@GetMapping("/wallet/{id}")
-	public ResponseEntity<Wallet> retrieveWallet(@PathVariable long id) {
+	public ResponseEntity<WalletObject> retrieveWallet(@PathVariable long id) {
 		Wallet wallet = walletService.findById(id);
 		if(wallet != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(wallet);
+			List<Wallet> ls = new ArrayList<>();
+			ls.add(wallet);
+			List<WalletObject> list = walletService.display(ls);
+			return ResponseEntity.status(HttpStatus.OK).body(list.get(0));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@GetMapping("/provider/{id}/wallets")
-	public ResponseEntity<List<Wallet>> retrieveAllWalletsOfCategory(@PathVariable long id){
+	public ResponseEntity<List<WalletObject>> findByProviderID(@PathVariable long id){
 		Provider provider = providerService.findById(id);
-		if(provider != null)
-			return ResponseEntity.ok(walletService.findByProviderId(id));
-		else return ResponseEntity.notFound().build();
+		if(provider != null) {
+			List<Wallet> ls = walletService.findByProviderId(id);
+			List<WalletObject> list = walletService.display(ls);
+			return ResponseEntity.ok(list);
+		}else return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
     }
 	
 	@GetMapping("/provider/balanceBelowThreshold")
-	public ResponseEntity<List<Wallet>> findByBalanceBelowThreshold(){
-		return ResponseEntity.ok(walletService.findByBalanceBelowThreshold());
+	public ResponseEntity<List<WalletObject>> findByBalanceBelowThreshold(){
+		List<Wallet> ls = walletService.findByBalanceBelowThreshold();
+		List<WalletObject> list = walletService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 	
 	@GetMapping("/wallets/createDate/{dateMin}/{dateMax}")
-	public ResponseEntity<List<Wallet>> findByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax){
-		return ResponseEntity.ok(walletService.findByCreateDateInterval(dateMin,dateMax));
+	public ResponseEntity<List<WalletObject>> findByCreateDateInterval(@PathVariable("dateMin") Date dateMin, @PathVariable("dateMax") Date dateMax){
+		List<Wallet> ls = walletService.findByCreateDateInterval(dateMin,dateMax);
+		List<WalletObject> list = walletService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 	
-	@GetMapping("/provider/balance/{lower}/{upper}")
-	public ResponseEntity<List<Wallet>> findByBalanceInterval(@PathVariable("lower") long lower, @PathVariable("upper") long upper){
-		return ResponseEntity.ok(walletService.findByBalanceInterval(lower,upper));
+	@GetMapping("/wallets/balance/{lower}/{upper}")
+	public ResponseEntity<List<WalletObject>> findByBalanceInterval(@PathVariable("lower") long lower, @PathVariable("upper") long upper){
+		List<Wallet> ls = walletService.findByBalanceInterval(lower,upper);
+		List<WalletObject> list = walletService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 	
 	@PostMapping("/provider/{id}/wallet")
@@ -71,6 +94,9 @@ public class WalletController {
 		try {
 			Provider provider = providerService.findById(id);
 			if(provider == null) return ResponseEntity.notFound().header("message", "Provider not found. Adding failed").build();
+			
+			if(walletService.findById(wallet.getWalletID()) != null)
+				return ResponseEntity.badRequest().header("message", "Wallet with such ID already exists").build();
 			
 			wallet.setProvider(provider);
 			Wallet savedWallet = walletService.add(wallet);
@@ -87,7 +113,7 @@ public class WalletController {
 		try {
 			Provider provider = providerService.findById(id);
 			if(provider == null) return ResponseEntity.notFound().header("message", "Provider not found. Update failed").build();
-			
+
 			if(walletService.findById(wallet.getWalletID()) == null) return ResponseEntity.notFound().header("message", "Wallet with such ID not found. Update failed").build();
 			
 			wallet.setProvider(provider);
@@ -103,6 +129,8 @@ public class WalletController {
 	@DeleteMapping("/wallet/{id}")
 	public ResponseEntity<Void> deleteWallet(@PathVariable long id){
 		try{
+			if(walletService.findById(id) == null) return ResponseEntity.notFound().header("message", "Wallet with such ID not found. Update failed").build();
+			
 			walletService.delete(id);
 			return ResponseEntity.noContent().header("message", "Wallet deleted successfully").build();
 		}
