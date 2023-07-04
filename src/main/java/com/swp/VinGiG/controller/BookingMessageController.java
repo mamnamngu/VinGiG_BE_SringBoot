@@ -63,10 +63,13 @@ public class BookingMessageController {
 			BookingMessageBox y = new BookingMessageBox();
 			y.setBookingID(x.getBookingID());
 			y.setProviderID(x.getProviderService().getProvider().getProviderID());
-			y.setFullName(x.getProviderService().getProvider().getFullName());
+			y.setProviderFullName(x.getProviderService().getProvider().getFullName());
 			y.setServiceID(x.getProviderService().getService().getServiceID());
 			y.setServiceName(x.getProviderService().getService().getServiceName());
-			y.setAvatar(x.getProviderService().getProvider().getAvatar());
+			y.setProviderAvatar(x.getProviderService().getProvider().getAvatar());
+			y.setCustomerID(x.getCustomer().getCustomerID());
+			y.setCustomerFullName(x.getCustomer().getFullName());
+			y.setCustomerAvatar(x.getCustomer().getAvatar());
 			list.add(y);
 		}
 		return ResponseEntity.ok(list);
@@ -81,10 +84,13 @@ public class BookingMessageController {
 			BookingMessageBox y = new BookingMessageBox();
 			y.setBookingID(x.getBookingID());
 			y.setProviderID(x.getProviderService().getProvider().getProviderID());
-			y.setFullName(x.getProviderService().getProvider().getFullName());
+			y.setProviderFullName(x.getProviderService().getProvider().getFullName());
 			y.setServiceID(x.getProviderService().getService().getServiceID());
 			y.setServiceName(x.getProviderService().getService().getServiceName());
-			y.setAvatar(x.getProviderService().getProvider().getAvatar());
+			y.setProviderAvatar(x.getProviderService().getProvider().getAvatar());
+			y.setCustomerID(x.getCustomer().getCustomerID());
+			y.setCustomerFullName(x.getCustomer().getFullName());
+			y.setCustomerAvatar(x.getCustomer().getAvatar());
 			list.add(y);
 		}
 		return ResponseEntity.ok(list);

@@ -1,6 +1,7 @@
 package com.swp.VinGiG.view;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,28 +19,18 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Data
 
-public class BookingMessageBox implements Serializable{
+public class BookingMessageObject implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	//BookingMessage
+	private long messageID;
+	private boolean sendBy;
+	private String content;
+	private Date time;
+	
 	//Booking
 	private long bookingID;
-	
-	//Provider
-	private long providerID;
-	private String providerFullName;
-	private String providerAvatar;
-	
-	//Customer
-	private long customerID;
-	private String customerFullName;
-	private String customerAvatar;
-	
-	//GiGService
-	private long serviceID;
-	private String serviceName;
-	
 }
