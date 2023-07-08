@@ -129,7 +129,7 @@ public class BookingController {
 		if (provider == null)
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
 		
-		List<Booking> ls = bookingService.findByProServiceIDByDateInterval(id, dateMin, dateMax);
+		List<Booking> ls = bookingService.findByProviderIDByDateInterval(id, dateMin, dateMax);
 		List<BookingObject> list = bookingService.display(ls);
 		return ResponseEntity.ok(list);
 	}

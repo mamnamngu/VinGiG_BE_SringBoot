@@ -127,6 +127,20 @@ public class BookingService {
 		return bookingRepo.findByProServiceIDByDateIntervalHistory(proServiceID, dateMin, dateMax);
 	}
 	
+	//display booking history by proServiceID over a time interval
+		public List<Booking> findByProviderIDByDateInterval(long providerID, Date dateMin, Date dateMax){
+			if(dateMin == null) dateMin = Constants.START_DATE;
+			if(dateMax == null) dateMax = Constants.currentDate();
+			Provider provider = providerService.findById(providerID);
+			if(provider == null) return null;
+			
+			List<com.swp.VinGiG.entity.ProviderService> ls = providerServiceService.findByProviderID(providerID);
+			List<Booking> list = new ArrayList<>();
+			for(com.swp.VinGiG.entity.ProviderService x:ls)
+				list.addAll(bookingRepo.findByProServiceIDByDateIntervalHistory(x.getProServiceID(), dateMin, dateMax));
+			return list;
+		}
+	
 	//ADD
 	private Booking add(Booking booking) {
 		return bookingRepo.save(booking);
