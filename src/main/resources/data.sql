@@ -2405,7 +2405,7 @@ INSERT INTO Image(link, proServiceID) VALUES ('https://giupviectot.vn/wp-content
 INSERT INTO Image(link, proServiceID) VALUES ('https://static.chotot.com/storage/chotot-kinhnghiem/c2c/2020/12/tuyen-giup-viec-theo-gio-tai-nha-rieng-quan-12.jpg', 105);
 INSERT INTO Image(link, proServiceID) VALUES ('https://danviet.mediacdn.vn/upload/2-2017/images/2017-06-16/149760075623937-dich-vu-giup-viec-sang-den-toi-ve.jpg', 106);
 INSERT INTO Image(link, proServiceID) VALUES ('https://media.lamchame.vn/images/2018/09/06/gettyimages-169270362.jpg', 107);
-INSERT INTO Image(link, proServiceID) VALUES ('https://scontent-lax3-1.xx.fbcdn.net/v/t39.30808-6/274999277_135259772370221_917396418720461175_n.jpg?stp=dst-jpg_p640x640&_nc_cat=110&ccb=1-7&_nc_sid=8631f5&_nc_ohc=U8ovtmaZRM8AX9g_Nau&_nc_ht=scontent-lax3-1.xx&oh=00_AfAGnfaodk4YLFDpttX8ACf03KIMPd4n-AYIxXnL4GlsDQ&oe=649E6002', 108);
+INSERT INTO Image(link, proServiceID) VALUES ('https://hoanmy.vn/public/upload/files/dich-vu-ve-sinh-nha-cua-281.jpg', 108);
 INSERT INTO Image(link, proServiceID) VALUES ('https://giupviectot.vn/wp-content/uploads/2020/04/Ti%CC%80m-vie%CC%A3%CC%82c-giu%CC%81p-vie%CC%A3%CC%82c-nha%CC%80-theo-gio%CC%9B%CC%80-3-scaled.jpeg', 109);
 INSERT INTO Image(link, proServiceID) VALUES ('https://giupviectot.vn/wp-content/uploads/2020/04/Ti%CC%80m-ngu%CC%9Bo%CC%9B%CC%80i-giu%CC%81p-vie%CC%A3%CC%82c-theo-gio%CC%9B%CC%80-7-2048x1536.jpeg', 110);
 INSERT INTO Image(link, proServiceID) VALUES ('https://naturalqueen.com.vn/wp-content/uploads/2020/09/nhan-vien-natural-queen-cham-soc-cho-be-tai-nha.jpg', 111);
@@ -2429,7 +2429,7 @@ INSERT INTO Image(link, proServiceID) VALUES ('https://img.thuocbietduoc.com.vn/
 INSERT INTO Image(link, proServiceID) VALUES ('https://scontent-lax3-2.xx.fbcdn.net/v/t1.6435-9/60254250_2047919111985133_3441300661398929408_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=8bfeb9&_nc_ohc=gsRvh8u_RIgAX8avshY&_nc_ht=scontent-lax3-2.xx&oh=00_AfC67_vHSf1wOsYnx2maciXq1NmOc6lEUuvwhLcycBvSxg&oe=64C0CFFA', 129);
 INSERT INTO Image(link, proServiceID) VALUES ('https://phongkhamdakhoatambinh.com/wp-content/uploads/2022/04/dieu-duong-tai-nha.jpg', 130);
 INSERT INTO Image(link, proServiceID) VALUES ('http://www.dongnaicdc.vn/UserFiles/Images/2020/Thang%208/bv%20lk.jpg', 131);
-INSERT INTO Image(link, proServiceID) VALUES ('https://vatlytrilieutainhahcm.com/wp-content/uploads/2019/03/thay-b%C4%83ng-v%E1%BA%BFt-th%C6%B0%C6%A1ng-t%E1%BA%A1i-nh%C3%A0-hcm.jpg', 132);
+INSERT INTO Image(link, proServiceID) VALUES ('http://vatlytrilieutainhahcm.com/wp-content/uploads/2019/03/thay-b%C4%83ng-v%E1%BA%BFt-th%C6%B0%C6%A1ng-t%E1%BA%A1i-nh%C3%A0-hcm.jpg', 132);
 INSERT INTO Image(link, proServiceID) VALUES ('https://ssl.latcdn.com/img/0DcXJ4_AE-can-nguoi-cham-nguoi-benh-tai-benh-vien.png', 133);
 INSERT INTO Image(link, proServiceID) VALUES ('http://tbh.vn/tbh-filemanager/photos/1/Post/FUJI0191.png', 134);
 INSERT INTO Image(link, proServiceID) VALUES ('https://cpt-medical.com/wp-content/uploads/2020/09/buoc-chi-vet-thuong-1.jpg', 135);
@@ -2439,14 +2439,14 @@ INSERT INTO Image(link, proServiceID) VALUES ('http://medicviet.vn/uploads/image
 INSERT INTO Image(link, proServiceID) VALUES ('https://xetnghiemdanang.com/wp-content/uploads/2019/06/xet-nghiem-mau-tai-nha-benh-vien-da-khoa-medlatec-min-768x511.jpg', 139);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vnn-imgs-a1.vgcloud.vn/image1.ictnews.vn/_Files/2020/04/13/20200317_152344.jpg', 140);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vcdn-giadinh.vnecdn.net/2023/06/01/hoa-qua-2-2010-1685603557.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=2Zun_dIFnSuPiFOfsfIvVw', 141);
-INSERT INTO Image(link, proServiceID) VALUES ('https://moit.gov.vn/upload/2005517/20210802/grab8641becabf03c0a16fd48a407.jpg', 142);
+INSERT INTO Image(link, proServiceID) VALUES ('https://images.hcmcpv.org.vn/res/news/2021/08/24-08-2021-nguoi-dan-muon-dang-ky-di-cho-ho-lien-he-to-dan-pho-de-duoc-ho-tro-F4A98D6C.jpg', 142);
 INSERT INTO Image(link, proServiceID) VALUES ('https://media.vneconomy.vn/w800/images/upload/2021/08/30/viettel-post-giao-don-hang-di-cho-ho-d7769.JPG', 143);
-INSERT INTO Image(link, proServiceID) VALUES ('https://moit.gov.vn/upload/2005517/fck/files/San_TMDT_Vo_So_di_cho_ho_1_6f155.jpg', 144);
+INSERT INTO Image(link, proServiceID) VALUES ('https://images.hcmcpv.org.vn/res/news/2021/08/24-08-2021-nguoi-dan-muon-dang-ky-di-cho-ho-lien-he-to-dan-pho-de-duoc-ho-tro-F4A98D6C.jpg', 144);
 INSERT INTO Image(link, proServiceID) VALUES ('https://images.hcmcpv.org.vn/res/news/2021/08/24-08-2021-nguoi-dan-muon-dang-ky-di-cho-ho-lien-he-to-dan-pho-de-duoc-ho-tro-7ACBFD3C-details.jpg?vs=24082021101515', 145);
 INSERT INTO Image(link, proServiceID) VALUES ('https://www.cleanipedia.com/images/5iwkm8ckyw6v/2Y5qEls4VrKkWv6sU6qGmv/d8cbe50b1c4446b53ac772182c159180/aDIuanBn/900w-600h/%C6%B0u-%C4%91i%E1%BB%83m-d%E1%BB%8Bch-v%E1%BB%A5-%C4%91i-ch%E1%BB%A3-online-btaskee.avif', 146);
-INSERT INTO Image(link, proServiceID) VALUES ('https://danviet.mediacdn.vn/thumb_w/650/296231569849192448/2021/8/28/base64-1630140167978313921004.png', 147);
+INSERT INTO Image(link, proServiceID) VALUES ('https://chandat.net/testx/wp-content/uploads/2021/07/dat-hang-online.jpg', 147);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vcdn-kinhdoanh.vnecdn.net/2021/09/10/quyn2427-1631250479-2794-1631250778.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=pP_JaH8UOa7j5mCAZO0_ZA', 148);
-INSERT INTO Image(link, proServiceID) VALUES ('https://moit.gov.vn/upload/2005517/fck/files/San_TMDT_Vo_So_di_cho_ho_2_769d4.jpg', 149);
+INSERT INTO Image(link, proServiceID) VALUES ('https://www.cleanipedia.com/images/5iwkm8ckyw6v/2Y5qEls4VrKkWv6sU6qGmv/d8cbe50b1c4446b53ac772182c159180/aDIuanBn/900w-600h/%C6%B0u-%C4%91i%E1%BB%83m-d%E1%BB%8Bch-v%E1%BB%A5-%C4%91i-ch%E1%BB%A3-online-btaskee.jpg', 149);
 INSERT INTO Image(link, proServiceID) VALUES ('https://baodongkhoi.vn/image/fckeditor/upload/2021/20210728/images/di-cho1.jpg', 150);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vtv1.mediacdn.vn/thumb_w/650/2021/8/25/vnapotalcovid-19tphochiminhdaymanhviecgiupnguoidanmuahanghoathucphamtrongnhungngaygiancachxahoi5625964-1629866732798765216551.jpg', 151);
 INSERT INTO Image(link, proServiceID) VALUES ('https://lotushotel.vn/wp-content/uploads/2021/01/vai-tro-cua-bo-phan-giat-la-tai-khach-san-dem-lai-nguon-thu-thap-cao-cua-khach-san.jpg', 152);
@@ -2454,7 +2454,7 @@ INSERT INTO Image(link, proServiceID) VALUES ('https://maygiatcongnghiep1.com/wp
 INSERT INTO Image(link, proServiceID) VALUES ('https://apprada.vn/images/services/dvgd-giatla.jpg', 154);
 INSERT INTO Image(link, proServiceID) VALUES ('https://scontent-lax3-2.xx.fbcdn.net/v/t1.15752-9/354335925_809635434092551_7541483309020084066_n.png?_nc_cat=101&ccb=1-7&_nc_sid=ae9488&_nc_ohc=Rem8h8DMdMgAX-S8xGd&_nc_ht=scontent-lax3-2.xx&oh=03_AdQQc_Tc3oAeNAtjXXiS7YHWk_bdDlmQ8N_xWQ-KLf23Uw&oe=64C0D262', 155);
 INSERT INTO Image(link, proServiceID) VALUES ('https://maygiatcongnghiep.org/themes/images/uploads/blogs/Cac-thiet-bi-can-thiet-khi-ban-quyet-dinh-kinh-doanh-giat-la1.jpg', 156);
-INSERT INTO Image(link, proServiceID) VALUES ('https://giatsaytiktak247.com/upload/filemanager/Images/giat-ui-cong-nghiep-gym-spa-ho-boi-2.jpg', 157);
+INSERT INTO Image(link, proServiceID) VALUES ('https://cdnimg.vietnamplus.vn/t1200/Uploaded/qrndqxjwp/2023_01_11/32165751561946039872256013649942885393414228n.jpg', 157);
 INSERT INTO Image(link, proServiceID) VALUES ('http://img.360dalat.com/resize/730x-/2021/05/07/giat-ui-da-lat-7b7d.jpg', 158);
 INSERT INTO Image(link, proServiceID) VALUES ('http://img.360dalat.com/resize/730x-/2021/05/07/giat-ui-a85c.jpg', 159);
 INSERT INTO Image(link, proServiceID) VALUES ('https://codon.vn/help/blogs/kinh-nghiem-mo-tiem-giat-la-cho-nguoi-moi-bat-dau-10.jpg', 160);
@@ -2467,7 +2467,7 @@ INSERT INTO Image(link, proServiceID) VALUES ('https://file.hstatic.net/10002885
 INSERT INTO Image(link, proServiceID) VALUES ('https://bizweb.dktcdn.net/thumb/1024x1024/100/394/661/products/dich-vu-giat-rem-cua-chuyen-nghiep-gia-re-tai-quang-trung-hoan-kiem-ha-noi.jpg?v=1607960009487', 167);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vesinhanhduongxanh.com/wp-content/uploads/2022/05/dich-vu-giat-rem-cua-cao-cap-hai-phong-2.jpg', 168);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vesinhhaotam.com/wp-content/uploads/2020/03/1-1.jpg', 169);
-INSERT INTO Image(link, proServiceID) VALUES ('https://top1hue.com/StoreData/images/PageData/giat-rem-cua-tai-hue-2.jpg', 170);
-INSERT INTO Image(link, proServiceID) VALUES ('https://vesinhcongnghiepquangngai.com/wp-content/uploads/2022/10/giat-rem-cua-quang-ngai-1.jpg', 171);
+INSERT INTO Image(link, proServiceID) VALUES ('https://dienlanhtienphat.com/wp-content/uploads/2020/06/v%E1%BB%87-sinh-m%C3%A1y-gi%E1%BA%B7t-c%E1%BB%ADa-ngang-2.jpg', 170);
+INSERT INTO Image(link, proServiceID) VALUES ('https://maycodien.com/wp-content/uploads/2023/03/ve-sinh-may-giat-da-nang-9.jpeg', 171);
 INSERT INTO Image(link, proServiceID) VALUES ('https://vesinhnhaviet.vn/wp-content/uploads/2023/05/dich-vu-giat-rem-cua-tai-nha-quan-2-tphcm-2.jpg', 172);
-INSERT INTO Image(link, proServiceID) VALUES ('https://baotrif24.com/wp-content/uploads/2020/08/dich-vu-giat-rem-man-2.jpg', 173);
+INSERT INTO Image(link, proServiceID) VALUES ('https://baotridienlanh.com/wp-content/uploads/2014/08/ve-sinh-may-giat.jpg', 173);
