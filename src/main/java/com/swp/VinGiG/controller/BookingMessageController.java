@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +22,7 @@ import com.swp.VinGiG.service.BookingMessageService;
 import com.swp.VinGiG.service.BookingService;
 import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.BookingMessageBox;
+import com.swp.VinGiG.view.BookingMessageObject;
 
 @RestController
 public class BookingMessageController {
@@ -28,11 +32,16 @@ public class BookingMessageController {
 	@Autowired
 	private BookingService bookingService;
 	
+	@Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+	
 	//SEARCH
 	//admin
 	@GetMapping("/bookingMessages")
-	public ResponseEntity<List<BookingMessage>> retrieveAllBookingMessages(){
-		return ResponseEntity.ok(bookingMessageService.findAll());
+	public ResponseEntity<List<BookingMessageObject>> retrieveAllBookingMessages(){
+		List<BookingMessage> ls = bookingMessageService.findAll();
+		List<BookingMessageObject> list = bookingMessageService.display(ls);
+		return ResponseEntity.ok(list);
     }
 	
 	//admin
@@ -47,11 +56,10 @@ public class BookingMessageController {
 	}
 	
 	@GetMapping("booking/{id}/bookingMessage")
-	public ResponseEntity<List<BookingMessage>> retrieveBookingMessageByBookingID(@PathVariable long id){
-		Booking booking = bookingService.findById(id);
-		if(booking != null)
-			return ResponseEntity.ok(bookingMessageService.findByBookingID(id));
-		else return ResponseEntity.notFound().build();
+	public ResponseEntity<List<BookingMessageObject>> retrieveBookingMessageByBookingID(@PathVariable long id){
+		List<BookingMessage> ls = bookingMessageService.findByBookingID(id);
+		List<BookingMessageObject> list = bookingMessageService.display(ls);
+		return ResponseEntity.ok(list);
 	}
 	
 	//Getting all Booking that have Message for Provider
@@ -114,6 +122,38 @@ public class BookingMessageController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "Failed to add new message to corresponding booking").build();
 		}
 	}
+	
+	@MessageMapping("/messages")
+	public BookingMessageObject receiveMessage(@Payload BookingMessageObject message) {
+		try {
+			Booking booking = bookingService.findById(message.getBookingID());
+			if(booking == null) return null;
+			
+//			BookingMessage bookingMessage = new BookingMessage();
+//			bookingMessage.setBooking(booking);
+//			bookingMessage.setSendBy(message.isSendBy());
+//			bookingMessage.setContent(message.getContent());
+//			if(bookingMessage.getTime() == null) bookingMessage.setTime(Constants.currentDate());
+//			else bookingMessage.setTime(message.getTime());
+//			bookingMessageService.add(bookingMessage);
+			
+			//ROLE
+			long id;
+			if(message.isSendBy()) { //customer
+				id = booking.getProviderService().getProvider().getProviderID();
+				simpMessagingTemplate.convertAndSendToUser(Long.toString(id),"/provider/messages",message);
+				
+			}else { //provider
+				id = booking.getCustomer().getCustomerID();
+				simpMessagingTemplate.convertAndSendToUser(Long.toString(id),"/customer/messages",message);
+			}
+			return message;
+			
+		}catch(Exception e) {
+				return null;		
+		}
+	}
+	
 	
 	@DeleteMapping("/bookingMessage/{id}")
 	public ResponseEntity<Void> deleteBookingMessage(@PathVariable int id){

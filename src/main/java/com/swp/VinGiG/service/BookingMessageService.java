@@ -12,6 +12,7 @@ import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingMessage;
 import com.swp.VinGiG.repository.BookingMessageRepository;
 import com.swp.VinGiG.utilities.Constants;
+import com.swp.VinGiG.view.BookingMessageObject;
 
 @Service
 public class BookingMessageService {
@@ -87,5 +88,20 @@ public class BookingMessageService {
 			delete(x.getMessageID());
 		}
 		return ls;
+	}
+	
+	//Display
+	public List<BookingMessageObject> display(List<BookingMessage> ls){
+		List<BookingMessageObject> list = new ArrayList<>();
+		for(BookingMessage x: ls) {
+			BookingMessageObject y = new BookingMessageObject();
+			y.setMessageID(x.getMessageID());
+			y.setContent(x.getContent());
+			y.setSendBy(x.isSendBy());
+			y.setTime(x.getTime());
+			y.setBookingID(x.getBooking().getBookingID());
+			list.add(y);
+		}
+		return list;
 	}
 }

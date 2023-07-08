@@ -62,11 +62,15 @@ public class BookingService {
 	
 	//FINDING CURRENT ACTIVITY FOR CUSTOMER AND PROVIDER
 	public List<Booking> findByProviderIDGoingOn(long providerID){
-		return bookingRepo.findByProviderServiceProviderProviderIDAndStatus(providerID, Constants.BOOKING_STATUS_PENDING);
+		List<Booking> ls = new ArrayList<Booking>();
+		ls.addAll(bookingRepo.findByProviderServiceProviderProviderIDAndStatusBetween(providerID, Constants.BOOKING_STATUS_PENDING, Constants.BOOKING_STATUS_ACCEPTED));
+		return ls;
 	}
 	
 	public List<Booking> findByCustomerIDGoingOn(long customerID){
-		return bookingRepo.findByCustomerCustomerIDAndStatus(customerID, Constants.BOOKING_STATUS_PENDING);
+		List<Booking> ls = new ArrayList<>();
+		ls.addAll(bookingRepo.findByCustomerCustomerIDAndStatusBetween(customerID, Constants.BOOKING_STATUS_PENDING, Constants.BOOKING_STATUS_ACCEPTED));
+		return ls;
 	}
 	
 	//rating for customer
@@ -113,14 +117,14 @@ public class BookingService {
 	public List<Booking> findByCustomerIDByDateInterval(long customerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByCustomerIDByDateIntervalAndStatus(customerID, dateMin, dateMax, Constants.BOOKING_STATUS_COMPLETED);
+		return bookingRepo.findByCustomerIDByDateIntervalHistory(customerID, dateMin, dateMax);
 	}
 	
-	//display booking by proServiceID over a time interval
+	//display booking history by proServiceID over a time interval
 	public List<Booking> findByProServiceIDByDateInterval(long proServiceID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByProServiceIDByDateIntervalAndStatus(proServiceID, dateMin, dateMax, Constants.BOOKING_STATUS_COMPLETED);
+		return bookingRepo.findByProServiceIDByDateIntervalHistory(proServiceID, dateMin, dateMax);
 	}
 	
 	//ADD
@@ -306,12 +310,12 @@ public class BookingService {
 			y.setBookingID(x.getBookingID());
 			y.setApartment(x.getApartment());
 			y.setUnitPrice(x.getUnitPrice());
-			y.setTotal(x.getTotal());
+			if(x.getTotal() != null) y.setTotal(x.getTotal());
 			y.setStatus(x.getStatus());
 			y.setDate(x.getDate());
-			y.setProvidersRating(x.getProvidersRating());
+			if(x.getProvidersRating() != null) y.setProvidersRating(x.getProvidersRating());
 			y.setProvidersReview(x.getProvidersReview());
-			y.setCustomersRating(x.getCustomersRating());
+			if(x.getCustomersRating() != null) y.setCustomersRating(x.getCustomersRating());
 			y.setCustomersReview(x.getCustomersReview());
 			
 			Customer customer = x.getCustomer();

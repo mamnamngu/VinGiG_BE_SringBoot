@@ -10,14 +10,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.swp.VinGiG.entity.Booking;
+import com.swp.VinGiG.utilities.Constants;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpecificationExecutor<Booking>{
 
-	//Current activity. CORRECT THE STATUS TO 1 (PENDING)
-	public List<Booking> findByCustomerCustomerIDAndStatus(long customerID, int status);
+	//Current activity
+	public List<Booking> findByCustomerCustomerIDAndStatusBetween(long customerID, int statusLower, int statusUpper);
 	
-	public List<Booking> findByProviderServiceProviderProviderIDAndStatus(long providerID, int status);
+	public List<Booking> findByProviderServiceProviderProviderIDAndStatusBetween(long providerID, int statusLower, int statusUpper);
 	
 	public List<Booking> findByDateAndStatus(Date date, int status);
 	
@@ -34,10 +35,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 	public List<Booking> findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(long proServiceID);
 	
 	//History
-	@Query("SELECT a FROM Booking a WHERE a.customer.customerID = :customerID AND a.date BETWEEN :dateMin AND :dateMax AND a.status = :status")
-	public List<Booking> findByCustomerIDByDateIntervalAndStatus(@Param("customerID") long customerID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax, @Param("status") int status);
+	@Query("SELECT a FROM Booking a WHERE a.customer.customerID = :customerID AND a.date BETWEEN :dateMin AND :dateMax AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED)
+	public List<Booking> findByCustomerIDByDateIntervalHistory(@Param("customerID") long customerID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
-	@Query("SELECT a FROM Booking a WHERE a.providerService.proServiceID = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax AND a.status = :status")
-	public List<Booking> findByProServiceIDByDateIntervalAndStatus(@Param("proServiceID") long proServiceID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax, @Param("status") int status);
+	@Query("SELECT a FROM Booking a WHERE a.providerService.proServiceID = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED)
+	public List<Booking> findByProServiceIDByDateIntervalHistory(@Param("proServiceID") long proServiceID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
 }

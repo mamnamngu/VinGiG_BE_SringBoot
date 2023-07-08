@@ -63,7 +63,7 @@ public class Booking implements Serializable{
 	private long unitPrice;
 	
 	@Column(name = "total", nullable = true)
-	private long total;
+	private Long total;
 	
 	@Column(name = "status", nullable = false)
 	private int status;
@@ -71,16 +71,16 @@ public class Booking implements Serializable{
 	@Column(name = "date")
 	private Date date;
 	
-	@Column(name = "providersRating")
+	@Column(name = "providersRating", nullable = true)
 	@Size(min = Constants.REVIEW_MIN, max = Constants.REVIEW_MAX)
-	private int providersRating;
+	private Integer providersRating;
 	
 	@Column(name = "providersReview", columnDefinition = "NVARCHAR(300) NULL")
 	private String providersReview;
 	
-	@Column(name = "customersRating")
+	@Column(name = "customersRating", nullable = true)
 	@Size(min = Constants.REVIEW_MIN, max = Constants.REVIEW_MAX)
-	private int customersRating;
+	private Integer customersRating;
 	
 	@Column(name = "customersReview", columnDefinition = "NVARCHAR(300) NULL")
 	private String customersReview;
