@@ -7,6 +7,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +46,9 @@ public class BookingController {
 
 	@Autowired
 	private ProviderServiceService providerServiceService;
+	
+	@Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
 	@GetMapping("/bookings")
 	public ResponseEntity<List<BookingObject>> retreiveAllBookings() {
@@ -217,6 +223,19 @@ public class BookingController {
 					.header("message", "Failed to add new booking").build();
 		}
 	}
+	
+	@MessageMapping("/booking/place")
+	public BookingObject placeBookingWebSocket(@Payload BookingObject booking) {
+		try {
+			com.swp.VinGiG.entity.ProviderService providerService = providerServiceService.findById(booking.getProServiceID());
+			if(providerService == null) return null;
+			Provider provider = providerService.getProvider();
+			simpMessagingTemplate.convertAndSendToUser(Long.toString(provider.getProviderID()),"/provider/booking/place",booking);
+			return booking;
+		}catch(Exception e) {
+			return null;
+		}	
+	}
 
 	@PutMapping("building/{buildingID}/customer/{customerID}/providerService/{proServiceID}/booking")
 	public ResponseEntity<Booking> updateBooking(@PathVariable("buildingID") int buildingID,
@@ -250,7 +269,7 @@ public class BookingController {
 	}
 
 	@PutMapping("/providerService/{proServiceID}/booking/{bookingID}/action/{action}/total/{total}")
-	public ResponseEntity<Booking> acceptBooking(@PathVariable("proServiceID") long proServiceID,
+	public ResponseEntity<Booking> actionBooking(@PathVariable("proServiceID") long proServiceID,
 			@PathVariable("bookingID") long bookingID, @PathVariable("action") String action,
 			@PathVariable(name = "total", required = false) Long total) {
 		try {
@@ -295,6 +314,26 @@ public class BookingController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+	
+	@MessageMapping("/booking/update")
+	public BookingObject updateBookingWebSocket(@Payload BookingObject booking) {
+		try {
+			Booking book = bookingService.findById(booking.getBookingID());
+			if(book == null) return null;
+			
+			//ROLE
+			String target = booking.getApartment().equalsIgnoreCase("provider")?"customer":"provider";
+			
+			long id;
+			if(target.equalsIgnoreCase("provider")) id = book.getProviderService().getProvider().getProviderID();
+			else id = book.getCustomer().getCustomerID();
+
+			simpMessagingTemplate.convertAndSendToUser(Long.toString(id),"/" + target +"/booking/update",booking);
+			return booking;
+		}catch(Exception e) {
+			return null;
+		}	
 	}
 
 	// CUSTOMER REVIEW
