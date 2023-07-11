@@ -180,13 +180,24 @@ public class ProviderServiceController {
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
 	}
 
-	@PostMapping("/providerService")
-	public ResponseEntity<ProviderService> createProviderService(@RequestBody ProviderService providerService) {
-		if (providerServiceService.findById(providerService.getProServiceID()) != null)
+	@PostMapping("/provider/{providerID}/giGService/{serviceID}/providerService")
+	public ResponseEntity<ProviderService> createProviderService(@RequestBody ProviderService providerServices, @PathVariable("providerID") long providerID, @PathVariable("serviceID") int serviceID) {
+		if (providerServiceService.findById(providerServices.getProServiceID()) != null)
 			return ResponseEntity.notFound().header("message", "ProviderService with such ID already exists").build();
 
 		try {
-			ProviderService savedProviderService = providerServiceService.add(providerService);
+			Provider provider = providerService.findById(providerID);
+			if(provider == null)
+				return ResponseEntity.notFound().header("message", "Provider with such ID does not exist!").build();
+			
+			GiGService service = giGServiceService.findById(serviceID);
+			if(service == null)
+				return ResponseEntity.notFound().header("message", "Service with such ID does not exist!").build();
+			
+			providerServices.setProvider(provider);
+			providerServices.setService(service);
+			
+			ProviderService savedProviderService = providerServiceService.add(providerServices);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedProviderService);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -194,12 +205,23 @@ public class ProviderServiceController {
 		}
 	}
 
-	@PutMapping("/providerService")
-	public ResponseEntity<ProviderService> updateProviderService(@RequestBody ProviderService providerService) {
-		if (providerServiceService.findById(providerService.getProServiceID()) == null)
+	@PutMapping("/provider/{providerID}/giGService/{serviceID}/providerService")
+	public ResponseEntity<ProviderService> updateProviderService(@RequestBody ProviderService providerServices, @PathVariable("providerID") long providerID, @PathVariable("serviceID") int serviceID) {
+		if (providerServiceService.findById(providerServices.getProServiceID()) == null)
 			return ResponseEntity.notFound().header("message", "No ProviderService found for such ID").build();
 
-		ProviderService updatedProviderService = providerServiceService.update(providerService);
+		Provider provider = providerService.findById(providerID);
+		if(provider == null)
+			return ResponseEntity.notFound().header("message", "Provider with such ID does not exist!").build();
+		
+		GiGService service = giGServiceService.findById(serviceID);
+		if(service == null)
+			return ResponseEntity.notFound().header("message", "Service with such ID does not exist!").build();
+		
+		providerServices.setProvider(provider);
+		providerServices.setService(service);
+		
+		ProviderService updatedProviderService = providerServiceService.update(providerServices);
 		if (updatedProviderService != null)
 			return ResponseEntity.ok(updatedProviderService);
 		else

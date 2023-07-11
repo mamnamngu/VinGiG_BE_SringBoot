@@ -122,7 +122,7 @@ public class ProviderServiceService {
 		object.setBookingNo(x.getBookingNo());
 		object.setUnitPrice(x.getUnitPrice());
 		object.setDescription(x.getDescription());
-		object.setAvailablity(x.isAvailability());
+		object.setAvailability(x.isAvailability());
 		object.setVisible(x.isVisible());
 		object.setActive(x.isActive());
 		
