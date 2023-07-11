@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.swp.VinGiG.entity.GiGService;
+import com.swp.VinGiG.entity.Image;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.ProviderService;
 import com.swp.VinGiG.service.GiGServiceService;
+import com.swp.VinGiG.service.ImageService;
 import com.swp.VinGiG.service.ProviderServiceService;
 import com.swp.VinGiG.view.ProviderServiceObject;
 
@@ -32,6 +34,9 @@ public class ProviderServiceController {
 
 	@Autowired
 	private com.swp.VinGiG.service.ProviderService providerService;
+	
+	@Autowired
+	private ImageService imageService;
 
 	//ADMIN
 	@GetMapping("/providerServices")
@@ -181,8 +186,9 @@ public class ProviderServiceController {
 	}
 
 	@PostMapping("/provider/{providerID}/giGService/{serviceID}/providerService")
-	public ResponseEntity<ProviderService> createProviderService(@RequestBody ProviderService providerServices, @PathVariable("providerID") long providerID, @PathVariable("serviceID") int serviceID) {
-		if (providerServiceService.findById(providerServices.getProServiceID()) != null)
+	public ResponseEntity<ProviderService> createProviderService(@RequestBody ProviderServiceObject providerServiceObject, @PathVariable("providerID") long providerID, @PathVariable("serviceID") int serviceID) {
+		com.swp.VinGiG.entity.ProviderService proService = providerServiceService.findById(providerServiceObject.getProServiceID());
+		if (proService != null)
 			return ResponseEntity.notFound().header("message", "ProviderService with such ID already exists").build();
 
 		try {
@@ -193,11 +199,23 @@ public class ProviderServiceController {
 			GiGService service = giGServiceService.findById(serviceID);
 			if(service == null)
 				return ResponseEntity.notFound().header("message", "Service with such ID does not exist!").build();
+			proService = new ProviderService();
+		
+			proService.setProvider(provider);
+			proService.setService(service);
+			proService.setActive(true);
+			proService.setAvailability(true);
+			proService.setVisible(true);
+			if(providerServiceObject.getDescription() != null) proService.setDescription(providerServiceObject.getDescription());
+			proService.setUnitPrice(providerServiceObject.getUnitPrice());
+			ProviderService savedProviderService = providerServiceService.add(proService);
 			
-			providerServices.setProvider(provider);
-			providerServices.setService(service);
+			//CREATE IMAGE
+			Image image = new Image();
+			if(providerServiceObject.getLink() != null) image.setLink(providerServiceObject.getLink());
+			image.setProviderService(savedProviderService);
+			imageService.add(image);
 			
-			ProviderService savedProviderService = providerServiceService.add(providerServices);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedProviderService);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -206,8 +224,9 @@ public class ProviderServiceController {
 	}
 
 	@PutMapping("/provider/{providerID}/giGService/{serviceID}/providerService")
-	public ResponseEntity<ProviderService> updateProviderService(@RequestBody ProviderService providerServices, @PathVariable("providerID") long providerID, @PathVariable("serviceID") int serviceID) {
-		if (providerServiceService.findById(providerServices.getProServiceID()) == null)
+	public ResponseEntity<ProviderService> updateProviderService(@RequestBody ProviderServiceObject providerServiceObject, @PathVariable("providerID") long providerID, @PathVariable("serviceID") int serviceID) {
+		com.swp.VinGiG.entity.ProviderService proService = providerServiceService.findById(providerServiceObject.getProServiceID());
+		if (proService == null)
 			return ResponseEntity.notFound().header("message", "No ProviderService found for such ID").build();
 
 		Provider provider = providerService.findById(providerID);
@@ -218,10 +237,30 @@ public class ProviderServiceController {
 		if(service == null)
 			return ResponseEntity.notFound().header("message", "Service with such ID does not exist!").build();
 		
-		providerServices.setProvider(provider);
-		providerServices.setService(service);
+		proService.setProvider(provider);
+		proService.setService(service);
+		proService.setActive(true);
+		proService.setAvailability(true);
+		proService.setVisible(providerServiceObject.isVisible());
+		if(providerServiceObject.getDescription() != null) proService.setDescription(providerServiceObject.getDescription());
+		proService.setUnitPrice(providerServiceObject.getUnitPrice());
+		ProviderService updatedProviderService = providerServiceService.add(proService);
 		
-		ProviderService updatedProviderService = providerServiceService.update(providerServices);
+		//CREATE IMAGE
+		List<Image> imageLs = imageService.findByProviderServiceID(proService.getProServiceID());
+		Image image;
+		if(imageLs == null || imageLs.size() == 0) {
+			image = new Image();
+			if(providerServiceObject.getLink() != null) image.setLink(providerServiceObject.getLink());
+			image.setProviderService(updatedProviderService);
+			imageService.add(image);
+		}else {
+			image = imageLs.get(0);
+			if(providerServiceObject.getLink() != null) image.setLink(providerServiceObject.getLink());
+			image.setProviderService(updatedProviderService);
+			imageService.update(image);
+		}
+		
 		if (updatedProviderService != null)
 			return ResponseEntity.ok(updatedProviderService);
 		else
