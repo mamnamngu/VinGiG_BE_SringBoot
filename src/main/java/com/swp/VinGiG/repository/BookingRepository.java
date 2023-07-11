@@ -35,10 +35,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 	public List<Booking> findByProviderServiceProServiceIDAndCustomersReviewIsNotNullOrderByDateDesc(long proServiceID);
 	
 	//History
-	@Query("SELECT a FROM Booking a WHERE a.customer.customerID = :customerID AND a.date BETWEEN :dateMin AND :dateMax AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED)
+	@Query("SELECT a FROM Booking a WHERE a.customer.customerID = :customerID AND a.date BETWEEN :dateMin AND :dateMax AND a.status != 4 AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED_CUSTOMER)
 	public List<Booking> findByCustomerIDByDateIntervalHistory(@Param("customerID") long customerID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
-	@Query("SELECT a FROM Booking a WHERE a.providerService.proServiceID = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED)
+	@Query("SELECT a FROM Booking a WHERE a.providerService.proServiceID = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED_PROVIDER)
 	public List<Booking> findByProServiceIDByDateIntervalHistory(@Param("proServiceID") long proServiceID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
 }

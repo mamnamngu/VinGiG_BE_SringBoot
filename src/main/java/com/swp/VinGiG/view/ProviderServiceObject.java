@@ -28,7 +28,7 @@ public class ProviderServiceObject implements Serializable{
 	private int bookingNo;
 	private long unitPrice;
 	private String description;
-	private boolean availablity;
+	private boolean availability;
 	private boolean visible;
 	private boolean active;
 	

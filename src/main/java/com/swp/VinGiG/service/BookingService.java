@@ -198,15 +198,29 @@ public class BookingService {
 	}
 	
 	//Provider cancel a booking
-	public Booking cancelBooking(Booking booking) {
+	public Booking cancelBookingProvider(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(Constants.BOOKING_STATUS_CANCELLED);
+		booking.setStatus(Constants.BOOKING_STATUS_CANCELLED_PROVIDER);
 		
 		//SUSPEND THE PROVIDER'S ACCOUNT FOR 1 HOUR
 		
 		//Set the availability of all other Provider Service of such Provider to TRUE
 		providerServiceService.setAvailability(booking.getProviderService().getProvider().getProviderID(), true);
 				
+		return update(booking);
+	}
+	
+	//Customer cancel a booking
+	public Booking cancelBookingCustomer(Booking booking) {
+		if(findById(booking.getBookingID()) == null) return null;
+		booking.setStatus(Constants.BOOKING_STATUS_CANCELLED_CUSTOMER);	
+		return update(booking);
+	}
+	
+	//Timeout
+	public Booking timeout(Booking booking) {
+		if(findById(booking.getBookingID()) == null) return null;
+		booking.setStatus(Constants.BOOKING_STATUS_TIMEOUT);	
 		return update(booking);
 	}
 	

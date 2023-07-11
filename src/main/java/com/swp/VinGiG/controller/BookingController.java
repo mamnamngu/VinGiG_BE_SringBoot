@@ -304,8 +304,16 @@ public class BookingController {
 				temp = bookingService.completeBooking(booking, total);
 				break;
 				
-			case Constants.BOOKING_CANCEL:
-				temp = bookingService.cancelBooking(booking);
+			case Constants.BOOKING_CANCEL_PROVIDER:
+				temp = bookingService.cancelBookingProvider(booking);
+				break;
+				
+			case Constants.BOOKING_CANCEL_CUSTOMER:
+				temp = bookingService.cancelBookingCustomer(booking);
+				break;
+				
+			case Constants.BOOKING_TIMEOUT:
+				temp = bookingService.timeout(booking);
 				break;
 			}
 			if (temp != null)

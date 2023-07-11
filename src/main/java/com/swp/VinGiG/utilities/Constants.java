@@ -55,7 +55,9 @@ public final class Constants {
 	public static final int BOOKING_STATUS_ACCEPTED = 1;
 	public static final int BOOKING_STATUS_COMPLETED = 2;
 	public static final int BOOKING_STATUS_DECLINED = 3;
-	public static final int BOOKING_STATUS_CANCELLED = 4;
+	public static final int BOOKING_STATUS_CANCELLED_PROVIDER = 4;
+	public static final int BOOKING_STATUS_CANCELLED_CUSTOMER = 5;
+	public static final int BOOKING_STATUS_TIMEOUT = 6;
 	
 	//Count
 	public static final int DEFAULT_COUNT = 3;
@@ -68,7 +70,9 @@ public final class Constants {
 	public static final String BOOKING_ACCEPT = "accept";
 	public static final String BOOKING_COMPLETE = "complete";
 	public static final String BOOKING_DECLINE = "decline";
-	public static final String BOOKING_CANCEL = "cancel";
+	public static final String BOOKING_CANCEL_PROVIDER = "cancel_provider";
+	public static final String BOOKING_CANCEL_CUSTOMER = "cancel_customer";
+	public static final String BOOKING_TIMEOUT = "timeout";
 	
 	//Date format
 	public static final Date strToDate(String dateStr) {
