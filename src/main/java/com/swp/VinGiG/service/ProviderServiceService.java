@@ -131,6 +131,10 @@ public class ProviderServiceService {
 		object.setFullName(x.getProvider().getFullName());
 		object.setGender(x.getProvider().isGender());
 		
+		//Service
+		object.setServiceID(x.getService().getServiceID());
+		object.setServiceName(x.getService().getServiceName());
+		
 		//Badge
 		object.setBadgeID(x.getProvider().getBadge().getBadgeID());
 		object.setBadgeName(x.getProvider().getBadge().getBadgeName());

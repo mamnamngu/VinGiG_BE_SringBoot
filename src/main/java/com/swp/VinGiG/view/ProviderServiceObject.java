@@ -37,6 +37,10 @@ public class ProviderServiceObject implements Serializable{
 	private String fullName;
 	private boolean gender;
 	
+	//Service
+	private int serviceID;
+	private String serviceName;
+	
 	//Badge
 	private int badgeID;
 	private String badgeName;

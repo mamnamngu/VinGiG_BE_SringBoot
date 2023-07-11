@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Customer;
+import com.swp.VinGiG.entity.GiGService;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.BookingService;
 import com.swp.VinGiG.service.BuildingService;
@@ -321,13 +322,20 @@ public class BookingController {
 		try {
 			Booking book = bookingService.findById(booking.getBookingID());
 			if(book == null) return null;
+			Provider provider = book.getProviderService().getProvider();
+			Customer customer = book.getCustomer();
+			GiGService service = book.getProviderService().getService();
+			booking.setCustomerFullName(customer.getFullName());
+			booking.setProviderFullName(provider.getFullName());
+			booking.setServiceName(service.getServiceName());
+
 			
 			//ROLE
 			String target = booking.getApartment().equalsIgnoreCase("provider")?"customer":"provider";
 			
 			long id;
-			if(target.equalsIgnoreCase("provider")) id = book.getProviderService().getProvider().getProviderID();
-			else id = book.getCustomer().getCustomerID();
+			if(target.equalsIgnoreCase("provider")) id = provider.getProviderID();
+			else id = customer.getCustomerID();
 
 			simpMessagingTemplate.convertAndSendToUser(Long.toString(id),"/" + target +"/booking/update",booking);
 			return booking;
