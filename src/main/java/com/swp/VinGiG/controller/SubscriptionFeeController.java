@@ -109,7 +109,7 @@ public class SubscriptionFeeController {
 			if (provider == null)
 				return ResponseEntity.notFound().header("message", "No Provider found for such providerID").build();
 
-			if (subscriptionFeeService.findById(subscriptionFee.getSubID()) == null)
+			if (subscriptionFeeService.findById(subscriptionFee.getSubID()) != null)
 				return ResponseEntity.badRequest().header("message", "SubscriptionFee with such ID already exists").build();
 
 			subscriptionFee.setPlan(plan);
