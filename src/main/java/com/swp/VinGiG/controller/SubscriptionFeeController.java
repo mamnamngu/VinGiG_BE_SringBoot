@@ -114,6 +114,7 @@ public class SubscriptionFeeController {
 
 			subscriptionFee.setPlan(plan);
 			subscriptionFee.setProvider(provider);
+			subscriptionFee.setDate(Constants.currentDate());
 			SubscriptionFee savedSubscriptionFee = subscriptionFeeService.add(subscriptionFee);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedSubscriptionFee);
 		} catch (Exception e) {
