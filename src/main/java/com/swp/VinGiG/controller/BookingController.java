@@ -26,6 +26,7 @@ import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.service.BookingService;
 import com.swp.VinGiG.service.BuildingService;
 import com.swp.VinGiG.service.CustomerService;
+import com.swp.VinGiG.service.EmailService;
 import com.swp.VinGiG.service.ProviderService;
 import com.swp.VinGiG.service.ProviderServiceService;
 import com.swp.VinGiG.utilities.Constants;
@@ -50,6 +51,9 @@ public class BookingController {
 	
 	@Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@GetMapping("/bookings")
 	public ResponseEntity<List<BookingObject>> retreiveAllBookings() {
@@ -232,6 +236,16 @@ public class BookingController {
 			if(providerService == null) return null;
 			Provider provider = providerService.getProvider();
 			simpMessagingTemplate.convertAndSendToUser(Long.toString(provider.getProviderID()),"/provider/booking/place",booking);
+			
+			//Send Mail of booking placement
+			String to = "asouth93new@gmail.com";
+	        String subject = "NEW BOOKING PLACED";
+	        
+	        Customer customer = customerService.findById(booking.getCustomerID());
+	        Building building = buildingService.findById(booking.getBuildingID());
+	        String body = "Xin chào, \nDịch vụ " + providerService.getService().getServiceName() + " vừa được đặt bởi " + customer.getFullName() + " tại căn " + booking.getApartment() + ", tòa " + building.getBuildingName() + ".\n Xin vui lòng phản hồi trên hệ thống!\nXin cảm ơn";
+	        emailService.sendSimpleEmail(to, subject, body);
+	        
 			return booking;
 		}catch(Exception e) {
 			return null;

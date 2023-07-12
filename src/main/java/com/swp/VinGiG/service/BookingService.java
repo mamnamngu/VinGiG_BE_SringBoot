@@ -162,9 +162,10 @@ public class BookingService {
 	//Customer place a Booking
 	public Booking placeBooking(Booking booking) {
 		if(findById(booking.getBookingID()) != null) return null;
-		
 		booking.setStatus(Constants.BOOKING_STATUS_PENDING);
-		return add(booking);
+		Booking added = add(booking);
+        
+		return added;
 	}
 	
 	//Provider accept a Booking
