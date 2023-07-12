@@ -220,7 +220,9 @@ public class BookingService {
 	//Timeout
 	public Booking timeout(Booking booking) {
 		if(findById(booking.getBookingID()) == null) return null;
-		booking.setStatus(Constants.BOOKING_STATUS_TIMEOUT);	
+		if(booking.getStatus() == Constants.BOOKING_STATUS_PENDING) {
+			booking.setStatus(Constants.BOOKING_STATUS_TIMEOUT);
+		}	
 		return update(booking);
 	}
 	

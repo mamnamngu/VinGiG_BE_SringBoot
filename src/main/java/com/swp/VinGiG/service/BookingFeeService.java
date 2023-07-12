@@ -65,12 +65,13 @@ public class BookingFeeService {
 		if(dateMax == null) dateMax = Constants.currentDate();
 		Provider provider = providerService.findById(providerID);
 		if(provider == null) return null;
-		List<Booking> ls = bookingService.findByProServiceIDByDateInterval(providerID, null, dateMax);
+		List<Booking> ls = bookingService.findByProServiceIDByDateInterval(providerID, null, null);
 		List<BookingFee> list = new ArrayList<>();
 		for(Booking x: ls) {
 			List<BookingFee> fee = bookingFeeRepo.findByBookingBookingID(x.getBookingID());
-			if(fee.get(0).getDate().before(dateMax) && fee.get(0).getDate().after(dateMin))
-			list.addAll(fee);
+			if(fee.size() > 0)
+				if(fee.get(0).getDate().before(dateMax) && fee.get(0).getDate().after(dateMin))
+					list.addAll(fee);
 		}
 		return list;
 	}

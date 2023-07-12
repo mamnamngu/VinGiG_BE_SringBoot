@@ -42,21 +42,21 @@ public class SubscriptionFeeService {
 	
 	public List<SubscriptionFee> findByDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return subscriptionFeeRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
 	//provider
 	public List<SubscriptionFee> findByProviderIDDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return subscriptionFeeRepo.findByProviderProviderIDAndDateBetween(providerID, dateMin, dateMax);
 	}
 	
 	//admin
 	public List<SubscriptionFee> findByPlanPlanIDAndDateBetween(int planID, Date dateMin,Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return subscriptionFeeRepo.findByPlanPlanIDAndDateBetween(planID, dateMin, dateMax);
 	}
 	
