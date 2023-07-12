@@ -65,9 +65,9 @@ public class Deposit implements Serializable{
 	@ToString.Exclude
 	private Provider provider;
 	
-	@OneToMany(targetEntity = Transaction.class, mappedBy = "deposit")
+	@OneToMany(targetEntity = Transction.class, mappedBy = "deposit")
 	@JsonIgnore
 	@ToString.Exclude
-	private Collection<Transaction> transactionList;
+	private Collection<Transction> transactionList;
 	
 }

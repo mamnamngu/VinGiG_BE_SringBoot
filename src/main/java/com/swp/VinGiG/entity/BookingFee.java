@@ -62,10 +62,10 @@ public class BookingFee implements Serializable{
 	@ToString.Exclude
 	private Booking booking;
 	
-	@OneToMany(targetEntity = Transaction.class, mappedBy = "bookingFee")
+	@OneToMany(targetEntity = Transction.class, mappedBy = "bookingFee")
 	@JsonIgnore
 	@ToString.Exclude
-	private Collection<Transaction> transactionList;
+	private Collection<Transction> transactionList;
 	
 	
 }

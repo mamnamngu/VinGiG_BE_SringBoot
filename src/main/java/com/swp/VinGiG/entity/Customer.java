@@ -64,7 +64,7 @@ public class Customer implements Serializable{
 	@Column(name = "dob")
 	private Date dob;
 	
-	@Column(name = "avatar", columnDefinition = "NVARCHAR(150) DEFAULT '" + Constants.DEFAULT_AVATAR + "'")
+	@Column(name = "avatar", columnDefinition = "NVARCHAR(300) DEFAULT '" + Constants.DEFAULT_AVATAR + "'")
 	private String avatar;
 	
 	@Column(name = "gender", nullable = false)

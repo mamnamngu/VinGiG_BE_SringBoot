@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Deposit;
 import com.swp.VinGiG.entity.Provider;
-import com.swp.VinGiG.entity.Transaction;
+import com.swp.VinGiG.entity.Transction;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.DepositRepository;
 import com.swp.VinGiG.utilities.Constants;
@@ -63,21 +63,21 @@ public class DepositService {
 		deposit.setDate(Constants.currentDate());
 		
 		//Create a transaction
-		Transaction transaction = new Transaction();
-		transaction.setDeposit(deposit);
-		transaction.setDate(Constants.currentDate());
-		transaction.setAmount(deposit.getAmount());
+		Transction transction = new Transction();
+		transction.setDeposit(deposit);
+		transction.setDate(Constants.currentDate());
+		transction.setAmount(deposit.getAmount());
 		
 		Provider provider = deposit.getProvider();
 		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
 		if(wallet == null || wallet.size() == 0) return null;
-		transaction.setWallet(wallet.get(0));
+		transction.setWallet(wallet.get(0));
 		
 		//save father object
 		Deposit tmp = depositRepo.save(deposit);
 		
 		//save Transaction
-		Transaction output = transactionService.add(transaction);
+		Transction output = transactionService.add(transction);
 		if(output == null) {
 			delete(tmp.getDepositID());
 			return null;

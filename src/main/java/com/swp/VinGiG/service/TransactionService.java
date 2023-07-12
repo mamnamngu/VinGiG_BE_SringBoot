@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.swp.VinGiG.entity.Provider;
-import com.swp.VinGiG.entity.Transaction;
+import com.swp.VinGiG.entity.Transction;
 import com.swp.VinGiG.entity.Wallet;
-import com.swp.VinGiG.repository.TransactionRepository;
+import com.swp.VinGiG.repository.TransctionRepository;
 import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.TransactionObject;
 
@@ -19,103 +19,103 @@ import com.swp.VinGiG.view.TransactionObject;
 public class TransactionService {
 	
 	@Autowired
-	TransactionRepository transactionRepo;
+	TransctionRepository transactionRepo;
 	
 	@Autowired
 	WalletService walletService;
 	
 	// FIND
-	public List<Transaction> findAll(){
+	public List<Transction> findAll(){
 			return transactionRepo.findAll();
 		}
 
-	public Transaction findById(long id) {
-		Optional<Transaction> transaction = transactionRepo.findById(id);
-		if (transaction.isPresent())
-			return transaction.get();
+	public Transction findById(long id) {
+		Optional<Transction> transction = transactionRepo.findById(id);
+		if (transction.isPresent())
+			return transction.get();
 		else
 			return null;
 	}
 	
 	//admin
-	public List<Transaction> findByDateInterval(Date dateMin, Date dateMax){
+	public List<Transction> findByDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
-		return transactionRepo.findByDateInterval(dateMin, dateMax);
+		return transactionRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
-	public List<Transaction> findTypeDepositDateInterval(Date dateMin, Date dateMax){
+	public List<Transction> findTypeDepositDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
-		return transactionRepo.findTypeDepositDateInterval(dateMin, dateMax);
+		return transactionRepo.findByDepositNotNullAndDateBetween(dateMin, dateMax);
 	}
 	
-	public List<Transaction> findTypeBookingFeeDateInterval(Date dateMin, Date dateMax){
+	public List<Transction> findTypeBookingFeeDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
-		return transactionRepo.findTypeBookingFeeDateInterval(dateMin, dateMax);
+		return transactionRepo.findByBookingFeeNotNullAndDateBetween(dateMin, dateMax);
 	}
 	
-	public List<Transaction> findByTypeSubscriptionFeeDateInterval(Date dateMin, Date dateMax){
+	public List<Transction> findByTypeSubscriptionFeeDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
-		return transactionRepo.findBySubscriptionFeeDateInterval(dateMin, dateMax);
+		return transactionRepo.findBySubscriptionFeeNotNullAndDateBetween(dateMin, dateMax);
 	}
 
 	//provider
-	public List<Transaction> findByProviderIDDateInterval(long providerID, Date dateMin, Date dateMax){
+	public List<Transction> findByProviderIDDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
-		return transactionRepo.findByWalletIDDateInterval(wallet.get(0).getWalletID(), dateMin, dateMax);
+		return transactionRepo.findByWalletWalletIDAndDateBetween(wallet.get(0).getWalletID(), dateMin, dateMax);
 	}
 	
-	public List<Transaction> findByProviderIDTypeDepositDateInterval(long providerID, Date dateMin, Date dateMax){
+	public List<Transction> findByProviderIDTypeDepositDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
-		return transactionRepo.findByWalletIDTypeDepositDateInterval(wallet.get(0).getWalletID(), dateMin, dateMax);
+		return transactionRepo.findByWalletWalletIDAndDepositNotNullAndDateBetween(wallet.get(0).getWalletID(), dateMin, dateMax);
 	}
 	
-	public List<Transaction> findByProviderIDTypeBookingFeeDateInterval(long providerID, Date dateMin, Date dateMax){
+	public List<Transction> findByProviderIDTypeBookingFeeDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
-		return transactionRepo.findByWalletIDTypeBookingFeeDateInterval(wallet.get(0).getWalletID(), dateMin, dateMax);
+		return transactionRepo.findByWalletWalletIDAndBookingFeeNotNullAndDateBetween(wallet.get(0).getWalletID(), dateMin, dateMax);
 	}
 	
-	public List<Transaction> findByProviderIDBySubscriptionFeeDateInterval(long providerID, Date dateMin, Date dateMax){
+	public List<Transction> findByProviderIDBySubscriptionFeeDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMin == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
-		return transactionRepo.findByWalletIDBySubscriptionFeeDateInterval(wallet.get(0).getWalletID(), dateMin, dateMax);
+		return transactionRepo.findByWalletWalletIDAndSubscriptionFeeNotNullAndDateBetween(wallet.get(0).getWalletID(), dateMin, dateMax);
 	}
 	
 	// ADD
-	public Transaction add(Transaction transaction) {
+	public Transction add(Transction transction) {
 		//Subtract from wallet an amount
-		Wallet wallet = walletService.findById(transaction.getWallet().getWalletID());
+		Wallet wallet = walletService.findById(transction.getWallet().getWalletID());
 		if(wallet == null) return null;
-		if((wallet.getBalance() + transaction.getAmount()) < 0) return null;
+		if((wallet.getBalance() + transction.getAmount()) < 0) return null;
 
 		//transaction into wallet's balance
-		wallet.setBalance(wallet.getBalance() + transaction.getAmount());
+		wallet.setBalance(wallet.getBalance() + transction.getAmount());
 		walletService.update(wallet);
 		
-		return transactionRepo.save(transaction);
+		return transactionRepo.save(transction);
 	}
 
 	// UPDATE
-	public Transaction update(Transaction transaction) {
-		return transactionRepo.save(transaction);
+	public Transction update(Transction transction) {
+		return transactionRepo.save(transction);
 	}
 
 	// DELETE
@@ -125,9 +125,9 @@ public class TransactionService {
 	}
 
 	//DISPLAY
-	public List<TransactionObject> display(List<Transaction> ls){
+	public List<TransactionObject> display(List<Transction> ls){
 		List<TransactionObject> list = new ArrayList<>();
-		for(Transaction x: ls) {
+		for(Transction x: ls) {
 			TransactionObject y = new TransactionObject();
 			y.setTransactionID(x.getTransactionID());
 			y.setAmount(x.getAmount());
@@ -149,18 +149,18 @@ public class TransactionService {
 	}
 		
 	//BACKGROUND WORKER
-	public List<Transaction> regularDelete(){
+	public List<Transction> regularDelete(){
 		Date currentDate = Constants.currentDate();
-		List<Transaction> lsDeposit = findTypeDepositDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
-		List<Transaction> lsBookingFee = findTypeBookingFeeDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
-		List<Transaction> lsSubscriptionFee = findByTypeSubscriptionFeeDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+		List<Transction> lsDeposit = findTypeDepositDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+		List<Transction> lsBookingFee = findTypeBookingFeeDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
+		List<Transction> lsSubscriptionFee = findByTypeSubscriptionFeeDateInterval(Constants.subtractDay(currentDate, Constants.BOOKINGFEEE_DELETION),currentDate);
 
-		List<Transaction> ls = new ArrayList<>();
+		List<Transction> ls = new ArrayList<>();
 		ls.addAll(lsDeposit);
 		ls.addAll(lsBookingFee);
 		ls.addAll(lsSubscriptionFee);
 		
-		for(Transaction x: ls) {
+		for(Transction x: ls) {
 			delete(x.getTransactionID());
 		}
 		return ls;

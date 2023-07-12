@@ -43,7 +43,7 @@ public class Image implements Serializable{
 	@Column(name = "imageID")
 	private long imageID;
 	
-	@Column(name = "link", nullable = false, columnDefinition = "NVARCHAR(150)")
+	@Column(name = "link", nullable = false, columnDefinition = "NVARCHAR(300)")
 	private String link;
 	
 //	@Column(name = "proServiceID", insertable = false, updatable = false, nullable = false)

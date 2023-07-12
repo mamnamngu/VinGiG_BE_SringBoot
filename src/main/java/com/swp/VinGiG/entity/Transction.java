@@ -31,7 +31,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 
 @Table(name = "Transction")
-public class Transaction implements Serializable{
+public class Transction implements Serializable{
 
 	/**
 	 * 

@@ -65,8 +65,8 @@ public class Wallet implements Serializable{
 	@ToString.Exclude
 	private Provider provider;
 	
-	@OneToMany(targetEntity = Transaction.class, mappedBy = "wallet")
+	@OneToMany(targetEntity = Transction.class, mappedBy = "wallet")
 	@JsonIgnore
 	@ToString.Exclude
-	private Collection<Transaction> transactionList;
+	private Collection<Transction> transactionList;
 }

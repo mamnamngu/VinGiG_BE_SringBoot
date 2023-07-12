@@ -71,8 +71,8 @@ public class SubscriptionFee implements Serializable{
 	@ToString.Exclude
 	private SubscriptionPlan plan;
 	
-	@OneToMany(targetEntity = Transaction.class, mappedBy = "subscriptionFee")
+	@OneToMany(targetEntity = Transction.class, mappedBy = "subscriptionFee")
 	@JsonIgnore
 	@ToString.Exclude
-	private Collection<Transaction> transactionList;
+	private Collection<Transction> transactionList;
 }

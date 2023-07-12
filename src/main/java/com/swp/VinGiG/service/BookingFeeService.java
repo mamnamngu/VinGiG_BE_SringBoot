@@ -12,7 +12,7 @@ import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingFee;
 import com.swp.VinGiG.entity.GiGService;
 import com.swp.VinGiG.entity.Provider;
-import com.swp.VinGiG.entity.Transaction;
+import com.swp.VinGiG.entity.Transction;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.BookingFeeRepository;
 import com.swp.VinGiG.utilities.Constants;
@@ -82,21 +82,21 @@ public class BookingFeeService {
 		bookingFee.setAmount(bookingFee.getBooking().getProviderService().getService().getFee());
 		
 		//Create a transaction
-		Transaction transaction = new Transaction();
-		transaction.setBookingFee(bookingFee);
-		transaction.setDate(Constants.currentDate());
-		transaction.setAmount(bookingFee.getAmount()*Constants.TRANSACTION_SUBTRACT_FACTOR);
+		Transction transction = new Transction();
+		transction.setBookingFee(bookingFee);
+		transction.setDate(Constants.currentDate());
+		transction.setAmount(bookingFee.getAmount()*Constants.TRANSACTION_SUBTRACT_FACTOR);
 		
 		Provider provider = bookingFee.getBooking().getProviderService().getProvider();
 		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
 		if(wallet == null || wallet.size() == 0) return null;
-		transaction.setWallet(wallet.get(0));
+		transction.setWallet(wallet.get(0));
 		
 		//save father object in db
 		BookingFee tmp = bookingFeeRepo.save(bookingFee);
 		
 		//save Transaction
-		Transaction output = transactionService.add(transaction);
+		Transction output = transactionService.add(transction);
 		
 		if(output == null) {
 			delete(tmp.getBookingFeeID());

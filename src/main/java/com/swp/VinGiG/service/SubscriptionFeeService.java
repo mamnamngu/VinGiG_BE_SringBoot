@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.SubscriptionFee;
 import com.swp.VinGiG.entity.SubscriptionPlan;
-import com.swp.VinGiG.entity.Transaction;
+import com.swp.VinGiG.entity.Transction;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.SubscriptionFeeRepository;
 import com.swp.VinGiG.utilities.Constants;
@@ -66,21 +66,21 @@ public class SubscriptionFeeService {
 		subscriptionFee.setDate(Constants.currentDate());
 		
 		//Create a transaction
-		Transaction transaction = new Transaction();
-		transaction.setAmount(subscriptionFee.getAmount()*Constants.TRANSACTION_SUBTRACT_FACTOR);
-		transaction.setDate(Constants.currentDate());
-		transaction.setSubscriptionFee(subscriptionFee);
+		Transction transction = new Transction();
+		transction.setAmount(subscriptionFee.getAmount()*Constants.TRANSACTION_SUBTRACT_FACTOR);
+		transction.setDate(Constants.currentDate());
+		transction.setSubscriptionFee(subscriptionFee);
 		
 		Provider provider = subscriptionFee.getProvider();
 		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
 		if(wallet == null || wallet.size() == 0) return null;
-		transaction.setWallet(wallet.get(0));
+		transction.setWallet(wallet.get(0));
 		
 		//save father object
 		SubscriptionFee tmp = subscriptionFeeRepo.save(subscriptionFee);
 		
 		//save Transaction
-		Transaction output = transactionService.add(transaction);
+		Transction output = transactionService.add(transction);
 		if(output == null) {
 			delete(tmp.getSubID());
 			return null;

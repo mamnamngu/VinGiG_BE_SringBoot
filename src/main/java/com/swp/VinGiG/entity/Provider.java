@@ -65,7 +65,7 @@ public class Provider implements Serializable{
 //	@Column(name = "badgeID", nullable = false, columnDefinition = "INT DEFAULT " + Constants.DEFAULT_BADGE)
 //	private int badgeID;
 	
-	@Column(name = "avatar", columnDefinition = "NVARCHAR(150) DEFAULT '" + Constants.DEFAULT_AVATAR + "'")
+	@Column(name = "avatar", columnDefinition = "NVARCHAR(300) DEFAULT '" + Constants.DEFAULT_AVATAR + "'")
 	private String avatar;
 	
 	@Column(name = "rating", precision = 2, scale = 1)
