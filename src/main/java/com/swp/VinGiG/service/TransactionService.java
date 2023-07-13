@@ -40,32 +40,32 @@ public class TransactionService {
 	//admin
 	public List<Transction> findByDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return transactionRepo.findByDateBetween(dateMin, dateMax);
 	}
 	
 	public List<Transction> findTypeDepositDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return transactionRepo.findByDepositNotNullAndDateBetween(dateMin, dateMax);
 	}
 	
 	public List<Transction> findTypeBookingFeeDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return transactionRepo.findByBookingFeeNotNullAndDateBetween(dateMin, dateMax);
 	}
 	
 	public List<Transction> findByTypeSubscriptionFeeDateInterval(Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		return transactionRepo.findBySubscriptionFeeNotNullAndDateBetween(dateMin, dateMax);
 	}
 
 	//provider
 	public List<Transction> findByProviderIDDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
@@ -74,7 +74,7 @@ public class TransactionService {
 	
 	public List<Transction> findByProviderIDTypeDepositDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
@@ -83,7 +83,7 @@ public class TransactionService {
 	
 	public List<Transction> findByProviderIDTypeBookingFeeDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
@@ -92,7 +92,7 @@ public class TransactionService {
 	
 	public List<Transction> findByProviderIDBySubscriptionFeeDateInterval(long providerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
+		if(dateMax == null) dateMax = Constants.currentDate();
 		List<Wallet> wallet = walletService.findByProviderId(providerID);
 		if(wallet == null || wallet.size() == 0) return null;
 		
@@ -137,11 +137,11 @@ public class TransactionService {
 			y.setProviderID(provider.getProviderID());
 			y.setProviderFullName(provider.getFullName());
 			
-			y.setDepositID(x.getDeposit().getDepositID());
+			if(x.getDeposit() != null) y.setDepositID(x.getDeposit().getDepositID());
 			
-			y.setSubID(x.getSubscriptionFee().getSubID());
+			if(x.getSubscriptionFee() != null) y.setSubID(x.getSubscriptionFee().getSubID());
 			
-			y.setBookingFeeID(x.getBookingFee().getBookingFeeID());
+			if(x.getBookingFee() != null) y.setBookingFeeID(x.getBookingFee().getBookingFeeID());
 			
 			list.add(y);
 		}
