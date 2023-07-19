@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swp.VinGiG.entity.Count;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.SubscriptionFee;
 import com.swp.VinGiG.entity.SubscriptionPlan;
@@ -28,6 +29,9 @@ public class SubscriptionFeeService {
 	
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private CountService countService;
 	
 	//FIND
 	public List<SubscriptionFee> findAll(){
@@ -76,6 +80,13 @@ public class SubscriptionFeeService {
 		if(wallet == null || wallet.size() == 0) return null;
 		transction.setWallet(wallet.get(0));
 		
+		//update the count
+		List<Count> countLs = countService.findByProviderID(provider.getProviderID());
+		if(countLs == null || countLs.size() < 1) return null;
+		Count count = countLs.get(0);
+		count.setCount(count.getCount() + subscriptionFee.getPlan().getDuration());
+		countService.update(count);
+		
 		//save father object
 		SubscriptionFee tmp = subscriptionFeeRepo.save(subscriptionFee);
 		
@@ -85,7 +96,7 @@ public class SubscriptionFeeService {
 			delete(tmp.getSubID());
 			return null;
 		}
-		
+	
 		return tmp;
 	}
 	
