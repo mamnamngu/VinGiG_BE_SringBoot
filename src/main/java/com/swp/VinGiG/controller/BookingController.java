@@ -417,7 +417,7 @@ public class BookingController {
 						.header("message", "Provider with such ID has no permission to leave a review on this booking!")
 						.build();
 
-			Booking rvBooking = bookingService.reviewBookingByCustomerID(providerID, booking, content, rating);
+			Booking rvBooking = bookingService.reviewBookingByProviderID(providerID, booking, content, rating);
 			if (rvBooking != null)
 				return ResponseEntity.ok(rvBooking);
 			else

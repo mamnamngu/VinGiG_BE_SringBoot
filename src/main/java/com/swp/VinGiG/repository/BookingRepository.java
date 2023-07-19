@@ -16,9 +16,9 @@ import com.swp.VinGiG.utilities.Constants;
 public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpecificationExecutor<Booking>{
 
 	//Current activity
-	public List<Booking> findByCustomerCustomerIDAndStatusBetween(long customerID, int statusLower, int statusUpper);
+	public List<Booking> findByCustomerCustomerIDAndStatusBetweenOrderByDateDesc(long customerID, int statusLower, int statusUpper);
 	
-	public List<Booking> findByProviderServiceProviderProviderIDAndStatusBetween(long providerID, int statusLower, int statusUpper);
+	public List<Booking> findByProviderServiceProviderProviderIDAndStatusBetweenOrderByDateDesc(long providerID, int statusLower, int statusUpper);
 	
 	public List<Booking> findByDateAndStatus(Date date, int status);
 	

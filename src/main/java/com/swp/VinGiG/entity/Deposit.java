@@ -54,8 +54,11 @@ public class Deposit implements Serializable{
 	@Column(name = "date", nullable = false, updatable = false)
 	private Date date;
 	
-	@Column(name = "method", nullable = false)
+	@Column(name = "method", nullable = false, columnDefinition = "NVARCHAR(2000)")
 	private String method;
+	
+	@Column(name = "success", nullable = false)
+	private boolean success;
 	
 	//RELATIONSHIP SETUP
 	

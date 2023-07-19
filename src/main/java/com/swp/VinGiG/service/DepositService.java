@@ -41,14 +41,14 @@ public class DepositService {
 	
 	public List<Deposit> findByProviderIDDateInterval(long ProviderID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
-		return depositRepo.findByProviderProviderIDAndDateBetween(ProviderID, dateMin, dateMax);
+		if(dateMax == null) dateMax = Constants.currentDate();
+		return depositRepo.findByProviderProviderIDAndDateBetweenOrderByDateDesc(ProviderID, dateMin, dateMax);
 	}
 	
 	public List<Deposit> findByDateInterval(Date dateMin,Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
-		if(dateMin == null) dateMax = Constants.currentDate();
-		return depositRepo.findByDateBetween(dateMin, dateMax);
+		if(dateMax == null) dateMax = Constants.currentDate();
+		return depositRepo.findByDateBetweenOrderByDateDesc(dateMin, dateMax);
 	}
 	
 	public List<Deposit> findByMethod(String method, Date dateMin, Date dateMax){
@@ -59,8 +59,15 @@ public class DepositService {
 	
 	//ADD
 	public Deposit add(Deposit deposit) {
-		
 		deposit.setDate(Constants.currentDate());
+		Deposit tmp = depositRepo.save(deposit);
+		return tmp;
+	}
+	
+	public Deposit confirmDeposit(Deposit deposit) {
+		//Update deposit status
+		deposit.setSuccess(true);
+		update(deposit);
 		
 		//Create a transaction
 		Transction transction = new Transction();
@@ -72,18 +79,10 @@ public class DepositService {
 		List<Wallet> wallet = walletService.findByProviderId(provider.getProviderID());
 		if(wallet == null || wallet.size() == 0) return null;
 		transction.setWallet(wallet.get(0));
-		
-		//save father object
-		Deposit tmp = depositRepo.save(deposit);
-		
+	
 		//save Transaction
-		Transction output = transactionService.add(transction);
-		if(output == null) {
-			delete(tmp.getDepositID());
-			return null;
-		}
-				
-		return tmp;
+		transactionService.add(transction);
+		return deposit;		
 	}
 	
 	//UPDATE

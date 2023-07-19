@@ -35,7 +35,7 @@ import lombok.ToString;
 @ToString
 
 @Table(name = "Booking")
-public class Booking implements Serializable{
+public class Booking implements Serializable, Comparable<Booking>{
 
 	/**
 	 * 
@@ -84,6 +84,12 @@ public class Booking implements Serializable{
 	
 	@Column(name = "customersReview", columnDefinition = "NVARCHAR(300) NULL")
 	private String customersReview;
+	
+	//SORT
+	@Override
+    public int compareTo(Booking other) {
+        return this.date.compareTo(other.getDate());
+    }
 	
 	//RELATIONSHIP SETUP
 	

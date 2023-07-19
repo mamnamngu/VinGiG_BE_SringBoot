@@ -1,6 +1,7 @@
 package com.swp.VinGiG.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -63,13 +64,13 @@ public class BookingService {
 	//FINDING CURRENT ACTIVITY FOR CUSTOMER AND PROVIDER
 	public List<Booking> findByProviderIDGoingOn(long providerID){
 		List<Booking> ls = new ArrayList<Booking>();
-		ls.addAll(bookingRepo.findByProviderServiceProviderProviderIDAndStatusBetween(providerID, Constants.BOOKING_STATUS_PENDING, Constants.BOOKING_STATUS_ACCEPTED));
+		ls.addAll(bookingRepo.findByProviderServiceProviderProviderIDAndStatusBetweenOrderByDateDesc(providerID, Constants.BOOKING_STATUS_PENDING, Constants.BOOKING_STATUS_ACCEPTED));
 		return ls;
 	}
 	
 	public List<Booking> findByCustomerIDGoingOn(long customerID){
 		List<Booking> ls = new ArrayList<>();
-		ls.addAll(bookingRepo.findByCustomerCustomerIDAndStatusBetween(customerID, Constants.BOOKING_STATUS_PENDING, Constants.BOOKING_STATUS_ACCEPTED));
+		ls.addAll(bookingRepo.findByCustomerCustomerIDAndStatusBetweenOrderByDateDesc(customerID, Constants.BOOKING_STATUS_PENDING, Constants.BOOKING_STATUS_ACCEPTED));
 		return ls;
 	}
 	
@@ -127,7 +128,7 @@ public class BookingService {
 		return bookingRepo.findByProServiceIDByDateIntervalHistory(proServiceID, dateMin, dateMax);
 	}
 	
-	//display booking history by proServiceID over a time interval
+	//display booking history by providerID over a time interval
 		public List<Booking> findByProviderIDByDateInterval(long providerID, Date dateMin, Date dateMax){
 			if(dateMin == null) dateMin = Constants.START_DATE;
 			if(dateMax == null) dateMax = Constants.currentDate();
@@ -138,6 +139,8 @@ public class BookingService {
 			List<Booking> list = new ArrayList<>();
 			for(com.swp.VinGiG.entity.ProviderService x:ls)
 				list.addAll(bookingRepo.findByProServiceIDByDateIntervalHistory(x.getProServiceID(), dateMin, dateMax));
+			
+			Collections.sort(list);
 			return list;
 		}
 	

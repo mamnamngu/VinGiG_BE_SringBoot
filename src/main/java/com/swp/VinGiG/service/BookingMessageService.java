@@ -1,6 +1,7 @@
 package com.swp.VinGiG.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.swp.VinGiG.entity.Booking;
 import com.swp.VinGiG.entity.BookingMessage;
 import com.swp.VinGiG.repository.BookingMessageRepository;
+import com.swp.VinGiG.repository.BookingRepository;
 import com.swp.VinGiG.utilities.Constants;
 import com.swp.VinGiG.view.BookingMessageObject;
 
@@ -24,7 +26,7 @@ public class BookingMessageService {
 	ProviderServiceService pss;
 	
 	@Autowired
-	BookingService bs;
+	BookingRepository br;
 	
 	//FIND
 	public List<BookingMessage> findAll(){
@@ -46,20 +48,22 @@ public class BookingMessageService {
 		List<com.swp.VinGiG.entity.ProviderService> psList = pss.findByProviderID(providerID);
 		List<Booking> bookingList = new ArrayList<Booking>();
 		for(com.swp.VinGiG.entity.ProviderService x: psList)
-			bookingList.addAll(bs.findByProServiceIDByDateInterval(x.getProServiceID(), null, null));
+			bookingList.addAll(br.findByProviderServiceProviderProviderIDAndStatusBetweenOrderByDateDesc(x.getProServiceID(),Constants.BOOKING_STATUS_ACCEPTED, Constants.BOOKING_STATUS_CANCELLED_CUSTOMER));
 		
 		for(Booking y: bookingList)
 			if(findByBookingID(y.getBookingID()).size() > 0)
 				list.add(y);
+		Collections.sort(list);
 		return list;
 	}
 	
 	public List<Booking> findBookingHasBookingMessageForCustomer(long customerID){
 		List<Booking> list = new ArrayList<Booking>();
-		List<Booking> bookingList = bs.findByCustomerIDByDateInterval(customerID, null, null);
+		List<Booking> bookingList = br.findByCustomerCustomerIDAndStatusBetweenOrderByDateDesc(customerID, Constants.BOOKING_STATUS_ACCEPTED, Constants.BOOKING_STATUS_CANCELLED_CUSTOMER);
 		for(Booking y: bookingList)
 			if(findByBookingID(y.getBookingID()).size() > 0)
 				list.add(y);
+		Collections.sort(list);
 		return list;
 	}
 	
