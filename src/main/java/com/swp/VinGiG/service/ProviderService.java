@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.swp.VinGiG.entity.Badge;
 import com.swp.VinGiG.entity.Building;
 import com.swp.VinGiG.entity.Count;
+import com.swp.VinGiG.entity.Customer;
 import com.swp.VinGiG.entity.Provider;
 import com.swp.VinGiG.entity.Wallet;
 import com.swp.VinGiG.repository.ProviderRepository;
@@ -81,6 +82,11 @@ public class ProviderService {
 	public Provider login(String username, String password) {
 		if(username == null || password == null) return null;
 		return providerRepo.findByUsernameAndPassword(username, password);
+	}
+	
+	public Provider checkConflict(String username) {
+		if(username == null) return null;
+		return providerRepo.findByUsername(username);
 	}
 	
 	//ADD

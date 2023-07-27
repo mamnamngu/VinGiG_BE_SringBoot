@@ -31,4 +31,6 @@ public interface ProviderRepository extends JpaRepository<Provider, Long>, JpaSp
 	public List<Provider> findByBadgeBadgeIDAndCreateDateBetween(int badgeID, Date minDate, Date maxDate);
 	
 	public Provider findByUsernameAndPassword(String username, String password);
+	
+	public Provider findByUsername(String username);
 }

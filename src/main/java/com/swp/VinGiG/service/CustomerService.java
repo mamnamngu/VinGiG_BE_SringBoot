@@ -56,6 +56,11 @@ public class CustomerService {
 		return customerRepo.findByUsernameAndPassword(username, password);
 	}
 	
+	public Customer checkConflict(String username) {
+		if(username == null) return null;
+		return customerRepo.findByUsername(username);
+	}
+	
 	//ADD
 	public Customer add(Customer customer) {
 		return customerRepo.save(customer);
