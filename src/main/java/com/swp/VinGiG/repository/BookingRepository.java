@@ -41,4 +41,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, JpaSpec
 	@Query("SELECT a FROM Booking a WHERE a.providerService.proServiceID = :proServiceID AND a.date BETWEEN :dateMin AND :dateMax AND a.status BETWEEN " + Constants.BOOKING_STATUS_COMPLETED + " AND " + Constants.BOOKING_STATUS_CANCELLED_PROVIDER)
 	public List<Booking> findByProServiceIDByDateIntervalHistory(@Param("proServiceID") long proServiceID, @Param("dateMin") Date dateMin,@Param("dateMax") Date dateMax);
 
+	public List<Booking> findByStatusAndDateBetween(int status, Date dateMin, Date dateMax);
 }

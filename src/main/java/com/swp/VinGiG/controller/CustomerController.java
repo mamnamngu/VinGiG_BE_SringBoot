@@ -58,7 +58,7 @@ public class CustomerController {
 		}
 	}
 	
-	@GetMapping("customer/username/{username}")
+	@GetMapping("/customer/username/{username}")
 	public ResponseEntity<CustomerObject> retrieveCustomerByUserName(@PathVariable String username) {
 		List<Customer> ls = customerService.findByUsername(username);
 		if(ls.size() > 0) {
@@ -69,7 +69,7 @@ public class CustomerController {
 		}
 	}
 	
-	@GetMapping("customer/fullName/{fullName}")
+	@GetMapping("/customer/fullName/{fullName}")
 	public ResponseEntity<List<CustomerObject>> retrieveCustomerByFullName(@PathVariable String fullName) {
 		List<Customer> ls = customerService.findByFullNameIgnoreCase(fullName);
 		if(ls.size() > 0) {
@@ -79,7 +79,7 @@ public class CustomerController {
 			return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("customer/createDate/{dateMin}/{dateMax}")
+	@GetMapping("/customer/createDate/{dateMin}/{dateMax}")
 	public ResponseEntity<List<CustomerObject>> retrieveCustomerByCreateDateInterval(@PathVariable String dateMinStr, @PathVariable String dateMaxStr) {
 		Date dateMin = Constants.strToDate(dateMinStr);
 		Date dateMax = Constants.strToDate(dateMaxStr);
@@ -92,7 +92,7 @@ public class CustomerController {
 			return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("customer/rating/{lower}/{upper}")
+	@GetMapping("/customer/rating/{lower}/{upper}")
 	public ResponseEntity<List<CustomerObject>> retrieveCustomerByUserName(@PathVariable long lower, @PathVariable long upper) {
 		List<Customer> ls = customerService.findByRatingInterval(lower, upper);
 		if(ls.size() > 0) {
@@ -102,7 +102,7 @@ public class CustomerController {
 			return ResponseEntity.notFound().build();
 	}
 	
-	@PostMapping("building/{id}/customer")
+	@PostMapping("/building/{id}/customer")
 	public ResponseEntity<Customer> createCustomer(@PathVariable int id, @RequestBody Customer customer){
 		try {
 			Building building = buildingService.findById(id);
@@ -121,7 +121,7 @@ public class CustomerController {
 		}
 	}
 	
-	@PutMapping("building/{id}/customer")
+	@PutMapping("/building/{id}/customer")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable int id, @RequestBody Customer customer){
 		Building building = buildingService.findById(id);
 		if(building == null) return ResponseEntity.notFound().header("message", "Building not found. Update failed").build();

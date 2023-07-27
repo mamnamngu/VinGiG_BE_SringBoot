@@ -85,6 +85,19 @@ public class TransctionController {
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
+	@GetMapping("/transaction/deposit/date/{dateMin}/{dateMax}/total")
+	public ResponseEntity<Long> findTypeDepositDateIntervalTotal(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transction> ls = transactionService.findTypeDepositDateInterval(dateMin, dateMax);
+		long total = 0;
+		for(Transction x: ls)
+			total += x.getAmount();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(total);
+	}
+	
 	@GetMapping("/transaction/bookingFee/date/{dateMin}/{dateMax}")
 	public ResponseEntity<List<TransactionObject>> findTypeBookingFeeDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
 		Date dateMin = Constants.strToDate(dateMinStr);
@@ -95,6 +108,19 @@ public class TransctionController {
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
+	@GetMapping("/transaction/bookingFee/date/{dateMin}/{dateMax}/total")
+	public ResponseEntity<Long> findTypeBookingFeeDateIntervalTotal(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transction> ls = transactionService.findTypeBookingFeeDateInterval(dateMin, dateMax);
+		long total = 0;
+		for(Transction x: ls)
+			total += x.getAmount();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(total);
+	}
+	
 	@GetMapping("/transaction/subscriptionFee/date/{dateMin}/{dateMax}")
 	public ResponseEntity<List<TransactionObject>> findBySubscriptionFeeDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
 		Date dateMin = Constants.strToDate(dateMinStr);
@@ -103,6 +129,18 @@ public class TransctionController {
 		List<Transction> ls = transactionService.findByTypeSubscriptionFeeDateInterval(dateMin, dateMax);
 		List<TransactionObject> list = transactionService.display(ls);
 		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+	
+	@GetMapping("/transaction/subscriptionFee/date/{dateMin}/{dateMax}/total")
+	public ResponseEntity<Long> findBySubscriptionFeeDateIntervalTotal(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Transction> ls = transactionService.findByTypeSubscriptionFeeDateInterval(dateMin, dateMax);
+		long total = 0;
+		for(Transction x: ls)
+			total += x.getAmount();
+		return ResponseEntity.status(HttpStatus.OK).body(total);
 	}
 	
 	//Provider

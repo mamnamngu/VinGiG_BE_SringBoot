@@ -2,6 +2,7 @@ package com.swp.VinGiG.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,40 @@ public class BookingController {
 			List<Booking> ls = bookingService.findByDate(date, status);
 			List<BookingObject> list = bookingService.display(ls);
 			return ResponseEntity.status(HttpStatus.OK).body(list);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	//Admin dashboard
+	@GetMapping("/booking/date/{dateMin}/{dateMax}")
+	public ResponseEntity<HashMap<String, String>> getBookingRevenue(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);	
+		try {
+			//Total cash flow
+			List<Booking> ls = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_COMPLETED, dateMin, dateMax);
+			long total = 0;
+			for(Booking x: ls)
+				if(x.getTotal() != null)
+					total += x.getTotal();
+			
+			HashMap<String, String> map = new HashMap<>();
+			map.put("totalCashFlow", String.valueOf(total));
+			
+			//Booking completed
+			map.put("bookingCompletedNo",String.valueOf(ls.size()));
+			
+			//Booking cancel
+			List<Booking> cancelledByProvider = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_CANCELLED_PROVIDER, dateMin, dateMax);
+			List<Booking> cancelledByCustomer = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_CANCELLED_CUSTOMER, dateMin, dateMax);
+			map.put("bookingCancelledNo", String.valueOf(cancelledByProvider.size()+cancelledByCustomer.size()));
+			
+			//Booking declined
+			List<Booking> declined = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_DECLINED, dateMin, dateMax);
+			map.put("bookingDeclinedNo", String.valueOf(declined.size()));
+			
+			return ResponseEntity.status(HttpStatus.OK).body(map);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}

@@ -62,7 +62,7 @@ public class ProviderController {
 		return ResponseEntity.ok(list);
     }
 	
-	@GetMapping("provider/username/{username}")
+	@GetMapping("/provider/username/{username}")
 	public ResponseEntity<ProviderObject> retrieveProviderByUserName(@PathVariable String username) {
 		List<Provider> ls = providerService.findByUsername(username);
 		if(ls.size() > 0) {
@@ -73,7 +73,7 @@ public class ProviderController {
 		}
 	}
 	
-	@GetMapping("provider/fullName/{fullName}")
+	@GetMapping("/provider/fullName/{fullName}")
 	public ResponseEntity<List<ProviderObject>> retrieveProviderByFullName(@PathVariable String fullName) {
 		List<Provider> ls = providerService.findByFullNameIgnoreCase(fullName);
 		if(ls.size() > 0) {
@@ -84,7 +84,7 @@ public class ProviderController {
 			return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("badge/{id}/providers")
+	@GetMapping("/badge/{id}/providers")
 	public ResponseEntity<List<ProviderObject>> findProviderByBadge(@PathVariable("id") int id){
 		if(badgeService.findById(id) == null) return ResponseEntity.notFound().header("message", "No Badge found for such ID").build();
 		List<Provider> ls = providerService.findByBadgeID(id);
@@ -92,7 +92,7 @@ public class ProviderController {
 		return ResponseEntity.ok(list);		
 	}
 	
-	@GetMapping("provider/rating/{lower}/{upper}")
+	@GetMapping("/provider/rating/{lower}/{upper}")
 	public ResponseEntity<List<ProviderObject>> retrieveProviderByRatingInterval(@PathVariable("lower") double lower, @PathVariable("upper") double upper) {
 		List<Provider> ls = providerService.findByRatingInterval(lower, upper);
 		if(ls.size() > 0) {
@@ -102,7 +102,7 @@ public class ProviderController {
 			return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("provider/createDate/{dateMin}/{dateMax}")
+	@GetMapping("/provider/createDate/{dateMin}/{dateMax}")
 	public ResponseEntity<List<ProviderObject>> retrieveProviderByCreateDateInterval(@PathVariable("dateMin") String dateMinStr, @PathVariable("dateMax") String dateMaxStr) {
 		Date dateMin = Constants.strToDate(dateMinStr);
 		Date dateMax = Constants.strToDate(dateMaxStr);
@@ -114,7 +114,7 @@ public class ProviderController {
 			return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("providers/resetExpiredNewProvider")
+	@GetMapping("/providers/resetExpiredNewProvider")
 	public ResponseEntity<List<ProviderObject>> resetExpiredNewProvider(){
 		try {
 			List<Provider> ls = providerService.resetNewProviderBadge();
@@ -125,7 +125,7 @@ public class ProviderController {
 		}
 	}
 	
-	@PostMapping("building/{buildingID}/badge/{badgeID}/provider")
+	@PostMapping("/building/{buildingID}/badge/{badgeID}/provider")
 	public ResponseEntity<Provider> createProvider(@PathVariable int buildingID, @PathVariable int badgeID, @RequestBody Provider provider){
 		try {
 			Building building = buildingService.findById(buildingID);
@@ -148,7 +148,7 @@ public class ProviderController {
 		}
 	}
 	
-	@PutMapping("building/{buildingID}/badge/{badgeID}/provider")
+	@PutMapping("/building/{buildingID}/badge/{badgeID}/provider")
 	public ResponseEntity<Provider> updateProvider(@PathVariable int buildingID, @PathVariable int badgeID, @RequestBody Provider provider){
 		Building building = buildingService.findById(buildingID);
 		if(building == null) return ResponseEntity.notFound().header("message", "Building not found. Update failed").build();

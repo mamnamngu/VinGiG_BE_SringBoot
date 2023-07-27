@@ -143,6 +143,14 @@ public class BookingService {
 			Collections.sort(list);
 			return list;
 		}
+		
+	//display completed booking by date interval
+	public List<Booking> findBookingByStatusAndTimeInterval(int status, Date dateMin, Date dateMax){
+		if(dateMin == null) dateMin = Constants.START_DATE;
+		if(dateMax == null) dateMax = Constants.currentDate();
+		return bookingRepo.findByStatusAndDateBetween(status, dateMin, dateMax);
+	}
+		
 	
 	//ADD
 	private Booking add(Booking booking) {
