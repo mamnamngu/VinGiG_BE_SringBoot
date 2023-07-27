@@ -118,7 +118,9 @@ public class BookingService {
 	public List<Booking> findByCustomerIDByDateInterval(long customerID, Date dateMin, Date dateMax){
 		if(dateMin == null) dateMin = Constants.START_DATE;
 		if(dateMax == null) dateMax = Constants.currentDate();
-		return bookingRepo.findByCustomerIDByDateIntervalHistory(customerID, dateMin, dateMax);
+		List<Booking> list = bookingRepo.findByCustomerIDByDateIntervalHistory(customerID, dateMin, dateMax);
+		Collections.sort(list);
+		return list;
 	}
 	
 	//display booking history by proServiceID over a time interval
