@@ -117,6 +117,11 @@ public class BookingController {
 			List<Booking> declined = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_DECLINED, dateMin, dateMax);
 			map.put("bookingDeclinedNo", String.valueOf(declined.size()));
 			
+			//Total booking no
+			List<Booking> pending = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_PENDING, dateMin, dateMax);
+			List<Booking> accepted = bookingService.findBookingByStatusAndTimeInterval(Constants.BOOKING_STATUS_ACCEPTED, dateMin, dateMax);
+			map.put("totalBookingNo", String.valueOf(ls.size() + pending.size() + accepted.size() + declined.size() + cancelledByProvider.size() + cancelledByCustomer.size()));
+			
 			return ResponseEntity.status(HttpStatus.OK).body(map);
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
