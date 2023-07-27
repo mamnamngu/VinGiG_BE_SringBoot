@@ -63,6 +63,8 @@ public class RegisterController {
 			newCustomer.setAvatar(Constants.DEFAULT_AVATAR);
 			newCustomer.setAddress(account.getApartment());
 			newCustomer.setActive(true);
+			
+			customerService.add(newCustomer);
 			return ResponseEntity.ok(newCustomer);
 		}else {
 			Provider newProvider = new Provider();
@@ -81,6 +83,8 @@ public class RegisterController {
 			newProvider.setActive(true);
 			Badge badge = badgeService.findById(account.getBadgeID());
 			newProvider.setBadge(badge);
+			
+			providerService.add(newProvider);
 			return ResponseEntity.ok(newProvider);
 		}
 	}

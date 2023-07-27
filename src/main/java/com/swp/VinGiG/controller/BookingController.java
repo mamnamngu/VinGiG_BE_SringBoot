@@ -347,6 +347,16 @@ public class BookingController {
 			switch (action) {
 			case Constants.BOOKING_ACCEPT:
 				temp = bookingService.acceptBooking(booking);
+				
+				//Send Mail of booking placement
+				String to = "huynbse173020@fpt.edu.vn";
+		        String subject = "BOOKING ACCEPTED IN VINGIG";
+		        
+		        Provider provider = booking.getProviderService().getProvider();
+		        Building building = booking.getBuilding();
+		        String body = "Xin chào, \nDịch vụ " + providerService.getService().getServiceName() + " cung cấp bởi " + provider.getFullName() + " tại căn " + booking.getApartment() + ", tòa " + building.getBuildingName() + " vừa mới được nhận!.\n Xin vui lòng phản hồi trên hệ thống!\nXin cảm ơn";
+		        emailService.sendSimpleEmail(to, subject, body);
+		        
 				if(temp == null) return ResponseEntity.badRequest().header("message", "Failed to make a transaction to thr provider's account").build();
 				break;
 
@@ -356,14 +366,48 @@ public class BookingController {
 
 			case Constants.BOOKING_COMPLETE:
 				temp = bookingService.completeBooking(booking, total);
+				
+				//Send Mail of booking placement
+				String to1 = "huynbse173020@fpt.edu.vn";
+				String to2 = "asouth93new@gmail.com";
+		        String subject1 = "BOOKING ACCEPTED IN VINGIG";
+		        
+		        Provider provider1 = booking.getProviderService().getProvider();
+		        Customer customer1 = booking.getCustomer();
+		        Building building1 = booking.getBuilding();
+		        String body1 = "Chúc mừng, \nDịch vụ " + providerService.getService().getServiceName() + " cung cấp bởi " + provider1.getFullName() + " tại căn " + booking.getApartment() + ", tòa " + building1.getBuildingName() + " đã hoàn thành!.\n Xin vui lòng phản hồi trên hệ thống!\nXin cảm ơn";
+		        emailService.sendSimpleEmail(to1, subject1, body1);
+		        String body2 = "Chúc mừng, \nDịch vụ " + providerService.getService().getServiceName() + " được đặt bởi " + customer1.getFullName() + " tại căn " + booking.getApartment() + ", tòa " + building1.getBuildingName() + " đã hoàn thành!.\n Xin vui lòng phản hồi trên hệ thống!\nXin cảm ơn";
+		        emailService.sendSimpleEmail(to2, subject1, body2);
+		  
 				break;
 				
 			case Constants.BOOKING_CANCEL_PROVIDER:
 				temp = bookingService.cancelBookingProvider(booking);
+				
+				//Send Mail of booking placement
+				String to3 = "huynbse173020@fpt.edu.vn";
+		        String subject2 = "BOOKING CANCELLED";
+		        
+		        Provider provider2 = booking.getProviderService().getProvider();
+		        Building building2 = booking.getBuilding();
+		        String body3 = "Xin lỗi, \nDịch vụ " + providerService.getService().getServiceName() + " cung cấp bởi " + provider2.getFullName() + " tại căn " + booking.getApartment() + ", tòa " + building2.getBuildingName() + " vừa bị hủy!.\n Xin vui lòng phản hồi trên hệ thống!\nXin cảm ơn";
+		        emailService.sendSimpleEmail(to3, subject2, body3);
+		        
 				break;
 				
 			case Constants.BOOKING_CANCEL_CUSTOMER:
 				temp = bookingService.cancelBookingCustomer(booking);
+				
+				//Send Mail of booking placement
+				String to4 = "huynbse173020@fpt.edu.vn";
+		        String subject3 = "BOOKING CANCELLED";
+		        
+		        Customer customer3 = booking.getCustomer();
+		        Building building3 = booking.getBuilding();
+		        String body4 = "Xin lỗi, \nDịch vụ " + providerService.getService().getServiceName() + " được đặt bởi " + customer3.getFullName() + " tại căn " + booking.getApartment() + ", tòa " + building3.getBuildingName() + " vừa bị hủy!.\n Xin vui lòng phản hồi trên hệ thống!\nXin cảm ơn";
+		        emailService.sendSimpleEmail(to4, subject3, body4);
+		        
 				break;
 				
 			case Constants.BOOKING_TIMEOUT:
