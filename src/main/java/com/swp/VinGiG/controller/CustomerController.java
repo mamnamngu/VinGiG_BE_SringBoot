@@ -129,6 +129,7 @@ public class CustomerController {
 		if(customerService.findById(customer.getCustomerID()) == null)
 			return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
 		
+		customer.setBuilding(building);
 		Customer updatedCustomer = customerService.update(customer);
 		if(updatedCustomer != null)
 			return ResponseEntity.ok(updatedCustomer);

@@ -127,7 +127,7 @@ public class ProviderController {
 	
 	@PostMapping("/building/{buildingID}/badge/{badgeID}/provider")
 	public ResponseEntity<Provider> createProvider(@PathVariable int buildingID, @PathVariable int badgeID, @RequestBody Provider provider){
-		try {
+//		try {
 			Building building = buildingService.findById(buildingID);
 			if(building == null)
 				return ResponseEntity.notFound().header("message", "No Building found with such ID").build();
@@ -143,9 +143,9 @@ public class ProviderController {
 			provider.setBadge(badge);
 			Provider savedProvider = providerService.add(provider);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedProvider);
-		}catch(Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "Failed to add new provider").build();
-		}
+//		}catch(Exception e) {
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("message", "Failed to add new provider").build();
+//		}
 	}
 	
 	@PutMapping("/building/{buildingID}/badge/{badgeID}/provider")
@@ -159,6 +159,9 @@ public class ProviderController {
 		
 		if(providerService.findById(provider.getProviderID()) == null)
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
+		
+		provider.setBadge(badge);
+		provider.setBuilding(building);
 		
 		Provider updatedProvider = providerService.update(provider);
 		if(updatedProvider != null)
