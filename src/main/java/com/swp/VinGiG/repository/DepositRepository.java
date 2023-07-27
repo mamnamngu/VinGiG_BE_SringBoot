@@ -16,5 +16,7 @@ public interface DepositRepository  extends JpaRepository<Deposit, Long>, JpaSpe
 	
 	public List<Deposit> findByProviderProviderIDAndDateBetweenOrderByDateDesc(long providerID, Date dateMin, Date dateMax);
 	
+	public List<Deposit> findByProviderProviderIDAndSuccessIsFalseAndDateBetweenOrderByDateDesc(long providerID, Date dateMin, Date dateMax);
+	
 	public List<Deposit> findByDateBetweenOrderByDateDesc(Date dateMin, Date dateMax);
 }

@@ -157,11 +157,14 @@ public class ProviderController {
 		if(badge == null)
 			return ResponseEntity.notFound().header("message", "No Badge found with such ID").build();
 		
-		if(providerService.findById(provider.getProviderID()) == null)
+		Provider available = providerService.findById(provider.getProviderID());
+		if(available == null)
 			return ResponseEntity.notFound().header("message", "No Provider found for such ID").build();
 		
 		provider.setBadge(badge);
 		provider.setBuilding(building);
+		provider.setUsername(available.getUsername());
+		provider.setPassword(available.getPassword());
 		
 		Provider updatedProvider = providerService.update(provider);
 		if(updatedProvider != null)

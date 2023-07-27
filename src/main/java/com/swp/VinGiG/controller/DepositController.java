@@ -75,6 +75,16 @@ public class DepositController {
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 	
+	@GetMapping("/provider/{id}/deposit/pending/date/{dateMinStr}/{dateMaxStr}")
+	public ResponseEntity<List<DepositObject>> findByProviderIDIntervalPending(@PathVariable long id, @PathVariable String dateMinStr, @PathVariable String dateMaxStr){
+		Date dateMin = Constants.strToDate(dateMinStr);
+		Date dateMax = Constants.strToDate(dateMaxStr);
+		
+		List<Deposit> ls = depositService.findPendingDepositByProviderID(id,dateMin, dateMax);
+		List<DepositObject> list = depositService.display(ls);
+		return ResponseEntity.status(HttpStatus.OK).body(list);
+	}
+	
 	@GetMapping("/deposit/date/{dateMinStr}/{dateMaxStr}")
 	public ResponseEntity<List<DepositObject>> findByDateInterval( @PathVariable String dateMinStr, @PathVariable String dateMaxStr){
 		Date dateMin = Constants.strToDate(dateMinStr);

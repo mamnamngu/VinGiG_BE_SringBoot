@@ -126,10 +126,14 @@ public class CustomerController {
 		Building building = buildingService.findById(id);
 		if(building == null) return ResponseEntity.notFound().header("message", "Building not found. Update failed").build();
 		
-		if(customerService.findById(customer.getCustomerID()) == null)
+		Customer available = customerService.findById(customer.getCustomerID());
+		if(available == null)
 			return ResponseEntity.notFound().header("message", "No Customer found for such ID").build();
 		
 		customer.setBuilding(building);
+		customer.setUsername(available.getUsername());
+		customer.setPassword(available.getPassword());
+		
 		Customer updatedCustomer = customerService.update(customer);
 		if(updatedCustomer != null)
 			return ResponseEntity.ok(updatedCustomer);

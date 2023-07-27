@@ -57,6 +57,12 @@ public class DepositService {
 		return depositRepo.findByMethodAndDateBetween(method, dateMin, dateMax);
 	}
 	
+	public List<Deposit> findPendingDepositByProviderID(long providerID, Date dateMin, Date dateMax){
+		if(dateMin == null) dateMin = Constants.START_DATE;
+		if(dateMax == null) dateMax = Constants.currentDate();
+		return depositRepo.findByProviderProviderIDAndSuccessIsFalseAndDateBetweenOrderByDateDesc(providerID, dateMin, dateMax);
+	}
+	
 	//ADD
 	public Deposit add(Deposit deposit) {
 		deposit.setDate(Constants.currentDate());
